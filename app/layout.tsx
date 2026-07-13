@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
   const metadataBase = new URL(`${protocol}://${host}`);
   const title = "1304：不存在的住户";
-  const description = "一款发生在物业档案里的悬疑微恐互动故事。不要把地址拼完整。";
+  const description = "登录澄江物业中台，处理一张来自空房的工单。你看到的住户，未必还活着。";
 
   return {
     metadataBase,
@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       type: "website",
-      images: [{ url: new URL("/og.png", metadataBase).toString(), width: 1690, height: 931, alt: "1304：不存在的住户" }],
+      images: [{ url: new URL("/og.png", metadataBase).toString(), width: 1672, height: 941, alt: "1304：不存在的住户" }],
     },
     twitter: {
       card: "summary_large_image",
