@@ -1,98 +1,47 @@
-# vinext-starter
+# 不存在的住户 / ARG_1304
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+一款伪装成物业管理系统的中文浏览器ARG。玩家以物业管理员 `CJ-0713` 的身份处理夜间滴水投诉，并通过全文检索、监控复核、声纹分轨、账号恢复与跨系统档案逐步发现澄江公寓的真相。
 
-## Prerequisites
+## 本地运行
 
-- Node.js `>=22.13.0`
-
-## Quick Start
+需要 Node.js `>=22.13.0`。
 
 ```bash
-npm install
+npm ci
 npm run dev
-npm run build
 ```
 
-This starter does not use `wrangler.jsonc`.
+常用验证命令：
 
-## Included Shape
-
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
-
-## Workspace Auth Headers
-
-OpenAI workspace sites can read the current user's email from
-`oai-authenticated-user-email`.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
+```bash
+npm run lint
+npm test
+npm run build:pages
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+## 项目结构
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+- `app/page.tsx`：主游戏、状态机、谜题与hash路由
+- `app/truth/page.tsx`：独立全案真相页
+- `app/globals.css`：主游戏视觉与演出
+- `public/`：记忆、监控、搜救、人物、音频和结局素材
+- `scripts/generate-field-audio.mjs`：现场分轨WAV生成器
+- `tests/rendered-html.test.mjs`：剧情门槛与关键交互回归测试
+- `AGENTS.md`：云端开发接手规范
+- `docs/story-bible.md`：完整剧情真值表与密码契约，含剧透
+- `docs/game-flow.md`：完美通关、触发条件与回归清单，含剧透
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+## 状态与路由
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+游戏进度保存在浏览器 `localStorage`，键名为 `chengjiang-search-arg-v1`。主游戏使用hash路由以兼容GitHub Pages静态部署，刷新和浏览器前进/后退会恢复可访问的当前页面。登录页的 `遗忘` 可以清除本机调查记录。
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+全案真相使用独立静态路由 `/truth/`。
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
+## 部署
 
-## Useful Commands
+`.github/workflows/pages.yml` 会在 `main` 分支更新后构建静态站点并发布到GitHub Pages。
 
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
+- 游戏：<https://starwave0225.github.io/ARG_1304/>
+- 全案真相：<https://starwave0225.github.io/ARG_1304/truth/>
 
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+功能分支需要先合并到 `main` 并等待 Pages 工作流成功，线上地址才会包含最新内容。
