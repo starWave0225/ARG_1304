@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties, FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type View = "home" | "search" | "article" | "denied" | "ending";
 type Ending = "expose" | "loop" | null;
@@ -60,6 +61,10 @@ type BoardMessage = {
 
 const SAVE_KEY = "chengjiang-search-arg-v1";
 const WIFE_NAME = "林若岚";
+const BASE_PATH = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
+const assetPath = (path: string) => `${BASE_PATH}${path.startsWith("/") ? path : `/${path}`}`;
+const loginBackgroundStyle = { "--login-background-image": `url("${assetPath("/cctv/cam-2358.png")}")` } as CSSProperties;
+const deniedBackgroundStyle = { "--denied-background-image": `url("${assetPath("/backgrounds/access-denied-corridor.png")}")` } as CSSProperties;
 
 const initialGame: GameState = {
   started: false,
@@ -928,7 +933,7 @@ export default function Home() {
     if (id === "vacancy-1204") return <>
       <table className="data-table"><tbody><tr><th>产权状态</th><td>产权人涉嫌经济犯罪，长期境外失联</td></tr><tr><th>授权服务</th><td>许建国、赵秀兰 · 每月两次保洁</td></tr><tr><th>服务终止</th><td>2026-03-31（续费停止）</td></tr><tr><th>异常门禁</th><td>2026-04-03起每日出现</td></tr><tr><th>登记儿童</th><td className="danger-text">0人</td></tr></tbody></table>
       <div className="shoe-evidence-photo">
-        <Image src="/evidence/1204-child-shoes.png" alt="1204门外发现的儿童童鞋与潮湿脚印" fill sizes="(max-width: 900px) 100vw, 62vw" unoptimized />
+        <Image src={assetPath("/evidence/1204-child-shoes.png")} alt="1204门外发现的儿童童鞋与潮湿脚印" fill sizes="(max-width: 900px) 100vw, 62vw" unoptimized />
         <div className="shoe-evidence-overlay"><span>现场巡检影像 / IMG-1204-0709-04</span><b>拍摄时间 2026-07-09 08:43</b></div>
         <aside><strong>证物 04</strong><p>儿童魔术贴运动鞋<br />鞋内发现卡片边角</p></aside>
       </div>
@@ -945,7 +950,7 @@ export default function Home() {
     if (id === "cctv-1204") {
       const frame = game.nightFrames.at(-1)?.replace(":", "") || "2358";
       return <>
-        <div className="camera-feed search-camera"><Image src={`/cctv/cam-${frame}.png`} alt="12层走廊夜间监控" fill sizes="(max-width: 900px) 100vw, 62vw" unoptimized/><div className="camera-overlay"><span>CAM-12F-02</span><span>有效住户：2</span><span>REC</span></div></div>
+        <div className="camera-feed search-camera"><Image src={assetPath(`/cctv/cam-${frame}.png`)} alt="12层走廊夜间监控" fill sizes="(max-width: 900px) 100vw, 62vw" unoptimized/><div className="camera-overlay"><span>CAM-12F-02</span><span>有效住户：2</span><span>REC</span></div></div>
         <div className="frame-picker">{["23:58", "00:04", "00:07", "00:10", "00:12"].map((time) => <button key={time} className={game.nightFrames.includes(time) ? "is-selected" : ""} onClick={() => toggleFrame(time)}><i />{time}<small>{time === "00:04" ? "地面变化" : time === "00:07" ? "楼梯变化" : time === "00:10" ? "信号变化" : "画面稳定"}</small></button>)}</div>
         <div className="puzzle-submit"><p><strong>任务：</strong>标记所有出现异常、且仅出现异常的三个独立时间点。</p><button className="primary-button" onClick={submitFrames}>{game.surveillanceSolved ? "异常帧已确认" : "提交标记"}</button></div>
       </>;
@@ -966,7 +971,7 @@ export default function Home() {
       <div className="child-health-record">
         <header><div><span>东临妇幼保健中心</span><strong>儿童健康信息卡</strong></div><b>拾获物证复印件</b></header>
         <div className="child-health-body">
-          <div className="child-health-photo"><Image src="/evidence/he-zhiyao-health-photo.png" alt="何芷遥健康档案照片" fill sizes="185px" unoptimized /><span>拍摄：2025-10-12</span></div>
+          <div className="child-health-photo"><Image src={assetPath("/evidence/he-zhiyao-health-photo.png")} alt="何芷遥健康档案照片" fill sizes="185px" unoptimized /><span>拍摄：2025-10-12</span></div>
           <section><strong>何芷遥</strong><small>档案号：DL-2020-0412-██</small><dl><div><dt>性别</dt><dd>女</dd></div><div><dt>出生日期</dt><dd>2020-04-12</dd></div><div><dt>监护人</dt><dd>许建国、赵秀兰</dd></div><div><dt>监护关系</dt><dd>婚生子女</dd></div><div><dt>最后登记住址</dt><dd>外区集体宿舍</dd></div><div><dt>本楼住户登记</dt><dd className="danger-text">无记录</dd></div></dl></section>
         </div>
         <footer><span>拾获位置：1204门外左侧童鞋内</span><span>卡片状态：轻微受潮</span></footer>
@@ -1068,13 +1073,13 @@ export default function Home() {
     </>;
 
     if (id === "w04-directory") return <>
-      <div className="w04-index-card"><div className="w04-index-photo"><Image src="/residents/w-04.png" alt="1404住户索引影像" fill sizes="260px" unoptimized/></div><section><span>住户关怀索引</span><strong><MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /></strong><dl><div><dt>房号</dt><dd>1404</dd></div><div><dt>行动状态</dt><dd>需使用轮椅</dd></div><div><dt>关怀原因</dt><dd>配偶死亡后的长期哀伤</dd></div><div><dt>固定接收员工</dt><dd className="glitch-field">CJ-0713</dd></div></dl></section></div>
+      <div className="w04-index-card"><div className="w04-index-photo"><Image src={assetPath("/residents/w-04.png")} alt="1404住户索引影像" fill sizes="260px" unoptimized/></div><section><span>住户关怀索引</span><strong><MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /></strong><dl><div><dt>房号</dt><dd>1404</dd></div><div><dt>行动状态</dt><dd>需使用轮椅</dd></div><div><dt>关怀原因</dt><dd>配偶死亡后的长期哀伤</dd></div><div><dt>固定接收员工</dt><dd className="glitch-field">CJ-0713</dd></div></dl></section></div>
       <p>住户坚持由同一名员工每日回访，并声称双方已经“见过很多次”。系统却将每次会面都登记为<mark>首次接触</mark>。</p>
       <div className="uncanny-counter"><span>本年度首次接触次数</span><strong>223</strong><small>计数逻辑错误 / 无法修复</small></div>
     </>;
 
     if (id === "care-w04") return <>
-      <div className="wife-evidence"><Image src="/residents/w-04.png" alt="1404住户坐在轮椅上等待" fill sizes="(max-width: 900px) 100vw, 58vw" unoptimized/><div><blockquote>“我丈夫每天都会回来。只是每次回来，都比以前更不认识我。”</blockquote><small>1404住户 · <MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /></small></div></div>
+      <div className="wife-evidence"><Image src={assetPath("/residents/w-04.png")} alt="1404住户坐在轮椅上等待" fill sizes="(max-width: 900px) 100vw, 58vw" unoptimized/><div><blockquote>“我丈夫每天都会回来。只是每次回来，都比以前更不认识我。”</blockquote><small>1404住户 · <MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /></small></div></div>
       <div className="callout"><strong>公司沟通要求</strong><p>不得认同其关于亡夫的描述；不得询问房内<mark>驻场设备</mark>；住户保持沉默即可维持每日会面。</p></div>
     </>;
 
@@ -1127,7 +1132,7 @@ export default function Home() {
 
   if (!game.started) {
     return <main className="login-screen">
-      <section className="login-story">
+      <section className="login-story" style={loginBackgroundStyle}>
         <div className="brand-lockup"><EyeMark /><span>澄江物业服务中心</span></div>
         <div className="login-eyes" aria-hidden="true">{Array.from({ length: 24 }).map((_, index) => <EyeMark key={index} />)}</div>
         <div className="login-copy"><p>内部档案检索平台 / ARCHIVE 4.2</p><h1>不要按顺序读。<br/>按你怀疑的内容去找。</h1><span>今日待办：调查一张来自“空置房”的夜间滴水投诉。</span></div>
@@ -1148,7 +1153,7 @@ export default function Home() {
 
   if (game.view === "denied" && currentArticle) {
     const deniedMessage = deniedMessages[currentArticle.id] ?? "这份记录存在，但它不承认当前账号有资格知道它为什么存在。";
-    return <main className="access-denied-screen">
+    return <main className="access-denied-screen" style={deniedBackgroundStyle}>
       <div className="denied-eyes" aria-hidden="true">{Array.from({ length: 24 }).map((_, index) => <EyeMark key={index} small />)}</div>
       <section className="denied-terminal">
         <header><EyeMark /><div><span>CHENGJIANG ARCHIVE / ACCESS CONTROL</span><strong>档案权限校验失败</strong></div><b>403.04</b></header>

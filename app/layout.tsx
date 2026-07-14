@@ -1,33 +1,27 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import "./globals.css";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const requestHeaders = await headers();
-  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
-  const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
-  const metadataBase = new URL(`${protocol}://${host}`);
-  const title = "1304：不存在的住户";
-  const description = "登录澄江物业中台，处理一张来自空房的工单。你看到的住户，未必还活着。";
+const siteUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://starwave0225.github.io/ARG_1304/");
+const title = "1304：不存在的住户";
+const description = "登录澄江物业中台，处理一张来自空房的工单。你看到的住户，未必还活着。";
 
-  return {
-    metadataBase,
+export const metadata: Metadata = {
+  metadataBase: siteUrl,
+  title,
+  description,
+  openGraph: {
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      images: [{ url: new URL("/og.png", metadataBase).toString(), width: 1672, height: 941, alt: "1304：不存在的住户" }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [new URL("/og.png", metadataBase).toString()],
-    },
-  };
-}
+    type: "website",
+    images: [{ url: new URL("og.png", siteUrl).toString(), width: 1672, height: 941, alt: title }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [new URL("og.png", siteUrl).toString()],
+  },
+};
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
