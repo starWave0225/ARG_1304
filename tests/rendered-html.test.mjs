@@ -108,15 +108,103 @@ test("lets the login terminal forget the local investigation and restart from th
 test("plays a notification chime when new board messages are announced", async () => {
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
 
-  assert.match(page, /const playMessageNotificationSound = \(\) =>/);
+  assert.match(page, /const playMessageNotificationSound = useCallback\(\(\) =>/);
   assert.match(page, /new AudioContext\(\)/);
   assert.match(page, /if \(messages\.length === 0\) return;\s+playMessageNotificationSound\(\);/);
 });
 
-test("grounds operational clues in auditable property records", async () => {
+test("groups board messages by sender and orders each thread chronologically", async () => {
+  const [page, css] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(page, /const boardMessageThreads = Array\.from\(visibleBoardMessages\.reduce/);
+  assert.match(page, /threads\.get\(message\.author\)/);
+  assert.match(page, /const orderedMessages = \[\.\.\.messages\]\.sort\(\(a, b\) => a\.sequence - b\.sequence\)/);
+  assert.match(page, /\.sort\(\(a, b\) => b\.latest\.sequence - a\.latest\.sequence\)/);
+  assert.match(page, /boardMessageThreads\.map\(\(thread\) => <section/);
+  assert.match(page, /thread\.messages\.map\(\(message\) => <article/);
+  assert.match(page, /className="message-thread-group__header"/);
+  assert.match(page, /className="message-entry__time"/);
+  assert.match(css, /\.message-thread-group__messages/);
+  assert.match(css, /\.message-entry__time/);
+});
+
+test("plays one distinct chime when new evidence is written to the ledger", async () => {
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
 
+  assert.match(page, /const evidenceNotificationKeys = useRef\(new Set<string>\(\)\)/);
+  assert.match(page, /const playEvidenceNotificationSound = \(\) =>/);
+  assert.match(page, /frequency: 196/);
+  assert.match(page, /frequency: 293\.66/);
+  assert.match(page, /frequency: 277\.18/);
+  assert.match(page, /const notifyEvidenceWrite = \(evidenceIds: string\[\]\) =>/);
+  assert.match(page, /!game\.evidence\.includes\(evidenceId\) && !evidenceNotificationKeys\.current\.has\(evidenceId\)/);
+  assert.match(page, /notifyEvidenceWrite\(gained\);/);
+  assert.match(page, /notifyEvidenceWrite\(\["bodyWall", "internalTransfer"\]\);/);
+  assert.match(page, /notifyEvidenceWrite\(\["marriage"\]\);/);
+});
+
+test("escalates from the somber opening and restrained system score into horror states", async () => {
+  const [page, css, generator, backgroundMusic, systemBackgroundMusic, horrorBackgroundMusic] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/generate-field-audio.mjs", import.meta.url), "utf8"),
+    readFile(new URL("../public/audio/background-sorrow.wav", import.meta.url)),
+    readFile(new URL("../public/audio/background-system-uncanny.wav", import.meta.url)),
+    readFile(new URL("../public/audio/background-horror-alert.wav", import.meta.url)),
+  ]);
+
+  assert.match(page, /MUSIC_PREF_KEY = "chengjiang-background-music-muted"/);
+  assert.match(page, /const zhouLoginMusicActive = !game\.started/);
+  assert.match(page, /game\.view === "denied"/);
+  assert.match(page, /game\.activeAccount === MINGCHUAN_ACCOUNT/);
+  assert.match(page, /employeeIdInput\.trim\(\)\.toUpperCase\(\) === MINGCHUAN_ACCOUNT/);
+  assert.match(page, /"\/audio\/background-horror-alert\.wav"/);
+  assert.match(page, /"\/audio\/background-system-uncanny\.wav"/);
+  assert.match(page, /"\/audio\/background-sorrow\.wav"/);
+  assert.match(page, /src=\{assetPath\(backgroundMusicPath\)\}/);
+  assert.match(page, /document\.addEventListener\("pointerdown", startMusic, \{ once: true \}\)/);
+  assert.match(page, /BACKGROUND_MUSIC_DUCKED_VOLUME/);
+  assert.match(page, /fieldAudioPlaying \|\| cctvVideoPlaying/);
+  assert.match(page, /Math\.max\(0, Math\.min\(1, \(now - startedAt\) \/ duration\)\)/);
+  assert.match(page, /audio\.volume = Math\.max\(0, Math\.min\(1, nextVolume\)\)/);
+  assert.match(page, /aria-label=\{backgroundMusicEnabled \? "关闭背景音乐" : "播放背景音乐"\}/);
+  assert.match(generator, /const backgroundTempo = 52/);
+  assert.match(generator, /function createBackgroundMusic\(\)/);
+  assert.match(generator, /const roots = \[38, 34, 41, 36, 38, 43, 34, 45\]/);
+  assert.match(generator, /const systemBackgroundTempo = 48/);
+  assert.match(generator, /function createSystemBackgroundMusic\(\)/);
+  assert.match(generator, /function addReverseBell\(/);
+  assert.match(generator, /const tensionNote = root \+ 23/);
+  assert.match(generator, /const horrorBackgroundTempo = 76/);
+  assert.match(generator, /function createHorrorBackgroundMusic\(\)/);
+  assert.match(generator, /function addMetallicStrike\(/);
+  assert.match(generator, /function addNoiseRiser\(/);
+  assert.equal(backgroundMusic.subarray(0, 4).toString(), "RIFF");
+  assert.equal(backgroundMusic.subarray(8, 12).toString(), "WAVE");
+  assert.ok(backgroundMusic.length > 1_000_000);
+  assert.equal(systemBackgroundMusic.subarray(0, 4).toString(), "RIFF");
+  assert.equal(systemBackgroundMusic.subarray(8, 12).toString(), "WAVE");
+  assert.ok(systemBackgroundMusic.length > 1_000_000);
+  assert.equal(horrorBackgroundMusic.subarray(0, 4).toString(), "RIFF");
+  assert.equal(horrorBackgroundMusic.subarray(8, 12).toString(), "WAVE");
+  assert.ok(horrorBackgroundMusic.length > 1_000_000);
+  assert.match(css, /\.background-music-control--header/);
+  assert.match(css, /@keyframes background-music-meter/);
+});
+
+test("grounds operational clues in auditable property records", async () => {
+  const [page, ceilingInspectionPhoto] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../public/evidence/1204-ceiling-inspection.png", import.meta.url)),
+  ]);
+
   assert.match(page, /临时接触式拾振器/);
+  assert.match(page, /\/evidence\/1204-ceiling-inspection\.png/);
+  assert.match(page, /照片仅记录可见表面与现场测点，不代表已完成1304室内管线检查/);
+  assert.ok(ceilingInspectionPhoto.length > 1_000_000);
   assert.match(page, /公安协查回函/);
   assert.match(page, /ZC-LH/);
   assert.match(page, /殡仪馆寄存转出单/);
@@ -129,12 +217,32 @@ test("grounds operational clues in auditable property records", async () => {
 });
 
 test("turns the 1204 rescue into an evidence-led emergency workflow", async () => {
-  const [page, css] = await Promise.all([
+  const [page, css, livingRoomPhoto, airConditionerPhoto, kitchenPhoto] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../public/evidence/1204-vacancy/01-covered-living-room.png", import.meta.url)),
+    readFile(new URL("../public/evidence/1204-vacancy/02-covered-air-conditioner.png", import.meta.url)),
+    readFile(new URL("../public/evidence/1204-vacancy/03-kitchen-recent-use.png", import.meta.url)),
   ]);
+  const cctvMeta = page.slice(page.indexOf('id: "cctv-1204"'), page.indexOf('id: "audio-1304"'));
+  const workorderBody = page.slice(page.indexOf('if (id === "workorder-1204")'), page.indexOf('if (id === "vacancy-1204")'));
+  const vacancyBody = page.slice(page.indexOf('if (id === "vacancy-1204")'), page.indexOf('if (id === "scheduled-service-1204")'));
+  const policeRouteMessage = page.slice(page.indexOf('{ id: 121'), page.indexOf('{ id: 3'));
 
+  assert.match(vacancyBody, /现场巡检原始影像/);
+  assert.match(vacancyBody, /\/evidence\/1204-vacancy\/01-covered-living-room\.png/);
+  assert.match(vacancyBody, /\/evidence\/1204-vacancy\/02-covered-air-conditioner\.png/);
+  assert.match(vacancyBody, /\/evidence\/1204-vacancy\/03-kitchen-recent-use\.png/);
+  assert.match(vacancyBody, /家具防尘覆盖[\s\S]*?立式空调封存状态[\s\S]*?台面近期使用痕迹/);
+  assert.ok(livingRoomPhoto.length > 1_000_000);
+  assert.ok(airConditionerPhoto.length > 1_000_000);
+  assert.ok(kitchenPhoto.length > 1_000_000);
+  assert.match(css, /\.vacancy-photo-grid \{ display: grid;/);
   assert.match(page, /cam-12f-event-review\.mp4/);
+  assert.match(cctvMeta, /available: \(game\) => game\.childMissingReported/);
+  assert.match(cctvMeta, /接到失联儿童协查后/);
+  assert.doesNotMatch(workorderBody, /openRelatedArticle\("cctv-1204"\)|12层公共区域事件录像/);
+  assert.match(page, /本任务由失联儿童接警回执DL-0713-0041触发，不属于W-0713-019滴水投诉的原始附件/);
   assert.match(page, /className="cctv-video-play" onClick=\{playCctvReview\}/);
   assert.match(page, /ref=\{cctvVideoRef\}/);
   assert.match(css, /\.cctv-video-shell > \.camera-overlay \{ pointer-events: none; \}/);
@@ -160,11 +268,38 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.match(page, /terms: \["DL-0713-0041", "接警回执", "报警回执"/);
   assert.match(page, /id: "register-child"[\s\S]*?available: \(game\) => game\.childMissingReported && game\.evidence\.includes\("vacancyMismatch"\)/);
   assert.doesNotMatch(page, /available: \(game\) => game\.childMissingReported && hasVisited\(game, "clinic-child"\)/);
+  assert.match(page, /id: "clinic-child"[\s\S]*?title: "1204 童鞋内拾获儿童健康信息卡"[\s\S]*?available: \(game\) => game\.inspectedArticles\.includes\("vacancy-1204"\) \|\| hasVisited\(game, "clinic-child"\)/);
+  assert.doesNotMatch(page.slice(page.indexOf('id: "clinic-child"'), page.indexOf('id: "register-child"')), /childMissingReported|vacancyMismatch/);
+  assert.match(page, /const inspectChildShoes = \(\) =>/);
+  assert.match(page, /inspectedArticles: addUnique\(current\.inspectedArticles, \["vacancy-1204"\]\)/);
+  assert.match(page, /onClick=\{inspectChildShoes\}/);
+  assert.match(page, /检查童鞋内卡片边角/);
+  assert.match(page, /拾获物 FP-0713-26/);
+  assert.match(page, /"儿童健康", "儿童健康卡", "健康信息卡"/);
+  assert.match(page, /restored\.visited\?\.includes\("clinic-child"\) \? \["vacancy-1204"\] : \[\]/);
   assert.match(page, /\["1204儿童房", "1204门外", "消防楼梯", "13层前室", "1304门外"\]/);
   assert.match(page, /const rescueRouteScenes: RescueRouteScene\[\]/);
+  assert.match(page, /id: "rescue-route"[\s\S]*?available: \(game\) => game\.surveillanceSolved && game\.childRegistered/);
+  assert.match(policeRouteMessage, /author: "辖区民警"[\s\S]*?badge: "现场协查指令"/);
+  assert.match(policeRouteMessage, /建立《失联儿童现场搜索路线》/);
+  assert.match(policeRouteMessage, /1304室内未经授权不得进入/);
+  assert.doesNotMatch(policeRouteMessage, /1204儿童房[\s\S]*?1204门外[\s\S]*?消防楼梯[\s\S]*?13层前室[\s\S]*?1304门外/);
+  assert.match(page, /routeInstructionSeen: restored\.routeInstructionSeen \?\? Boolean\(restored\.visited\?\.includes\("rescue-route"\) \|\| restored\.childSaved\)/);
+  assert.match(page, /!game\.surveillanceSolved \|\| !game\.childRegistered \|\| game\.routeInstructionSeen \|\| game\.childSaved/);
+  assert.match(page, /announceMessages\(\[121\]\)/);
   assert.match(page, /\/rescue-route\/01-1204-child-room\.jpg/);
   assert.match(page, /\/rescue-route\/05-1304-door\.jpg/);
   assert.match(page, /className="route-scene-strip"/);
+  assert.match(page, /type RescueRouteDrag =/);
+  assert.match(page, /const insertRouteAt = \(place: string, targetIndex: number\) =>/);
+  assert.match(page, /const moveRouteStep = \(index: number, direction: -1 \| 1\) =>/);
+  assert.match(page, /onDragStart=\{\(event\) => scene \? startRouteDrag\(event, scene\.place, index\)/);
+  assert.match(page, /onDrop=\{\(event\) => dropRouteAt\(event, index\)\}/);
+  assert.match(page, /onDrop=\{dropRouteInPool\}/);
+  assert.match(page, /aria-pressed=\{selected\}/);
+  assert.match(page, /route-option-pool/);
+  assert.match(css, /\.route-scene-strip article\.is-drop-target/);
+  assert.match(css, /\.route-option-pool\.is-drop-target/);
   assert.match(page, /影子未通过目标识别/);
   assert.match(page, /画面已完成复核/);
   assert.match(page, /ELEV-12F \/ 呼梯0次/);
@@ -174,11 +309,25 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.match(page, /assetPath\(rescueResultScene\.image\)/);
   assert.doesNotMatch(page, /route-scene-missing|该位置没有连续现场记录|无连续信号/);
   assert.match(page, /route\.length !== 5/);
+  const submitRoute = page.slice(page.indexOf("const submitRoute ="), page.indexOf("const submitFatherStatus ="));
+  assert.doesNotMatch(submitRoute, /if \(game\.route\.join\("\|"\)[\s\S]*?route: \[\][\s\S]*?路线无法下发/);
   assert.match(css, /\.route-scene-stage,.route-rescue-result/);
   assert.doesNotMatch(page, /route-final-mask|现场画面待响应人员回传/);
   assert.doesNotMatch(css, /\.route-final-mask/);
   await Promise.all(["01-1204-child-room.jpg", "02-1204-corridor.jpg", "03-fire-stair.jpg", "04-13f-vestibule.jpg", "05-1304-door.jpg", "06-12f-elevator-lobby.png", "07-1304-archive-interior.png", "08-b2-parking.png"].map((name) => readFile(new URL(`../public/rescue-route/${name}`, import.meta.url))));
   assert.match(page, /已经报警/);
+  assert.match(page, /孩子不见了。芷遥，五岁/);
+  assert.match(page, /1204卧室、卫生间、阳台和同层走廊已经找过/);
+  assert.match(page, /110报警已受理，接警回执已经生成/);
+  assert.match(page, /安保正在封闭一层出口并逐层核对消防门/);
+  assert.match(page, /announceMessages\(\[112, 118, 119, 120\]\)/);
+  assert.match(page, /missingChildAlertSeen: restored\.missingChildAlertSeen \?\? false/);
+  assert.match(page, /!game\.childMissingReported \|\| game\.missingChildAlertSeen/);
+  assert.match(page, /missingChildAlertSeen: current\.missingChildAlertSeen \|\| triggersMissingChild/);
+  assert.match(page, /archive-app--emergency-alert/);
+  assert.match(page, /儿童失联 · \$\{messagePopup\.count\}条紧急消息/);
+  assert.match(css, /@keyframes emergency-window-shake/);
+  assert.match(css, /\.message-popup--urgent/);
   assert.doesNotMatch(page, /我们没敢报警/);
   assert.match(page, /const requestMissingChildDetail = \(detail: "last_seen" \| "police_ref"\) =>/);
   assert.match(page, /missingChildReply\.includes\("last_seen"\)/);
@@ -186,13 +335,27 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.doesNotMatch(page, /message\.id === 112 && !game\.missingChildReply/);
 });
 
-test("reveals the missing-child emergency only after two confirmed evidence sources", async () => {
+test("does not use service-contact names to index the police receipt", async () => {
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const policeRecordMeta = page.slice(page.indexOf('id: "register-child"'), page.indexOf('id: "rescue-route"'));
+
+  assert.match(policeRecordMeta, /terms: \["DL-0713-0041", "接警回执", "报警回执", "未登记儿童", "许芷遥", "协查", "最后确认日期", "1204"\]/);
+  assert.doesNotMatch(policeRecordMeta, /许建国|赵秀兰|父亲|母亲|监护人/);
+});
+
+test("reveals the missing-child emergency before creating the separate CCTV review task", async () => {
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   const openArticle = page.slice(page.indexOf("const openArticle ="), page.indexOf("const openRelatedArticle ="));
+  const submitCctv = page.slice(page.indexOf("const submitCctvReview ="), page.indexOf("const stopFieldAudio ="));
 
-  assert.match(page, /const missingChildEvidence = \["vacancyMismatch", "wetFootprints"\]/);
+  assert.match(page, /const missingChildEvidence = \["vacancyMismatch"\]/);
   assert.match(page, /missingChildEvidence\.every\(\(item\) => nextEvidence\.includes\(item\)\)/);
+  assert.match(page, /id: "cctv-1204"[\s\S]*?available: \(game\) => game\.childMissingReported/);
   assert.match(page, /available: \(game\) => game\.childMissingReported && game\.evidence\.includes\("vacancyMismatch"\)/);
+  assert.match(page, /childMissingReported: Boolean\(restored\.childMissingReported \|\| restored\.evidence\?\.includes\("vacancyMismatch"\)\)/);
+  assert.match(page, /const readArticles = articles\.filter\(\(article\) => game\.visited\.includes\(article\.id\) && article\.available\(game\)\)/);
+  assert.match(page, /requestedArticle && requestedArticle\.available\(saved\)/);
+  assert.doesNotMatch(submitCctv, /triggersMissingChild|childMissingReported|announceMessages\(\[112\]\)/);
   assert.doesNotMatch(openArticle, /triggersMissingChild|childMissingReported|articleEvidence/);
 });
 
@@ -240,6 +403,40 @@ test("keeps locked search results fragmented and out of the full-text answer ind
   assert.match(css, /@keyframes broken-title-slip/);
 });
 
+test("treats room numbers as narrow entry searches instead of master keys", async () => {
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+
+  assert.match(page, /const genericRoomSearchEntries: Record<string, readonly string\[]> = \{/);
+  assert.match(page, /"1204": \["workorder-1204", "vacancy-1204", "meter-1304"\]/);
+  assert.match(page, /"1304": \["meter-1304", "resident-1304", "height-mark", "workorder-1204"\]/);
+  assert.match(page, /id: "height-mark"[\s\S]*?available: \(game\) => game\.childSaved/);
+  assert.match(page, /"1104": \["employee-sync", "room-1104-live", "room-1104"\]/);
+  assert.match(page, /"1404": \["workorder-1404", "w04-directory"\]/);
+  assert.match(page, /query\.match\(\/\^\(\?:房间\|房号\|单元\)\?\(1204\|1304\|1104\|1404\)\(\?:室\|房\|户\)\?\$\/\)/);
+  assert.match(page, /if \(roomQuery\) \{[\s\S]*?if \(entryIndex === -1\) return 0;[\s\S]*?if \(!article\.available\(game\) && !indexedWhileLocked\) return 0;[\s\S]*?return 100 - entryIndex;/);
+});
+
+test("opens the 1104 live room view from Zhou's password-free plea", async () => {
+  const [page, css, roomFrame, ghostFrame] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../public/evidence/1104/room-live.jpg", import.meta.url)),
+    readFile(new URL("../public/evidence/1104/room-live-ghost.jpg", import.meta.url)),
+  ]);
+
+  assert.match(page, /text: "一切都放在1104，救救我，我被困住了！"/);
+  assert.match(page, /id: "room-1104-live"[\s\S]*?title: "1104 房间实况"[\s\S]*?available: \(game\) => hasVisited\(game, "employee-sync"\)/);
+  assert.match(page, /className="room-1104-live__wall-hotspot"/);
+  assert.match(page, /aria-pressed=\{room1104GhostPinned\}/);
+  assert.match(page, /\/evidence\/1104\/room-live\.jpg/);
+  assert.match(page, /\/evidence\/1104\/room-live-ghost\.jpg/);
+  assert.doesNotMatch(page, /author: "周明川"[\s\S]{0,300}text: "[^"]*密码/);
+  assert.match(css, /\.room-1104-live:has\(\.room-1104-live__wall-hotspot:hover\)/);
+  assert.match(css, /\.room-1104-live\.is-pinned \.room-1104-live__ghost/);
+  assert.ok(roomFrame.length > 100_000);
+  assert.ok(ghostFrame.length > 100_000);
+});
+
 test("awards article evidence only after attachment inspection or cross-checking", async () => {
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   const openArticle = page.slice(page.indexOf("const openArticle ="), page.indexOf("const openRelatedArticle ="));
@@ -256,10 +453,11 @@ test("awards article evidence only after attachment inspection or cross-checking
 });
 
 test("renders the night acoustic puzzle as an audible four-track field recording", async () => {
-  const [page, css, generator, ...stems] = await Promise.all([
+  const [page, css, generator, childVoiceSource, ...stems] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../scripts/generate-field-audio.mjs", import.meta.url), "utf8"),
+    readFile(new URL("../public/audio/field-child-voice-source.wav", import.meta.url)),
     ...["pipe", "tv", "bath", "child"].map((name) => readFile(new URL(`../public/audio/field-${name}.wav`, import.meta.url))),
   ]);
 
@@ -272,12 +470,18 @@ test("renders the night acoustic puzzle as an audible four-track field recording
   assert.match(page, /label: "低沉的金属嗡鸣"[\s\S]*?note: "持续低音，偶尔带有管壁回响"/);
   assert.match(page, /label: "电视里的新闻联播声"[\s\S]*?note: "远处成年男声，语速平稳"/);
   assert.match(page, /label: "空腔里的规律滴水声"[\s\S]*?note: "约每1\.4秒一次，带有短促回声"/);
-  assert.match(page, /label: "很轻的孩童哼唱"[\s\S]*?note: "没有歌词，旋律反复出现"/);
+  assert.match(page, /label: "很轻的孩童哼唱"[\s\S]*?note: "没有歌词，三拍旋律清楚，能听见换气"[\s\S]*?level: 0\.78/);
+  assert.match(page, /"儿童哼唱", "小白船", "三拍童谣"/);
   assert.doesNotMatch(page, /label: "结构传导"|label: "公共环境"|label: "近场瞬态"|label: "近场窄带"/);
   assert.match(generator, /const tracks = \["pipe", "tv", "bath", "child"\]/);
-  assert.match(generator, /voicePhase \+= Math\.PI \* 2 \* frequency \* vibrato \/ sampleRate/);
-  assert.match(generator, /envelope \* \(hum \+ filteredNoise \* 0\.0025\) \+ roomTone/);
-  assert.doesNotMatch(generator, /frequency \* vibrato \* time/);
+  assert.match(generator, /field-child-voice-source\.wav/);
+  assert.match(generator, /createChildVoiceTrack\(voiceSamples\)/);
+  assert.match(generator, /const childHummingTempo = 80/);
+  assert.match(generator, /const littleWhiteBoatMotif = \[/);
+  assert.match(generator, /\{ beat: 0, beats: 2, note: 66 \}[\s\S]*?\{ beat: 18, beats: 3, note: 69 \}/);
+  assert.match(generator, /delay: 0\.094, gain: 0\.13/);
+  assert.doesNotMatch(generator, /const notes = \[220, 247, 262/);
+  assert.ok(childVoiceSource.subarray(0, 4).toString() === "RIFF" && childVoiceSource.length > 100_000);
   assert.ok(stems.every((stem) => stem.subarray(0, 4).toString() === "RIFF" && stem.subarray(8, 12).toString() === "WAVE"));
   assert.match(css, /\.field-audio-monitor/);
   assert.match(css, /@keyframes field-waveform/);
@@ -303,10 +507,40 @@ test("makes the 1304 deduction reconstruct records before revealing the chapter"
   assert.doesNotMatch(page, /<button onClick=\{\(\) => closeFatherChat\("guilt"\)\}/);
 });
 
+test("keeps case titles sealed until their room deduction is complete", async () => {
+  const [page, css] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(page, /title: "空房间与隐形孩子"/);
+  assert.match(page, /title: "没离开的人"/);
+  assert.match(page, /title: "周明川，最后一次呼叫"/);
+  assert.match(page, /title: "明天，再一次"/);
+  assert.match(page, /chapter\.isResolved \? chapter\.title : chapter\.room/);
+  assert.match(page, /game\.childSaved \? evidenceChapters\[0\]\.title : "1204"/);
+  assert.match(page, /game\.fatherResolved \? evidenceChapters\[1\]\.title : "1304"/);
+  assert.match(page, /game\.colleagueSolved \? evidenceChapters\[2\]\.title : "1104"/);
+  assert.match(page, /game\.homeSolved \? evidenceChapters\[3\]\.title : "1404"/);
+  assert.match(page, /章节标题只会在对应推导完成后归档/);
+  assert.match(page, /className="ledger-evidence-list"/);
+  assert.match(page, /chapter\.foundEvidence\.map\(\(item, index\) =>/);
+  assert.match(page, /evidenceLabels\[item\] \?\? item/);
+  assert.match(page, /vacancyMismatch: "1204空置登记与实际居住记录冲突"/);
+  assert.match(page, /bodyWall: "1104西墙空腔尺寸与有机来源环境读数异常"/);
+  assert.match(page, /vacancyMismatch: "scheduled-service-1204"/);
+  assert.match(page, /const openEvidenceSource = \(evidenceId: string\) =>/);
+  assert.match(page, /aria-label=\{`打开证据来源：\$\{label\}`\}/);
+  assert.match(css, /\.ledger-chapter\.is-sealed/);
+  assert.match(css, /\.ledger-chapter\.is-revealed/);
+  assert.match(css, /\.ledger-evidence-list li/);
+  assert.match(css, /\.ledger-evidence-list li > button/);
+});
+
 test("keeps unread records out of the archive reading drawer", async () => {
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
 
-  assert.match(page, /const readArticles = articles\.filter\(\(article\) => game\.visited\.includes\(article\.id\)\)/);
+  assert.match(page, /const readArticles = articles\.filter\(\(article\) => game\.visited\.includes\(article\.id\) && article\.available\(game\)\)/);
   assert.match(page, /readArticles\.length \? readArticles\.map/);
   assert.match(page, /暂无阅读记录/);
   assert.doesNotMatch(page, /目录显示系统内全部档案/);
@@ -347,9 +581,8 @@ test("makes the 1404 complaint and memory rewrite the final chapter", async () =
   assert.match(page, /id: "workorder-1404"/);
   assert.match(page, /title: "1404 固定回访人员投诉工单"/);
   assert.match(page, /available: \(game\) => game\.colleagueSolved && game\.evidence\.includes\("churchFlow"\)/);
-  assert.match(page, /const finalChapterReady = game\.colleagueSolved && game\.evidence\.includes\("churchFlow"\)/);
   assert.match(page, /查找周明川留下的离线同步记录[\s\S]*?核验恒目复训与账号变更记录[\s\S]*?处理1404重复回访投诉/);
-  assert.match(page, /onClick=\{\(\) => openArticle\(internalReviewArticle\)\}/);
+  assert.match(page, /queuedArticle\("church-compliance", "恒目"[\s\S]*?queuedArticle\("workorder-1404", "1404"/);
   assert.match(page, /工单转派至被投诉的固定回访人员 CJ-0713/);
   assert.match(page, /id: "w04-directory"[\s\S]*?available: \(game\) => hasVisited\(game, "workorder-1404"\)/);
   assert.match(page, /id: "identity-1404"[\s\S]*?available: \(game\) => hasUnlockedArticle\(game, "crash-cj0713"\) && hasUnlockedArticle\(game, "on-site-device"\),/);
@@ -371,6 +604,19 @@ test("makes the 1404 complaint and memory rewrite the final chapter", async () =
   assert.match(page, /id: "clock-out"[\s\S]*?available: \(game\) => game\.homeSolved,/);
 });
 
+test("refreshes the dashboard queue to the next actionable record", async () => {
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+
+  assert.match(page, /function getPendingWorkItem\(game: GameState\): PendingWorkItem/);
+  assert.match(page, /queuedArticle\("workorder-1204", "1204"[\s\S]*?queuedArticle\("vacancy-1204", "空置房"[\s\S]*?queuedArticle\("scheduled-service-1204", "定时服务"/);
+  assert.match(page, /queuedArticle\("cctv-1204", "DL-0713-0041"[\s\S]*?queuedArticle\("vacancy-1204", "童鞋"[\s\S]*?queuedArticle\("clinic-child", "儿童健康"[\s\S]*?queuedArticle\("register-child", "DL-0713-0041"[\s\S]*?queuedArticle\("rescue-route", "搜索路线"/);
+  assert.match(page, /queuedArticle\("employee-sync", "周明川"[\s\S]*?queuedArticle\("room-1104", "1104"[\s\S]*?kind: "account"[\s\S]*?queuedArticle\("church-compliance", "恒目"/);
+  assert.match(page, /queuedArticle\("w04-directory", "1404"[\s\S]*?queuedArticle\("care-w04", "回访记录"[\s\S]*?queuedArticle\("on-site-device", "特殊保管物"[\s\S]*?queuedArticle\("crash-cj0713", "事故协查"[\s\S]*?queuedArticle\("identity-1404", "住户关系"[\s\S]*?queuedArticle\("clock-out", "下班"/);
+  assert.match(page, /if \(pendingWork\.direct \|\| game\.visited\.includes\(article\.id\)\)[\s\S]*?openArticle\(article\)[\s\S]*?searchFor\(pendingWork\.query \?\? article\.title\)/);
+  assert.match(page, /进度核验后自动刷新 · 共 1 项/);
+  assert.match(page, /onClick=\{openPendingWork\}/);
+});
+
 test("stages the evidence ending as the protagonist leaving the building", async () => {
   const [page, css, lobby, outside] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
@@ -388,6 +634,13 @@ test("stages the evidence ending as the protagonist leaving the building", async
   assert.match(page, /天亮以后，<br\/>CJ-0713没有回来/);
   assert.match(page, /setEndingStep\(\(current\) => current \+ 1\)/);
   assert.match(page, /结局 \/ 重新打卡/);
+  assert.match(page, /const reconsiderEnding = \(\) =>/);
+  assert.match(page, /ending: null, view: "article", activeArticle: "clock-out"/);
+  assert.equal((page.match(/onClick=\{reconsiderEnding\}>重新选择结局/g) ?? []).length, 2);
+  assert.equal((page.match(/>重新选择回复<\/button>/g) ?? []).length, 2);
+  assert.match(page, /wifeReply: ""/);
+  assert.match(page, /fatherReply: ""/);
+  assert.match(css, /\.ending-choice-return/);
   assert.match(css, /\.ending-cinematic > img \{ object-fit: cover/);
   assert.match(css, /@keyframes ending-camera-drift/);
   assert.match(css, /\.ending-cinematic > img \{ object-fit: contain; object-position: center top/);
@@ -436,25 +689,28 @@ test("keeps chapter summaries factual and leaves supernatural attribution unreso
   assert.doesNotMatch(page, /当前操作者已经死于车祸/);
 });
 
-test("locks the four 1404 records behind ARG-derived system passwords", async () => {
+test("locks the four 1404 records behind personal-memory passwords", async () => {
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
 
   assert.match(page, /type ProtectedArticleId = "w04-directory" \| "care-w04" \| "on-site-device" \| "crash-cj0713"/);
-  assert.match(page, /password: "T040713"/);
-  assert.match(page, /password: "32213"/);
-  assert.match(page, /password: "ZCLH1404"/);
-  assert.match(page, /password: "11050713"/);
-  assert.match(page, /终端指纹<\/dt><dd>T-04-CJ-0713/);
-  assert.match(page, /岗位短号<\/dt><dd>13/);
-  assert.match(page, /本年度首次接触次数[\s\S]*?<strong>223<\/strong>/);
-  assert.match(page, /旧库查询键<\/th><td>分类码 \+ 原址房号/);
-  assert.match(page, /东临殡仪馆寄存转出单 DL-1105/);
+  assert.match(page, /password: "LINRUOLAN"/);
+  assert.match(page, /password: "0812"/);
+  assert.match(page, /password: "1404"/);
+  assert.match(page, /password: "IMISSYOU"/);
+  assert.match(page, /报事人<\/dt><dd>林若岚 \/ 住户本人/);
+  assert.match(page, /报事人姓名通过住户端实名校验：林若岚/);
+  assert.match(page, /后台创建<\/dt><dd>2025-11-05 08:12/);
+  assert.match(page, /旧入口只读取四位时分/);
+  assert.match(page, /旧库定位字段<\/th><td>仅接受四位原址房号/);
+  assert.match(page, /id: 122[\s\S]*?visible: \(game\) => hasUnlockedArticle\(game, "on-site-device"\)[\s\S]*?text: "I MISS YOU\."/);
+  assert.match(page, /articleId === "on-site-device"[\s\S]*?announceMessages\(\[122\]\)/);
   assert.match(page, /protectedArticlesUnlocked: Array\.from\(new Set/);
   assert.match(page, /surveillanceEyes: current\.surveillanceEyes \+ 1/);
   assert.match(page, /Array\.from\(\{ length: game\.surveillanceEyes \}\)/);
   assert.match(page, /口令不匹配/);
   assert.doesNotMatch(page, /passwordLockout|passwordLockedUntil|remainingPasswordAttempts/);
+  assert.doesNotMatch(page, /T04240713|12213|260312081404|1105290713/);
   assert.match(styles, /\.protected-article-gate--4/);
   assert.match(styles, /\.surveillance-eye-field/);
   assert.match(styles, /\.surveillance-eye-field \.eye-mark[\s\S]*animation: watched-eye-blink/);

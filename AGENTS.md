@@ -64,10 +64,12 @@ npm run build:pages
 ### Evidence before conclusions
 
 - The player discovers identities through records and cross-checking. Do not expose "报事人及身份核验" answers as prefilled conclusions.
+- Do not use an unverified service-contact name to index a police or emergency record. In the 1204 chain, parent names come from the service schedule, while the receipt comes from the caller's message; they meet only in the player's temporary collaboration form.
 - In-game files should use objective administrative language: dates, document sources, measurements, access events, and audit fields.
 - Never turn a puzzle into choosing a polished interpretation that already states the answer. Ask the player to reconstruct times, routes, source fields, or document relationships.
 - Evidence is awarded only after attachment inspection, explicit verification, or a completed puzzle. Opening a document alone should not grant a critical fact.
 - Search results may include irrelevant but realistic records. Do not make every result a clue.
+- A bare room-number search is an entry lookup, not a master key. Keep `genericRoomSearchEntries` narrow; deeper files must be found through names, record numbers, times, objects, or terminology learned from an entry file.
 - First-time access to an article should come through search. The archive drawer lists only records the player has already opened.
 - Locked records use fractured titles and restricted search terms. Do not expose their raw protected fields in search snippets.
 - Important evidence should concentrate in later records and cross-system attachments, not the first article in a chain.
@@ -85,8 +87,9 @@ npm run build:pages
 ## Progression Invariants
 
 - 1204 is the opening investigation and emergency-rescue chapter.
-- The missing-child event requires both the actual-occupancy conflict and the monitoring anomaly. Merely opening a relevant article must not trigger it.
+- The missing-child event is triggered only after the player explicitly verifies the actual-occupancy conflict. The emergency report then creates the separate public-area CCTV review task; CCTV must not appear in the original dripping-noise work order or before the child is reported missing.
 - Every rescue-route location, including excluded locations, needs an image. Do not replace an excluded location with "no footage" text.
+- The rescue route is an image-based arrangement board: candidate scenes can be dragged into five slots, selected scenes can be reordered or dragged back out, and click/arrow controls must preserve the same actions on touch and keyboard devices. A wrong submission must not erase the assembled route.
 - The field-audio puzzle must keep four audible stems with human descriptions. The correct operation removes pipe resonance and television audio while preserving bath drips and child humming.
 - 1304 becomes a chapter performance only after the player reconstructs the factual audit sequence. The answer must not be written as a multiple-choice moral conclusion.
 - Zhou Mingchuan's body discovery unlocks the derivation of his local account password. His four private evidence files themselves do not each have an extra password.
