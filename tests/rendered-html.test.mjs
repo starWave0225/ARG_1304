@@ -107,10 +107,15 @@ test("lets the login terminal forget the local investigation and restart from th
 
 test("plays a notification chime when new board messages are announced", async () => {
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const startGame = page.slice(page.indexOf("const startGame ="), page.indexOf("const continueGame ="));
 
   assert.match(page, /const playMessageNotificationSound = useCallback\(\(\) =>/);
   assert.match(page, /new AudioContext\(\)/);
   assert.match(page, /if \(messages\.length === 0\) return;\s+playMessageNotificationSound\(\);/);
+  assert.match(page, /const FIRST_LOGIN_MESSAGE_DELAY_MS = 3200/);
+  assert.match(page, /const firstLoginMessageTimer = useRef<number \| null>\(null\)/);
+  assert.match(startGame, /writeAppRoute\("\/system\/home"\)[\s\S]*?window\.setTimeout\(\(\) => \{[\s\S]*?announceMessages\(\[1, 101, 102, 103\]\)[\s\S]*?FIRST_LOGIN_MESSAGE_DELAY_MS/);
+  assert.doesNotMatch(startGame, /writeAppRoute\("\/system\/home"\);\s+announceMessages/);
 });
 
 test("groups board messages by sender and orders each thread chronologically", async () => {
@@ -131,6 +136,29 @@ test("groups board messages by sender and orders each thread chronologically", a
   assert.match(css, /\.message-entry__time/);
 });
 
+test("turns the first 1404 message into a restrained multi-round dialogue", async () => {
+  const [page, css] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(page, /text: "今天还是你来处理吗？如果找不到入口，先查工单里最具体的时间。"/);
+  assert.match(page, /const WIFE_DIALOGUE_TURNS: Record<string, WifeDialogueTurn>/);
+  assert.match(page, /recognition: \{ player: "我们以前见过？", resident: "系统里写着没有。可你上次也先问了这句。" \}/);
+  assert.match(page, /assignment: \{ player: "请说明上一位处理人。", resident: "工牌上也是CJ-0713。客服说编号不会重复。" \}/);
+  assert.match(page, /when: \{ player: "上次是什么时候？"/);
+  assert.match(page, /dispatch: \{ player: "有上次的派单记录吗？"/);
+  assert.match(page, /audit: \{ player: "我会调取历史回访。"/);
+  assert.match(page, /procedure: \{ player: "请按标准流程重新报修。"/);
+  assert.match(page, /wifeDialoguePath\.length === 2[\s\S]*?WIFE_DIALOGUE_FINAL_CHOICES/);
+  assert.match(page, /wifeDialoguePath\.map\(\(reply, index\) =>/);
+  assert.match(page, /会话已暂存 · 未写入工单/);
+  assert.match(page, /restored\.wifeReply === "known"[\s\S]*?"recognition"/);
+  assert.doesNotMatch(page, /见过。很多次。只是每次都是我记得/);
+  assert.doesNotMatch(page, /谢谢。你还是只会说这一句/);
+  assert.match(css, /\.dialogue-thread--wife \.dialogue-resident/);
+});
+
 test("plays one distinct chime when new evidence is written to the ledger", async () => {
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
 
@@ -146,14 +174,16 @@ test("plays one distinct chime when new evidence is written to the ledger", asyn
   assert.match(page, /notifyEvidenceWrite\(\["marriage"\]\);/);
 });
 
-test("escalates from the somber opening and restrained system score into horror states", async () => {
-  const [page, css, generator, backgroundMusic, systemBackgroundMusic, horrorBackgroundMusic] = await Promise.all([
+test("escalates from the somber opening through licensed system and horror scores", async () => {
+  const [page, css, generator, backgroundMusic, systemBackgroundMusic, systemMusicSource, horrorBackgroundMusic, horrorMusicSource] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../scripts/generate-field-audio.mjs", import.meta.url), "utf8"),
     readFile(new URL("../public/audio/background-sorrow.wav", import.meta.url)),
-    readFile(new URL("../public/audio/background-system-uncanny.wav", import.meta.url)),
-    readFile(new URL("../public/audio/background-horror-alert.wav", import.meta.url)),
+    readFile(new URL("../public/audio/background-system-countdown.mp3", import.meta.url)),
+    readFile(new URL("../public/audio/SYSTEM_MUSIC_SOURCE.md", import.meta.url), "utf8"),
+    readFile(new URL("../public/audio/background-horror-lights.mp3", import.meta.url)),
+    readFile(new URL("../public/audio/HORROR_MUSIC_SOURCE.md", import.meta.url), "utf8"),
   ]);
 
   assert.match(page, /MUSIC_PREF_KEY = "chengjiang-background-music-muted"/);
@@ -161,8 +191,10 @@ test("escalates from the somber opening and restrained system score into horror 
   assert.match(page, /game\.view === "denied"/);
   assert.match(page, /game\.activeAccount === MINGCHUAN_ACCOUNT/);
   assert.match(page, /employeeIdInput\.trim\(\)\.toUpperCase\(\) === MINGCHUAN_ACCOUNT/);
-  assert.match(page, /"\/audio\/background-horror-alert\.wav"/);
-  assert.match(page, /"\/audio\/background-system-uncanny\.wav"/);
+  assert.match(page, /"\/audio\/background-horror-lights\.mp3"/);
+  assert.doesNotMatch(page, /background-horror-alert\.wav/);
+  assert.match(page, /"\/audio\/background-system-countdown\.mp3"/);
+  assert.doesNotMatch(page, /background-system-uncanny\.wav/);
   assert.match(page, /"\/audio\/background-sorrow\.wav"/);
   assert.match(page, /src=\{assetPath\(backgroundMusicPath\)\}/);
   assert.match(page, /document\.addEventListener\("pointerdown", startMusic, \{ once: true \}\)/);
@@ -174,23 +206,24 @@ test("escalates from the somber opening and restrained system score into horror 
   assert.match(generator, /const backgroundTempo = 52/);
   assert.match(generator, /function createBackgroundMusic\(\)/);
   assert.match(generator, /const roots = \[38, 34, 41, 36, 38, 43, 34, 45\]/);
-  assert.match(generator, /const systemBackgroundTempo = 48/);
-  assert.match(generator, /function createSystemBackgroundMusic\(\)/);
-  assert.match(generator, /function addReverseBell\(/);
-  assert.match(generator, /const tensionNote = root \+ 23/);
-  assert.match(generator, /const horrorBackgroundTempo = 76/);
-  assert.match(generator, /function createHorrorBackgroundMusic\(\)/);
-  assert.match(generator, /function addMetallicStrike\(/);
-  assert.match(generator, /function addNoiseRiser\(/);
+  assert.doesNotMatch(generator, /createSystemBackgroundMusic/);
+  assert.doesNotMatch(generator, /background-system-uncanny\.wav/);
+  assert.doesNotMatch(generator, /createHorrorBackgroundMusic/);
+  assert.doesNotMatch(generator, /background-horror-alert\.wav/);
   assert.equal(backgroundMusic.subarray(0, 4).toString(), "RIFF");
   assert.equal(backgroundMusic.subarray(8, 12).toString(), "WAVE");
   assert.ok(backgroundMusic.length > 1_000_000);
-  assert.equal(systemBackgroundMusic.subarray(0, 4).toString(), "RIFF");
-  assert.equal(systemBackgroundMusic.subarray(8, 12).toString(), "WAVE");
-  assert.ok(systemBackgroundMusic.length > 1_000_000);
-  assert.equal(horrorBackgroundMusic.subarray(0, 4).toString(), "RIFF");
-  assert.equal(horrorBackgroundMusic.subarray(8, 12).toString(), "WAVE");
-  assert.ok(horrorBackgroundMusic.length > 1_000_000);
+  assert.equal(systemBackgroundMusic[0], 0xff);
+  assert.ok(systemBackgroundMusic.length > 10_000_000);
+  assert.match(systemMusicSource, /Alexander Nakarada/);
+  assert.match(systemMusicSource, /Countdown/);
+  assert.match(systemMusicSource, /CC BY 4\.0/);
+  assert.match(systemMusicSource, /commons\.wikimedia\.org/);
+  assert.equal(horrorBackgroundMusic.subarray(0, 3).toString(), "ID3");
+  assert.ok(horrorBackgroundMusic.length > 5_000_000);
+  assert.match(horrorMusicSource, /Rafael Krux/);
+  assert.match(horrorMusicSource, /CC BY 4\.0/);
+  assert.match(horrorMusicSource, /commons\.wikimedia\.org/);
   assert.match(css, /\.background-music-control--header/);
   assert.match(css, /@keyframes background-music-meter/);
 });
@@ -200,15 +233,19 @@ test("grounds operational clues in auditable property records", async () => {
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../public/evidence/1204-ceiling-inspection.png", import.meta.url)),
   ]);
+  const workorderBody = page.slice(page.indexOf('if (id === "workorder-1204")'), page.indexOf('if (id === "vacancy-1204")'));
 
   assert.match(page, /临时接触式拾振器/);
   assert.match(page, /\/evidence\/1204-ceiling-inspection\.png/);
   assert.match(page, /照片仅记录可见表面与现场测点，不代表已完成1304室内管线检查/);
+  assert.match(page, /confirmed: "已确认非水管破损，怀疑人为因素"/);
+  assert.doesNotMatch(page, /已确认零用水与固定声响并存/);
   assert.ok(ceilingInspectionPhoto.length > 1_000_000);
   assert.match(page, /公安协查回函/);
   assert.match(page, /ZC-LH/);
   assert.match(page, /殡仪馆寄存转出单/);
   assert.match(page, /以上身份仅为报事人自述，不作为房屋关系结论/);
+  assert.doesNotMatch(workorderBody, /<p className="is-anomalous"><time>01:29<\/time>/);
   assert.doesNotMatch(page, /楼上的人是不是已经死了/);
   assert.doesNotMatch(page, /设备不是设备。驻场不是在岗/);
   assert.doesNotMatch(page, /将记忆清除称为<mark>过滤/);
@@ -216,13 +253,42 @@ test("grounds operational clues in auditable property records", async () => {
   assert.doesNotMatch(page, /账号来源为已终止的历史服务授权/);
 });
 
+test("pairs Gu Changhe's subjective callback statement with a damaged identity copy", async () => {
+  const [page, css, guChangheId] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../public/evidence/gu-changhe-cut-id.png", import.meta.url)),
+  ]);
+  const residentBody = page.slice(page.indexOf('if (id === "resident-1304")'), page.indexOf('if (id === "height-mark")'));
+
+  assert.match(residentBody, /我总是听到她在敲门。我们已经分开很久了，她还是总来打扰我和孩子的生活。/);
+  assert.doesNotMatch(residentBody, /是不是有人冒用住户资料/);
+  assert.match(residentBody, /\/evidence\/gu-changhe-cut-id\.png/);
+  assert.match(residentBody, /原件右下角缺失/);
+  assert.match(page, /const guChangheDocumentRef = useRef<HTMLElement \| null>\(null\)/);
+  assert.match(page, /window\.addEventListener\("pointermove", trackEyes\)/);
+  assert.match(page, /documentFigure\.style\.setProperty\("--eye-track-x"/);
+  assert.match(residentBody, /resident-profile__eye-overlay--left/);
+  assert.match(residentBody, /resident-profile__eye-overlay--right/);
+  assert.equal((residentBody.match(/style=\{\{ objectFit: "contain" \}\}/g) ?? []).length, 3);
+  assert.match(css, /\.resident-profile__document \{[^}]*position: relative;/);
+  assert.match(css, /\.resident-profile__document img \{ object-fit: contain;/);
+  assert.match(css, /\.resident-profile__eye-overlay--left \{ clip-path: ellipse/);
+  assert.match(css, /rotate\(var\(--eye-track-rotate\)\)/);
+  assert.ok(guChangheId.length > 1_000_000);
+});
+
 test("turns the 1204 rescue into an evidence-led emergency workflow", async () => {
-  const [page, css, livingRoomPhoto, airConditionerPhoto, kitchenPhoto] = await Promise.all([
+  const [page, css, livingRoomPhoto, airConditionerPhoto, kitchenPhoto, childShoesPhoto, cctvAmbience, cctvAudioSource, rescueGhostFrame] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../public/evidence/1204-vacancy/01-covered-living-room.png", import.meta.url)),
     readFile(new URL("../public/evidence/1204-vacancy/02-covered-air-conditioner.png", import.meta.url)),
     readFile(new URL("../public/evidence/1204-vacancy/03-kitchen-recent-use.png", import.meta.url)),
+    readFile(new URL("../public/evidence/1204-child-shoes.png", import.meta.url)),
+    readFile(new URL("../public/cctv/cam-12f-elevator-ambience.mp3", import.meta.url)),
+    readFile(new URL("../public/cctv/CCTV_AUDIO_SOURCE.md", import.meta.url), "utf8"),
+    readFile(new URL("../public/rescue-route/09-1304-gu-changhe-ghost.png", import.meta.url)),
   ]);
   const cctvMeta = page.slice(page.indexOf('id: "cctv-1204"'), page.indexOf('id: "audio-1304"'));
   const workorderBody = page.slice(page.indexOf('if (id === "workorder-1204")'), page.indexOf('if (id === "vacancy-1204")'));
@@ -233,12 +299,23 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.match(vacancyBody, /\/evidence\/1204-vacancy\/01-covered-living-room\.png/);
   assert.match(vacancyBody, /\/evidence\/1204-vacancy\/02-covered-air-conditioner\.png/);
   assert.match(vacancyBody, /\/evidence\/1204-vacancy\/03-kitchen-recent-use\.png/);
-  assert.match(vacancyBody, /家具防尘覆盖[\s\S]*?立式空调封存状态[\s\S]*?台面近期使用痕迹/);
+  assert.match(vacancyBody, /\/evidence\/1204-child-shoes\.png/);
+  assert.match(vacancyBody, /家具防尘覆盖[\s\S]*?立式空调封存状态[\s\S]*?台面近期使用痕迹[\s\S]*?未清点儿童鞋履/);
   assert.ok(livingRoomPhoto.length > 1_000_000);
   assert.ok(airConditionerPhoto.length > 1_000_000);
   assert.ok(kitchenPhoto.length > 1_000_000);
-  assert.match(css, /\.vacancy-photo-grid \{ display: grid;/);
+  assert.ok(childShoesPhoto.length > 1_000_000);
+  assert.match(css, /\.vacancy-photo-grid \{ display: grid; grid-template-columns: repeat\(4,minmax\(0,1fr\)\);/);
   assert.match(page, /cam-12f-event-review\.mp4/);
+  assert.match(page, /cam-12f-elevator-ambience\.mp3/);
+  assert.match(page, /ref=\{cctvAmbienceRef\}/);
+  assert.match(page, /ambience\.volume = Math\.max\(0, Math\.min\(1, video\.volume \* CCTV_AMBIENCE_VOLUME\)\)/);
+  assert.match(page, /onSeeking=\{\(\) => syncCctvAmbience\(\)\}/);
+  assert.match(page, /onVolumeChange=\{\(\) => syncCctvAmbience\(\)\}/);
+  assert.match(page, /拾音轨：公共区域设备环境声/);
+  assert.ok(cctvAmbience.length > 700_000);
+  assert.match(cctvAudioSource, /Recordist: stephan/);
+  assert.match(cctvAudioSource, /License: Public domain/);
   assert.match(cctvMeta, /available: \(game\) => game\.childMissingReported/);
   assert.match(cctvMeta, /接到失联儿童协查后/);
   assert.doesNotMatch(workorderBody, /openRelatedArticle\("cctv-1204"\)|12层公共区域事件录像/);
@@ -272,9 +349,15 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.doesNotMatch(page.slice(page.indexOf('id: "clinic-child"'), page.indexOf('id: "register-child"')), /childMissingReported|vacancyMismatch/);
   assert.match(page, /const inspectChildShoes = \(\) =>/);
   assert.match(page, /inspectedArticles: addUnique\(current\.inspectedArticles, \["vacancy-1204"\]\)/);
-  assert.match(page, /onClick=\{inspectChildShoes\}/);
-  assert.match(page, /检查童鞋内卡片边角/);
-  assert.match(page, /拾获物 FP-0713-26/);
+  assert.match(page, /visited: addUnique\(current\.visited, \["clinic-child"\]\)/);
+  assert.match(vacancyBody, /className=\{`shoe-note-hotspot/);
+  assert.match(vacancyBody, /onClick=\{inspectChildShoes\}/);
+  assert.equal((vacancyBody.match(/onClick=\{inspectChildShoes\}/g) ?? []).length, 1);
+  assert.match(vacancyBody, /aria-controls="vacancy-child-health-card"/);
+  assert.match(vacancyBody, /renderChildHealthCard\(true\)/);
+  assert.doesNotMatch(vacancyBody, /shoe-evidence-photo|shoe-card-inspect|shoe-card-result/);
+  assert.match(page, /id=\{inline \? "vacancy-child-health-card" : undefined\}/);
+  assert.match(page, /鞋内折叠卡片/);
   assert.match(page, /"儿童健康", "儿童健康卡", "健康信息卡"/);
   assert.match(page, /restored\.visited\?\.includes\("clinic-child"\) \? \["vacancy-1204"\] : \[\]/);
   assert.match(page, /\["1204儿童房", "1204门外", "消防楼梯", "13层前室", "1304门外"\]/);
@@ -300,13 +383,29 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.match(page, /route-option-pool/);
   assert.match(css, /\.route-scene-strip article\.is-drop-target/);
   assert.match(css, /\.route-option-pool\.is-drop-target/);
-  assert.match(page, /影子未通过目标识别/);
-  assert.match(page, /画面已完成复核/);
+  assert.doesNotMatch(page, /影子未通过目标识别/);
+  assert.doesNotMatch(page, /画面已完成复核/);
+  assert.doesNotMatch(page, /两部电梯门在复核时段内保持关闭/);
+  assert.doesNotMatch(page, /地库车道在完整复核区间内没有人员移动/);
+  assert.doesNotMatch(page, /系统只能调取2023年的入户巡检归档照/);
+  assert.match(page, /activeRescueScene\.observation && <p>\{activeRescueScene\.observation\}<\/p>/);
   assert.match(page, /ELEV-12F \/ 呼梯0次/);
   assert.match(page, /历史入户影像 \/ 非本次时段/);
   assert.match(page, /CAM-B2-07 \/ 事件0/);
   assert.match(page, /const rescueResultScene = rescueRouteScenes\.find\(\(scene\) => scene\.place === "1304门外"\)!/);
   assert.match(page, /assetPath\(rescueResultScene\.image\)/);
+  assert.match(page, /type RescueCinematicStage = "idle" \| "found" \| "corridor" \| "ghost"/);
+  assert.match(page, /GU_CHANGHE_RESCUE_FRAME = "\/rescue-route\/09-1304-gu-changhe-ghost\.png"/);
+  assert.match(page, /setRescueCinematicStage\("found"\)/);
+  assert.match(page, /rescueCinematicStage === "found"[\s\S]*?"corridor"[\s\S]*?"ghost"/);
+  assert.match(page, /aria-label="许芷遥获救场景演出"/);
+  assert.match(page, /带我来的小姑娘没有跟出来/);
+  assert.match(page, /现场设备没有保存这一帧/);
+  assert.match(page, /记录现场，继续调查/);
+  assert.match(css, /\.route-rescue-cinematic\.is-corridor \.route-rescue-cinematic__base/);
+  assert.match(css, /\.route-rescue-cinematic\.is-ghost \.route-rescue-cinematic__ghost/);
+  assert.match(css, /@keyframes rescue-caption-enter/);
+  assert.ok(rescueGhostFrame.length > 1_000_000);
   assert.doesNotMatch(page, /route-scene-missing|该位置没有连续现场记录|无连续信号/);
   assert.match(page, /route\.length !== 5/);
   const submitRoute = page.slice(page.indexOf("const submitRoute ="), page.indexOf("const submitFatherStatus ="));
@@ -377,7 +476,8 @@ test("gives the 1204 owner a searchable public-news trail", async () => {
   const vacancyBody = page.slice(page.indexOf('if (id === "vacancy-1204")'), page.indexOf('if (id === "scheduled-service-1204")'));
 
   assert.match(vacancyBody, /产权登记[\s\S]*?陈大国[\s\S]*?不动产权证尾号 4417/);
-  assert.match(vacancyBody, /检索<mark>陈大国<\/mark>或<mark>经侦通报<\/mark>/);
+  assert.doesNotMatch(vacancyBody, /公开信息索引|经侦通报|畏罪潜逃|姓名命中一条公开信息/);
+  assert.match(page, /id: "vacancy-1204"[\s\S]*?terms: \["1204", "空置房", "产权人", "陈大国", "4417", "保洁"/);
   assert.match(page, /id: "owner-chen-public-notice"/);
   assert.match(page, /terms: \["陈大国", "陈某国", "经侦通报", "畏罪潜逃"/);
   assert.match(page, /available: \(game\) => hasVisited\(game, "vacancy-1204"\)/);
@@ -385,6 +485,20 @@ test("gives the 1204 owner a searchable public-news trail", async () => {
   assert.match(page, /证件号码末四位为<mark>4417<\/mark>[\s\S]*?澄江公寓1号楼1204/);
   assert.match(page, /“畏罪潜逃”来自媒体转载标题，不是司法结论/);
   assert.doesNotMatch(vacancyBody, /产权人涉嫌经济犯罪，长期境外失联/);
+});
+
+test("links the pending 1204 identity status to the property review record", async () => {
+  const [page, css] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  const workorderBody = page.slice(page.indexOf('if (id === "workorder-1204")'), page.indexOf('if (id === "vacancy-1204")'));
+
+  assert.match(workorderBody, /className="complainant-review-link"/);
+  assert.match(workorderBody, /onClick=\{\(\) => openRelatedArticle\("vacancy-1204"\)\}/);
+  assert.match(workorderBody, /资料状态[\s\S]*?待复核[\s\S]*?本工单未附产权证明、租赁备案或家庭成员材料/);
+  assert.match(workorderBody, /查看1204产权复核材料/);
+  assert.match(css, /\.complainant-review-link:focus-visible/);
 });
 
 test("keeps locked search results fragmented and out of the full-text answer index", async () => {
@@ -452,37 +566,36 @@ test("awards article evidence only after attachment inspection or cross-checking
   assert.doesNotMatch(unlockArticle, /evidence:/);
 });
 
-test("renders the night acoustic puzzle as an audible four-track field recording", async () => {
-  const [page, css, generator, childVoiceSource, ...stems] = await Promise.all([
+test("renders the night acoustic puzzle with licensed real-world recordings", async () => {
+  const [page, css, generator, recordingNotes, ...stems] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../scripts/generate-field-audio.mjs", import.meta.url), "utf8"),
-    readFile(new URL("../public/audio/field-child-voice-source.wav", import.meta.url)),
-    ...["pipe", "tv", "bath", "child"].map((name) => readFile(new URL(`../public/audio/field-${name}.wav`, import.meta.url))),
+    readFile(new URL("../public/audio/FIELD_RECORDINGS.md", import.meta.url), "utf8"),
+    ...["pipe", "tv", "bath", "child"].map((name) => readFile(new URL(`../public/audio/field-${name}.mp3`, import.meta.url))),
   ]);
 
   assert.match(page, /fieldAudioElements = useRef<Partial<Record<AudioTrackKey, HTMLAudioElement>>>/);
-  assert.match(page, /src=\{assetPath\(`\/audio\/field-\$\{track\.key\}\.wav`\)\}/);
+  assert.match(page, /src=\{assetPath\(track\.src\)\}/);
   assert.match(page, /await Promise\.all\(elements\.map\(\(\{ element \}\) => element!\.play\(\)\)\)/);
+  assert.match(page, /fieldAudioStartedAt\.current = performance\.now\(\)/);
+  assert.doesNotMatch(page, /primary\.currentTime/);
   assert.match(page, /element\.muted = willMute/);
   assert.match(page, /播放拾振样本/);
   assert.match(page, /game\.audioSolved \? track\.resolved : track\.label/);
-  assert.match(page, /label: "低沉的金属嗡鸣"[\s\S]*?note: "持续低音，偶尔带有管壁回响"/);
-  assert.match(page, /label: "电视里的新闻联播声"[\s\S]*?note: "远处成年男声，语速平稳"/);
-  assert.match(page, /label: "空腔里的规律滴水声"[\s\S]*?note: "约每1\.4秒一次，带有短促回声"/);
-  assert.match(page, /label: "很轻的孩童哼唱"[\s\S]*?note: "没有歌词，三拍旋律清楚，能听见换气"[\s\S]*?level: 0\.78/);
-  assert.match(page, /"儿童哼唱", "小白船", "三拍童谣"/);
+  assert.match(page, /src: "\/audio\/field-pipe\.mp3"[\s\S]*?label: "低沉的金属嗡鸣"[\s\S]*?note: "持续水流低鸣，偶尔带有金属腔体回响"/);
+  assert.match(page, /src: "\/audio\/field-tv\.mp3"[\s\S]*?label: "远处电视播报声"[\s\S]*?note: "隔墙人声模糊，无法辨清具体语句"/);
+  assert.match(page, /src: "\/audio\/field-bath\.mp3"[\s\S]*?label: "空腔里的规律滴水声"[\s\S]*?note: "水滴落入浴缸排水口，带有瓷砖空间反射"/);
+  assert.match(page, /src: "\/audio\/field-child\.mp3"[\s\S]*?label: "很轻的孩童哼唱"[\s\S]*?note: "乐句断续，没有歌词，近处换气和口腔音清楚"/);
+  assert.match(page, /"儿童哼唱", "童谣残句", "近场换气"/);
   assert.doesNotMatch(page, /label: "结构传导"|label: "公共环境"|label: "近场瞬态"|label: "近场窄带"/);
-  assert.match(generator, /const tracks = \["pipe", "tv", "bath", "child"\]/);
-  assert.match(generator, /field-child-voice-source\.wav/);
-  assert.match(generator, /createChildVoiceTrack\(voiceSamples\)/);
-  assert.match(generator, /const childHummingTempo = 80/);
-  assert.match(generator, /const littleWhiteBoatMotif = \[/);
-  assert.match(generator, /\{ beat: 0, beats: 2, note: 66 \}[\s\S]*?\{ beat: 18, beats: 3, note: 69 \}/);
-  assert.match(generator, /delay: 0\.094, gain: 0\.13/);
-  assert.doesNotMatch(generator, /const notes = \[220, 247, 262/);
-  assert.ok(childVoiceSource.subarray(0, 4).toString() === "RIFF" && childVoiceSource.length > 100_000);
-  assert.ok(stems.every((stem) => stem.subarray(0, 4).toString() === "RIFF" && stem.subarray(8, 12).toString() === "WAVE"));
+  assert.doesNotMatch(generator, /createChildVoiceTrack|littleWhiteBoatMotif|createTrack\(track\)|field-child-voice-source/);
+  assert.match(recordingNotes, /Creative Commons 0/);
+  assert.match(recordingNotes, /sounds\/442600/);
+  assert.match(recordingNotes, /sounds\/543782/);
+  assert.match(recordingNotes, /sounds\/434508/);
+  assert.match(recordingNotes, /sounds\/740288/);
+  assert.ok(stems.every((stem) => stem.length > 40_000 && stem[0] === 0xff && (stem[1] & 0xe0) === 0xe0));
   assert.match(css, /\.field-audio-monitor/);
   assert.match(css, /@keyframes field-waveform/);
 });
@@ -554,12 +667,19 @@ test("restores game screens from static-safe hash routes", async () => {
   assert.match(page, /`\/system\/article\/\$\{article\.id\}`/);
   assert.match(page, /`\/system\/denied\/\$\{article\.id\}`/);
   assert.match(page, /writeAppRoute\("\/system\/legacy"\)/);
+  assert.match(page, /segments\[1\] === "quality" && segments\[2\] === "trace-046"/);
+  assert.match(page, /writeAppRoute\("\/system\/quality\/trace-046"\)/);
   assert.match(page, /window\.addEventListener\("popstate", applyBrowserRoute\)/);
   assert.match(page, /saved\.visited\.includes\(route\.articleId\)/);
 });
 
-test("keeps the CS-046 callbacks as an optional unresolved subplot", async () => {
-  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+test("gates the CS-046 identity archive behind explicit player confirmation", async () => {
+  const [page, styles, eyeAsset, eyeSource] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../public/evidence/cs046-eye-cc0.jpg", import.meta.url)),
+    readFile(new URL("../public/evidence/CS046_EYE_SOURCE.md", import.meta.url), "utf8"),
+  ]);
 
   assert.match(page, /view: "callbacks"; callbackId: string \| null/);
   assert.match(page, /id: "1204-first-return"/);
@@ -568,11 +688,41 @@ test("keeps the CS-046 callbacks as an optional unresolved subplot", async () =>
   assert.match(page, /id: "1404-care-return"/);
   assert.match(page, /callbackRead: addUnique\(current\.callbackRead, \[record\.id\]\)/);
   assert.match(page, /const callbackReviewReady = callbackCoreIds\.every\(\(id\) => game\.callbackRead\.includes\(id\)\) && hasVisited\(game, "workorder-1404"\)/);
+  assert.match(page, /id: 123[\s\S]*?action: "callback-review"[\s\S]*?复核任务未登记到全文索引/);
+  assert.match(page, /callbackReviewNoticeSeen: boolean/);
+  assert.match(page, /if \(!game\.started \|\| !callbackReviewReady \|\| game\.callbackReviewNoticeSeen\) return/);
+  assert.match(page, /announceMessages\(\[123\]\)/);
+  assert.match(page, /const openCallbackIdentityReview = \(\) => \{/);
+  assert.match(page, /const callbackReviewReachable = saved\.cs046TraceSolved[\s\S]*?callbackCoreIds\.every/);
+  assert.match(page, /game\.view === "callback-review" && <div className=\{`callback-review-page/);
+  assert.doesNotMatch(page, /callback-correlation-locked/);
   assert.match(page, /callbackSequence !== "continuous-gap" \|\| callbackSystemEvent !== "consistency-review" \|\| callbackTerminalField !== "t04"/);
-  assert.match(page, /不生成坐席归属结论/);
-  assert.match(page, /系统拒绝填写“坐席归属”/);
-  assert.doesNotMatch(page, /CS-046不是前任客服|与CJ-0713属于同一操作者|主角已多次调查这些住户并被清除记忆/);
+  assert.match(page, /cs046TraceSolved: boolean/);
+  assert.match(page, /cs046TraceSolved: restored\.cs046TraceSolved \?\? restored\.cs046Solved \?\? false/);
+  assert.match(page, /setGame\(\(current\) => \(\{ \.\.\.current, cs046TraceSolved: true \}\)\)/);
+  assert.match(page, /const confirmCs046Identity = \(\) => \{/);
+  assert.match(page, /if \(!game\.cs046TraceSolved \|\| game\.cs046Solved\) return/);
+  assert.match(page, /确认两组工号属于同一人/);
+  assert.match(page, /CS-046与CJ-0713是同一个人/);
+  assert.doesNotMatch(page, /CS-046与CJ-0713是同一意识|主角已多次调查这些住户并被清除记忆/);
   assert.match(page, /disabled=\{!game\.colleagueSolved \|\| !game\.cs046Solved\}/);
+  assert.match(page, /id: "cs046-operator-archive"[\s\S]*?available: \(game\) => game\.cs046Solved/);
+  assert.match(page, /if \(query === "cs046"\) return game\.cs046Solved && article\.id === "cs046-operator-archive" \? 100 : 0/);
+  assert.match(page, /normalizeText\(game\.lastQuery\) === "cs046" && !game\.cs046Solved/);
+  assert.match(page, /const CS046_SEARCH_PASSES = \[[\s\S]*?QUERY OWNER \/ CJ-0713/);
+  assert.match(page, /isCs046Search \? <Cs046SearchIntrusion stage=\{cs046SearchStage\} \/>/);
+  assert.match(page, /setCs046SearchStage\(\(current\) => Math\.min\(CS046_SEARCH_FINAL_STAGE, current \+ 1\)\)/);
+  assert.match(page, /没有找到完全匹配的记录[\s\S]*?未收到终止标记/);
+  assert.match(page, /Array\.from\(\{ length: 24 \}\)/);
+  assert.match(page, /assetPath\("\/evidence\/cs046-eye-cc0\.jpg"\)/);
+  assert.match(styles, /@keyframes cs046-result-arrive/);
+  assert.match(styles, /@keyframes cs046-eye-blink/);
+  assert.match(styles, /\.cs046-search-intrusion\.is-taken-over \.cs046-eye-takeover \{ animation: cs046-takeover \.18s/);
+  assert.match(styles, /\.archive-app--callback-review \.evidence-rail \{ display: none/);
+  assert.match(styles, /\.callback-review-page\.is-confirming \.callback-review-ghosts/);
+  assert.match(styles, /@keyframes callback-review-title-slip/);
+  assert.ok(eyeAsset.length > 80_000 && eyeAsset[0] === 0xff && eyeAsset[1] === 0xd8);
+  assert.match(eyeSource, /Liam Welch[\s\S]*?CC0 1\.0/);
 });
 
 test("makes the 1404 complaint and memory rewrite the final chapter", async () => {
@@ -609,7 +759,8 @@ test("refreshes the dashboard queue to the next actionable record", async () => 
 
   assert.match(page, /function getPendingWorkItem\(game: GameState\): PendingWorkItem/);
   assert.match(page, /queuedArticle\("workorder-1204", "1204"[\s\S]*?queuedArticle\("vacancy-1204", "空置房"[\s\S]*?queuedArticle\("scheduled-service-1204", "定时服务"/);
-  assert.match(page, /queuedArticle\("cctv-1204", "DL-0713-0041"[\s\S]*?queuedArticle\("vacancy-1204", "童鞋"[\s\S]*?queuedArticle\("clinic-child", "儿童健康"[\s\S]*?queuedArticle\("register-child", "DL-0713-0041"[\s\S]*?queuedArticle\("rescue-route", "搜索路线"/);
+  assert.match(page, /queuedArticle\("cctv-1204", "DL-0713-0041"[\s\S]*?queuedArticle\("vacancy-1204", "童鞋"[\s\S]*?queuedArticle\("register-child", "DL-0713-0041"[\s\S]*?queuedArticle\("rescue-route", "搜索路线"/);
+  assert.doesNotMatch(page.slice(page.indexOf("function getPendingWorkItem"), page.indexOf("function getCaseDisplayTitle")), /queuedArticle\("clinic-child"/);
   assert.match(page, /queuedArticle\("employee-sync", "周明川"[\s\S]*?queuedArticle\("room-1104", "1104"[\s\S]*?kind: "account"[\s\S]*?queuedArticle\("church-compliance", "恒目"/);
   assert.match(page, /queuedArticle\("w04-directory", "1404"[\s\S]*?queuedArticle\("care-w04", "回访记录"[\s\S]*?queuedArticle\("on-site-device", "特殊保管物"[\s\S]*?queuedArticle\("crash-cj0713", "事故协查"[\s\S]*?queuedArticle\("identity-1404", "住户关系"[\s\S]*?queuedArticle\("clock-out", "下班"/);
   assert.match(page, /if \(pendingWork\.direct \|\| game\.visited\.includes\(article\.id\)\)[\s\S]*?openArticle\(article\)[\s\S]*?searchFor\(pendingWork\.query \?\? article\.title\)/);
