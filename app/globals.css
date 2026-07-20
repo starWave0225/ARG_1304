@@ -475,6 +475,16 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .article-body { background: #fff; border: 1px solid var(--line); border-top: 0; padding: clamp(28px,4vw,48px); min-height: 360px; }
 .article-body > p { font-size: 13px; line-height: 2; color: #35464d; }
 .article-body mark { color: #8f312c; background: linear-gradient(transparent 58%,#f1d5cf 58%); padding: 0 2px; }
+.aged-newspaper-scan { position: relative; max-width: 760px; margin: 0 auto; padding: clamp(12px,2vw,22px); background: #262522; box-shadow: 0 26px 55px rgba(24,28,29,.3), inset 0 0 0 1px rgba(255,255,255,.05); transform: rotate(-.18deg); }
+.aged-newspaper-scan img { display: block; width: 100%; height: auto; filter: sepia(.16) saturate(.72) contrast(1.04); box-shadow: 0 4px 18px rgba(0,0,0,.38); }
+.aged-newspaper-scan::after { content: ""; position: absolute; inset: 12px; pointer-events: none; opacity: .24; background: repeating-linear-gradient(0deg,transparent 0 3px,rgba(44,35,24,.08) 4px); mix-blend-mode: multiply; }
+.aged-newspaper-scan figcaption { position: relative; z-index: 1; display: flex; justify-content: space-between; gap: 18px; padding: 14px 4px 0; color: #c4beb1; font: 8px/1.5 var(--mono); letter-spacing: .05em; }
+.aged-newspaper-scan figcaption b { color: #9f9688; font-weight: 400; text-align: right; }
+.newspaper-archive-transcript { max-width: 760px; margin: 28px auto 0; border: 1px solid #c8ceca; background: #f5f6f2; }
+.newspaper-archive-transcript > summary { cursor: pointer; padding: 15px 18px; color: #536266; font: 9px/1.4 var(--mono); list-style-position: inside; }
+.newspaper-archive-transcript[open] > summary { border-bottom: 1px solid #c8ceca; }
+.newspaper-archive-transcript > :not(summary) { margin-right: 18px; margin-left: 18px; }
+.newspaper-archive-transcript > p { color: #425156; font-size: 12px; line-height: 1.9; }
 .record-article > footer { padding: 18px 25px; border: 1px solid var(--line); border-top: 0; background: #eef1ef; }
 .record-article > footer span { color: var(--blue); font: 9px/1 var(--mono); }
 .record-article > footer p { margin: 7px 0 0; color: var(--muted); font-size: 9px; }
