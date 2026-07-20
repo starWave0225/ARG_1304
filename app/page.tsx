@@ -152,7 +152,7 @@ const assetPath = (path: string) => `${BASE_PATH}${path.startsWith("/") ? path :
 const loginBackgroundStyle = { "--login-background-image": `url("${assetPath("/cctv/cam-2358.png")}")` } as CSSProperties;
 const deniedBackgroundStyle = { "--denied-background-image": `url("${assetPath("/backgrounds/access-denied-corridor.png")}")` } as CSSProperties;
 const MINGCHUAN_ACCOUNT: EmployeeAccount = "ZM-0602";
-const MINGCHUAN_PASSWORD = "1104-42-17";
+const MINGCHUAN_PASSWORD = "hengmurecyclezm0602";
 const MINGCHUAN_BIRTHDAY = "1991-09-17";
 const MINGCHUAN_RECORD_PASSWORD = "19910917";
 const LEGACY_READING_GRACE_MS = 18000;
@@ -257,42 +257,46 @@ const loopEndingScenes = [
 const legacyFiles = [
   {
     id: "transfer-list",
-    code: "ZM-EVID-01",
-    title: "内部转移人员复核表",
-    summary: "过去三年共有17名员工被改写为外派、离职或失联，实际离场记录均为空。",
+    code: "ZM-DIARY-01",
+    date: "2026-05-18 / 23:46",
+    title: "第一个没有去向的人",
+    summary: "我原本只是想替老孙补一张调岗交接单，结果名单里不止他一个。",
     paragraphs: [
-      "周明川将人事库、门禁、派车单和施工采购记录逐项比对：17份“内部转移”均缺少目的地、接收部门、交通安排或本人签字。",
-      "这些员工在状态变更前都触发过恒目数据合规复核；其中6人的最后门禁位置集中在后续封闭施工的房屋附近。",
+      "老孙的状态写着“内部转移”，可接收部门是空的，派车单里没有他的名字，他爱人也还在问工资为什么停了。我把人事库、门禁和派车记录对了一遍，过去三年一共有17个人这样消失：没有目的地，没有接收人，也没有本人签字。",
+      "他们离开前都被恒目做过一次“数据合规复核”。其中6个人最后刷门禁的地方，后来都出现过封闭施工。我先把名单抄在本机里，明天再去问工程部。服务器上的表，我已经不敢只看一遍了。",
     ],
   },
   {
     id: "property-ledger",
-    code: "ZM-EVID-02",
-    title: "物业服务费异常流水",
-    summary: "澄江物业长期将住户服务费拆分汇入恒目文化基金和无登记的设备维护项目。",
+    code: "ZM-DIARY-02",
+    date: "2026-05-24 / 01:12",
+    title: "钱最后都去了同一个地方",
+    summary: "白天看起来互不相干的三项支出，到了夜里都汇进恒目的账户。",
     paragraphs: [
-      "“特殊保管服务”“终端校准”和“数据过滤”三个科目没有对应供应商验收单，收款方最终均归集至恒目关联文化基金。",
-      "审批附件没有负责人姓名，只有同一个单眼图形电子章；财务系统无法校验该印章对应的企业证书。",
+      "我把“特殊保管服务”“终端校准”和“数据过滤”三项费用逐笔导出来。名称不同，项目编号也不同，可中转两次以后，钱都进了恒目关联的文化基金。没有验收单，也找不到实际维护过的设备。",
+      "审批页上没有负责人姓名，只有那枚向下看的单眼电子章。财务系统说证书校验失败，第二次刷新后却又自动显示“已通过”。我打印了一份，纸放在工具柜最下面。要是明天系统里什么都没有，至少我知道今晚不是我看错了。",
     ],
   },
   {
     id: "device-notes",
-    code: "ZM-EVID-03",
-    title: "ZC-LH 标签观察笔记",
-    summary: "部分无供电保管物标签会在外部终端打卡后生成临时在线记录，现有设备文档无法解释。",
+    code: "ZM-DIARY-03",
+    date: "2026-05-29 / 00:14",
+    title: "没有电的标签亮了",
+    summary: "我拆开了一个ZC-LH标签，里面什么都没有，但终端仍说它刚刚在线。",
     paragraphs: [
-      "周明川记录到，异常会话集中在00:04至00:10，且关联标签多为骨灰盒或遗物箱。标签本身没有芯片、电源或网络模块。",
-      "终端离线后，本机检索历史会被“过滤”任务清空，次日任务队列重新生成；员工无法从常规界面判断同一工单是否已重复处理。",
+      "标签里没有芯片、电池或天线，只是一张压过膜的纸。可外部终端打卡以后，它在00:04到00:10之间连续生成了在线记录。查到的几件物品都是骨灰盒或遗物箱，我不明白物业为什么要让这些东西“上线”。",
+      "我拔掉终端网线再查，检索历史立刻被一个叫“过滤”的任务清空，第二天的工单又从头生成。同一个人可能已经来过很多次，却会被系统写成第一次。我给客服046留了消息。奇怪的是，我明明没见过他，却觉得他会相信我。",
     ],
   },
   {
     id: "church-fragment",
-    code: "ZM-EVID-04",
-    title: "恒目旧项目通讯残片",
-    summary: "残缺邮件提到物业、殡葬寄存与长期观察项目，但发件组织和项目主体均未备案。",
+    code: "ZM-DIARY-04",
+    date: "2026-06-02 / 21:48",
+    title: "如果明天我没有来",
+    summary: "他们已经知道我在查什么。今晚有人先改了我的状态，然后才来找我。",
     paragraphs: [
-      "邮件反复使用“观察者”“回返窗口”和“记忆一致性”等非物业术语，并要求项目点优先接收意外死亡者家属的特殊保管委托。",
-      "发件人、项目地址和附件均被删除。周明川在打印件边缘写下：先别相信这些词的解释，去看账号每天被清掉了什么。",
+      "旧邮件里反复出现“观察者”“回返窗口”和“记忆一致性”。他们要求物业优先接收意外死亡者家属的特殊保管委托，再把每天被清掉的账号重新放回原来的任务里。发件组织、项目地址和附件都被删了，只剩恒目的单眼章。",
+      "21:17，系统先生成了我的处置记录；21:40，我的人事状态才被改成“内部转移”。顺序反了，不是系统出错，是有人提前知道接下来会发生什么。走廊里已经有人停了很久。我把四篇日记留在本地，不再上传。别用账号还在活动证明我还活着。先看原始时间，再看他们删掉了什么。",
     ],
   },
 ] as const;
@@ -1610,7 +1614,6 @@ export default function Home() {
   const [roomPassword, setRoomPassword] = useState("");
   const [wallWidth, setWallWidth] = useState("");
   const [wallSignal, setWallSignal] = useState("");
-  const [wallArchive, setWallArchive] = useState("");
   const [room1104GhostPinned, setRoom1104GhostPinned] = useState(false);
   const [credentialCipher, setCredentialCipher] = useState("");
   const [legacyFileId, setLegacyFileId] = useState<string | null>(null);
@@ -3005,8 +3008,8 @@ export default function Home() {
 
   const submitWall = (event: FormEvent) => {
     event.preventDefault();
-    if (wallWidth !== "42" || wallSignal !== "hidden" || wallArchive !== "transfer") {
-      flash("复核未通过：测量、信号或流程结论不一致");
+    if (wallWidth !== "42" || wallSignal !== "hidden") {
+      flash("复核未通过：墙体测量或环境读数判断不一致");
       return;
     }
     notifyEvidenceWrite(["bodyWall", "internalTransfer"]);
@@ -3018,7 +3021,7 @@ export default function Home() {
   const submitCredentialDecrypt = (event: FormEvent) => {
     event.preventDefault();
     if (normalizeText(credentialCipher) !== normalizeText(MINGCHUAN_PASSWORD)) {
-      flash("解密失败：按房号、墙体缺失厚度、员工状态修改次数重新排列");
+      flash("解密失败：按终端备注顺序拼接英文标记与员工工号，去掉分隔符");
       return;
     }
     setGame((current) => ({ ...current, colleagueCredentialsRecovered: true }));
@@ -3560,7 +3563,9 @@ export default function Home() {
     </>;
 
     if (id === "employee-mingchuan") return <>
-      <section className="employee-master-record"><header><span>EMPLOYEE MASTER DATA / READ ONLY</span><strong>员工基本信息</strong></header><dl className="record-grid"><div><dt>姓名</dt><dd>周明川</dd></div><div><dt>员工编号</dt><dd>{MINGCHUAN_ACCOUNT}</dd></div><div><dt>出生日期</dt><dd>{MINGCHUAN_BIRTHDAY}</dd></div><div><dt>所属部门</dt><dd>工程巡检组</dd></div><div><dt>入职日期</dt><dd>2018-03-12</dd></div><div><dt>当前状态</dt><dd className="danger-text">内部转移 / 接收部门缺失</dd></div></dl></section>
+      <section className="employee-master-record"><header><span>EMPLOYEE MASTER DATA / READ ONLY</span><strong>员工基本信息</strong></header><dl className="record-grid"><div><dt>姓名</dt><dd>周明川</dd></div><div><dt>员工编号</dt><dd>{MINGCHUAN_ACCOUNT}</dd></div><div><dt>性别</dt><dd>男</dd></div><div><dt>出生日期</dt><dd>{MINGCHUAN_BIRTHDAY}</dd></div><div><dt>所属部门</dt><dd>工程巡检组</dd></div><div><dt>岗位</dt><dd>设施巡检专员</dd></div><div><dt>入职日期</dt><dd>2018-03-12</dd></div><div><dt>用工类型</dt><dd>物业正式员工</dd></div><div><dt>手机号码</dt><dd>138 **** 6021</dd></div><div><dt>紧急联系人</dt><dd>周** / 兄长 / 136 **** 1947</dd></div><div><dt>常住地址</dt><dd>澄江市河西区春堤路**号</dd></div><div><dt>当前状态</dt><dd className="danger-text">内部转移 / 接收部门缺失</dd></div></dl></section>
+      <table className="data-table"><tbody><tr><th>持有资质</th><td>低压电工作业证、消防设施操作员（四级）</td></tr><tr><th>负责区域</th><td>1号楼、地下设备层及公共管井月度巡检</td></tr><tr><th>领用设备</th><td>LD-08激光测距仪、ZM-PHONE-02工作手机、工程主钥匙封包</td></tr><tr><th>最近考核</th><td>2026年第一季度：合格；备注“复测记录完整，但多次拒绝无照片结单”</td></tr><tr><th>未结事项</th><td>设备归还、工牌注销、离场面谈均无签收记录</td></tr></tbody></table>
+      <section className="field-record"><header><span>EMPLOYMENT TRACE / PERSONNEL LOG</span><strong>近期人事记录</strong></header><div><p><time>05-18 17:42</time><b>住户表扬</b><span>处理1号楼水压波动时主动复查顶层管井，避免重复停水。回访评价：“话不多，但会把哪里坏了讲清楚。”</span></p><p><time>05-27 09:10</time><b>流程提醒</b><span>因两次退回缺少现场照片的维修结单，被要求“减少非必要复核”。本人回复：测量结果不能由结单时限替代。</span></p><p><time>06-02 14:30</time><b>状态变更</b><span>员工状态由“在岗”改为“内部转移”；接收部门、工作地点、生效通知与本人确认均为空。</span></p></div></section>
       <aside className="article-note"><strong>旧系统口令规则</strong><p>跨部门联合复核附件仍沿用员工人事主档中的八位出生日期，不保留分隔符。</p></aside>
     </>;
 
@@ -3604,8 +3609,7 @@ export default function Home() {
           <div className="wall-visual"><span>竣工图净宽 4.80m</span><div className="wall-gap"><i /><b>实测净宽 4.38m</b></div></div>
           <label>缺失墙体厚度<select value={wallWidth} onChange={(event) => setWallWidth(event.target.value)}><option value="">选择</option><option value="18">18厘米</option><option value="42">42厘米</option><option value="80">80厘米</option></select></label>
           <label>环境读数初步判断<select value={wallSignal} onChange={(event) => setWallSignal(event.target.value)}><option value="">选择</option><option value="pipe">老化管道与防腐材料</option><option value="hidden">封闭空腔内存在有机来源，需公安到场破拆</option><option value="animal">小型动物进入夹层</option></select></label>
-          <label>“内部转移”流程合规性<select value={wallArchive} onChange={(event) => setWallArchive(event.target.value)}><option value="">选择</option><option value="travel">外派手续完整</option><option value="transfer">无车辆、目的地和签收人，不能证明员工完成转移</option><option value="resign">已提交主动离职材料</option></select></label>
-          <button className="primary-button">{game.colleagueSolved ? "异常链已确认" : "提交工程与人事交叉复核"}</button>
+          <button className="primary-button">{game.colleagueSolved ? "墙体异常已确认" : "提交墙体异常复核"}</button>
         </form>
         {game.colleagueSolved && <section className="credential-recovery">
           <div className="body-discovery">
@@ -3616,9 +3620,9 @@ export default function Home() {
           </div>
           <header><EyeMark small/><div><span>从周明川的本地终端发现加密凭据</span><strong>已注销员工账号恢复</strong></div></header>
           {!game.colleagueCredentialsRecovered ? <form onSubmit={submitCredentialDecrypt}>
-            <p>密码由三个未被系统改写的数字组成。按“房号—墙体缺失厚度—员工状态修改次数”排列。</p>
-            <div className="credential-clues"><span>ROOM 1104</span><span>GAP 42cm</span><span>REVISION 17</span></div>
-            <label>解密结果<input value={credentialCipher} onChange={(event) => setCredentialCipher(event.target.value)} placeholder="0000-00-00" autoComplete="off" /></label>
+            <p>本地凭据备注由三段组成。按显示顺序连续输入，并去掉员工工号中的分隔符。</p>
+            <div className="credential-clues"><span>HENGMU</span><span>RECYCLE</span><span>该员工工号</span></div>
+            <label>解密结果<input value={credentialCipher} onChange={(event) => setCredentialCipher(event.target.value)} placeholder="输入完整凭据" autoComplete="off" /></label>
             <button className="primary-button">恢复登录凭据</button>
           </form> : <div className="recovered-account">
             <span>本地凭据恢复成功</span>
@@ -3888,7 +3892,7 @@ export default function Home() {
 
       <div className="archive-layout">
         <aside className="archive-sidebar">
-          <section><span>当前调查</span><strong>未同步证据复核</strong><small>仅本机缓存可用，其他业务权限已停用</small></section>
+          <section><span>当前调查</span><strong>未同步私人日记</strong><small>仅本机缓存可用，其他业务权限已停用</small></section>
           <nav aria-label="已停用的系统导航"><button disabled>调查首页</button><button disabled>最近结果</button><button disabled>客户回访</button><button disabled>档案阅读</button><button disabled>真相推导</button><button className="is-active" disabled>证据台账</button><button disabled>用户留言板</button></nav>
           <div className="history-list"><span>检索历史</span><small>服务器索引未连接</small></div>
           <footer><span>服务器时间</span><strong>--:--:--</strong><small>LOCAL CACHE / OFFLINE</small></footer>
@@ -3896,23 +3900,23 @@ export default function Home() {
 
         <section className="archive-content">
           <div className="legacy-console-dashboard">
-            <div className="dashboard-head"><div><span>工作台 / LOCAL SESSION</span><h1>物业管理系统</h1><p>当前会话属于已注销员工周明川。服务器业务模块均已停用，仅发现四份未同步的本地证据。</p></div><aside><span>当前账号</span><strong>{MINGCHUAN_ACCOUNT}</strong><small><i /> 本地会话仍在线</small></aside></div>
-            <div className="dashboard-metrics"><article><span>本地证据</span><strong>{legacyFiles.length}</strong><small>未进入服务器索引</small></article><article><span>已阅读</span><strong>{game.legacyRead.length} / {legacyFiles.length}</strong><small>仅记录于本机</small></article><article><span>可用业务模块</span><strong>0</strong><small>账号已注销</small></article><article><span>远程会话</span><strong>1</strong><small>来源无法核验</small></article></div>
+            <div className="dashboard-head"><div><span>工作台 / LOCAL SESSION</span><h1>物业管理系统</h1><p>当前会话属于已注销员工周明川。服务器业务模块均已停用，仅发现四篇未同步的私人日记。</p></div><aside><span>当前账号</span><strong>{MINGCHUAN_ACCOUNT}</strong><small><i /> 本地会话仍在线</small></aside></div>
+            <div className="dashboard-metrics"><article><span>私人日记</span><strong>{legacyFiles.length}</strong><small>未进入服务器索引</small></article><article><span>已阅读</span><strong>{game.legacyRead.length} / {legacyFiles.length}</strong><small>仅记录于本机</small></article><article><span>可用业务模块</span><strong>0</strong><small>账号已注销</small></article><article><span>远程会话</span><strong>1</strong><small>来源无法核验</small></article></div>
             <section className="legacy-evidence-panel">
-              <header><div><span className="section-label">PRIVATE EVIDENCE</span><h2>本地证据</h2></div><small>唯一可访问模块 · {game.legacyRead.length} / {legacyFiles.length} 已阅</small></header>
-              <div className="legacy-evidence-grid">{legacyFiles.map((file, index) => <button key={file.id} className={`${legacyFileId === file.id ? "is-active" : ""} ${game.legacyRead.includes(file.id) ? "is-read" : ""}`} onClick={() => openLegacyFile(file.id)}><i>{String(index + 1).padStart(2, "0")}</i><span>{file.code} / LOCAL ONLY</span><strong>{file.title}</strong><small>{game.legacyRead.includes(file.id) ? "已阅 · 再次打开" : "未读取 · 打开证据"}</small></button>)}</div>
+              <header><div><span className="section-label">PRIVATE DIARY</span><h2>四篇日记</h2></div><small>唯一可访问模块 · {game.legacyRead.length} / {legacyFiles.length} 已阅</small></header>
+              <div className="legacy-evidence-grid">{legacyFiles.map((file, index) => <button key={file.id} className={`${legacyFileId === file.id ? "is-active" : ""} ${game.legacyRead.includes(file.id) ? "is-read" : ""}`} onClick={() => openLegacyFile(file.id)}><i>{String(index + 1).padStart(2, "0")}</i><span>{file.date}</span><strong>{file.title}</strong><small>{game.legacyRead.includes(file.id) ? "已阅 · 再次打开" : "未读取 · 打开日记"}</small></button>)}</div>
             </section>
             <article className="legacy-document">{activeLegacyFile ? <>
-              <header><span>{activeLegacyFile.code} / LOCAL ONLY</span><h2>{activeLegacyFile.title}</h2><p>{activeLegacyFile.summary}</p></header>
+              <header><span>{activeLegacyFile.code} / {activeLegacyFile.date}</span><h2>{activeLegacyFile.title}</h2><p>{activeLegacyFile.summary}</p></header>
               <div>{activeLegacyFile.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
-              <footer><EyeMark small/><span>该文件不在服务器索引中</span><b>阅读记录仍可能被监测</b></footer>
-            </> : <div className="legacy-empty"><EyeMark /><span>选择一份证据</span><p>其他系统模块均不可访问。只有标记为“本地证据”的内容仍能打开。</p></div>}</article>
+              <footer><EyeMark small/><span>该日记不在服务器索引中</span><b>阅读记录仍可能被监测</b></footer>
+            </> : <div className="legacy-empty"><EyeMark /><span>选择一篇日记</span><p>其他系统模块均不可访问。只有周明川留在本机的四篇日记仍能打开。</p></div>}</article>
           </div>
         </section>
 
         <aside className="evidence-rail legacy-evidence-rail">
-          <header><span>证据台账</span><strong>{game.legacyRead.length.toString().padStart(2, "0")}</strong></header>
-          <p>当前账号只能读取以下本机证据，服务器不会生成关联结果。</p>
+          <header><span>日记目录</span><strong>{game.legacyRead.length.toString().padStart(2, "0")}</strong></header>
+          <p>当前账号只能读取以下私人日记，服务器不会生成关联结果。</p>
           <div>{legacyFiles.map((file, index) => <button key={file.id} className={legacyFileId === file.id ? "is-active" : ""} onClick={() => openLegacyFile(file.id)}><span>{String(index + 1).padStart(2, "0")}</span><p>{file.title}</p><small>{game.legacyRead.includes(file.id) ? "已阅" : "未读取"}</small></button>)}</div>
           <section className="coverage"><span>本地阅读覆盖</span><strong>{game.legacyRead.length} / {legacyFiles.length}</strong><i><b style={{ width: `${(game.legacyRead.length / legacyFiles.length) * 100}%` }} /></i></section>
         </aside>

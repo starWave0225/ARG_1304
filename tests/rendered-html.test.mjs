@@ -53,7 +53,7 @@ test("publishes a complete standalone truth archive after the endings", async ()
   assert.match(html, /id="case-1404"/);
   assert.match(html, /主角是谁，以及妻子为什么一直认得他/);
   assert.match(html, /恒目不是普通外包商/);
-  assert.match(html, /1104-42-17/);
+  assert.match(html, /hengmurecyclezm0602/);
   assert.match(html, /第224次第一次见面/);
   assert.match(gamePage, /href=\{`\$\{BASE_PATH\}\/truth\/`\}>查看全案真相/);
   assert.match(truthPage, /CS-046就是被更早一次记忆清除后的主角/);
@@ -572,6 +572,9 @@ test("opens the 1104 live room view from Zhou's password-free plea", async () =>
   assert.match(page, /id: "room-1104-live"[\s\S]*?title: "1104 房间实况"[\s\S]*?available: \(game\) => hasVisited\(game, "employee-sync"\)/);
   assert.match(page, /id: "room-1104"[\s\S]*?title: "1104墙体复测与人员流转复核"/);
   assert.match(page, /id: "employee-mingchuan"[\s\S]*?title: "周明川员工基本信息"/);
+  assert.match(page, /设施巡检专员/);
+  assert.match(page, /多次拒绝无照片结单/);
+  assert.match(page, /话不多，但会把哪里坏了讲清楚/);
   assert.match(page, /const MINGCHUAN_BIRTHDAY = "1991-09-17"/);
   assert.match(page, /const MINGCHUAN_RECORD_PASSWORD = "19910917"/);
   assert.match(page, /normalizeText\(roomPassword\) !== MINGCHUAN_RECORD_PASSWORD/);
@@ -584,6 +587,8 @@ test("opens the 1104 live room view from Zhou's password-free plea", async () =>
   assert.match(page, /id: "wall-demolition-1104"[\s\S]*?title: "1104西墙封闭施工派工记录"[\s\S]*?available: \(game\) => game\.wallAnomalyInspected/);
   assert.match(page, /available: \(game\) => hasVisited\(game, "wall-demolition-1104"\)/);
   assert.match(page, /恒目驻场设施组接收1104西墙“局部封闭”任务/);
+  assert.doesNotMatch(page, /<label>“内部转移”流程合规性/);
+  assert.doesNotMatch(page, /wallArchive/);
   assert.match(page, /\/evidence\/1104\/room-live\.jpg/);
   assert.match(page, /\/evidence\/1104\/room-live-ghost\.jpg/);
   assert.doesNotMatch(page, /author: "周明川"[\s\S]{0,300}text: "[^"]*密码/);
@@ -947,7 +952,9 @@ test("supports manual login to Zhou Mingchuan's optional local archive", async (
 
   assert.match(page, /type LoginMethod = "badge" \| "password"/);
   assert.match(page, /const MINGCHUAN_ACCOUNT: EmployeeAccount = "ZM-0602"/);
-  assert.match(page, /const MINGCHUAN_PASSWORD = "1104-42-17"/);
+  assert.match(page, /const MINGCHUAN_PASSWORD = "hengmurecyclezm0602"/);
+  assert.match(page, /<span>HENGMU<\/span><span>RECYCLE<\/span><span>该员工工号<\/span>/);
+  assert.doesNotMatch(page, /房号—墙体缺失厚度—员工状态修改次数|1104-42-17/);
   assert.match(page, /game\.colleagueSolved && <section className="credential-recovery">/);
   assert.match(page, /警方破拆西墙空腔，发现周明川遗体/);
   assert.match(page, /DNA比对确认死者为失联员工周明川/);
@@ -960,6 +967,13 @@ test("supports manual login to Zhou Mingchuan's optional local archive", async (
   assert.doesNotMatch(page, /!saved\.colleagueCredentialsRecovered \|\| saved\.activeAccount !== MINGCHUAN_ACCOUNT/);
   assert.match(page, /"你是谁？" : "我发现你了"/);
   assert.match(page, /Array\.from\(\{ length: 88 \}\)/);
+  assert.match(page, /PRIVATE DIARY/);
+  assert.match(page, /四篇日记/);
+  assert.match(page, /第一个没有去向的人/);
+  assert.match(page, /钱最后都去了同一个地方/);
+  assert.match(page, /没有电的标签亮了/);
+  assert.match(page, /如果明天我没有来/);
+  assert.doesNotMatch(page, /title: "内部转移人员复核表"|title: "物业服务费异常流水"|title: "ZC-LH 标签观察笔记"|title: "恒目旧项目通讯残片"/);
 });
 
 test("keeps the Zhou Mingchuan breach playable when camera access is unavailable", async () => {
