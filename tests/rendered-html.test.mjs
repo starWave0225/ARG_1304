@@ -36,6 +36,15 @@ test("server-renders the Room 1304 ARG opening performance", async () => {
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape/i);
 });
 
+test("keeps dense desktop investigation screens readable", async () => {
+  const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(styles, /@media \(min-width: 1100px\)/);
+  assert.match(styles, /\.record-article p[\s\S]*?font-size: 14px/);
+  assert.match(styles, /\.archive-sidebar button[\s\S]*?font-size: 12px/);
+  assert.match(styles, /\.callback-center-head p[\s\S]*?font-size: 13px/);
+});
+
 test("publishes a complete standalone truth archive after the endings", async () => {
   const [response, gamePage, truthPage, truthCss] = await Promise.all([
     render("/truth"),

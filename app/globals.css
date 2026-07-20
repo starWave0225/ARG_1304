@@ -2148,6 +2148,37 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
   .ending-screen { padding: 8vh 7vw; }
 }
 
+/* Desktop readability pass: preserve the dense property-system layout while
+   keeping operational copy comfortably readable on full-size displays. */
+@media (min-width: 1100px) {
+  .archive-header { font-size: 15px; }
+  .global-search input,.global-search button,.header-actions > button { font-size: 13px; }
+  .account-switcher span { font-size: 12px; }
+  .account-switcher small,.archive-brand b,.header-actions > button i { font-size: 10px; }
+
+  .archive-sidebar { font-size: 13px; }
+  .archive-sidebar button,.archive-sidebar p,.archive-sidebar span,.archive-sidebar small { font-size: 12px; line-height: 1.55; }
+
+  .dashboard-head p,.dashboard-metric small,.inspection-list span,.inspection-list b,
+  .system-feed p,.memory-admin-table p,.urgent-order p,.urgent-order em { font-size: 13px; line-height: 1.65; }
+  .section-label,.dashboard-metric span,.urgent-order > span { font-size: 12px; }
+
+  .search-page > p,.search-result p,.search-result small,.search-result aside,
+  .archive-index p,.archive-index small { font-size: 13px; line-height: 1.7; }
+
+  .record-article p,.record-article li,.record-article blockquote,
+  .record-article figcaption,.record-article label { font-size: 14px; line-height: 1.75; }
+  .record-article dt,.record-article dd,.record-article td,.record-article th,
+  .record-article small,.record-article time,.record-article button { font-size: 12px; line-height: 1.6; }
+
+  .callback-center-head p,.callback-record-list small,.callback-record-detail p,
+  .callback-record-detail dt,.callback-record-detail dd,.callback-transcript span,
+  .callback-quality-note p,.callback-review-page p,.operator-correlation label { font-size: 13px; line-height: 1.7; }
+
+  .evidence-rail p,.evidence-rail li,.evidence-rail button,.evidence-rail small,
+  .message-board p,.message-board small,.message-popup p { font-size: 12px; line-height: 1.65; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
   .opening-wake .wake-line, .opening-wake button, .legacy-eye-collapse section button, .legacy-return-eye { animation-delay: 0ms !important; }
