@@ -4133,7 +4133,7 @@ export default function Home() {
             {game.cs046Solved ? <div className="operator-truth"><EyeMark /><div><span>MANUAL CONCLUSION / CJ-0713</span><strong>人工复核：CS-046为陈峻，1404住户与CJ-0713为夫妻，CJ-0713已死亡。</strong><p>结论由当前处理人根据事故报道、住户记录与主体状态填写。系统自动归因仍处于撤回状态，被删除的录音没有恢复。</p></div></div> : <form onSubmit={submitCallbackReview}>
               <label><span><i>01</i>CS-046是谁？</span><input value={callbackOperatorName} onChange={(event) => setCallbackOperatorName(event.target.value)} placeholder="填写姓名" autoComplete="off" /></label>
               <label><span><i>02</i>1404房主和CJ-0713的关系？</span><input value={callbackResidentRelation} onChange={(event) => setCallbackResidentRelation(event.target.value)} placeholder="填写人物关系" autoComplete="off" /></label>
-              <label><span><i>03</i>CJ-0713状态？</span><input value={callbackEmployeeStatus} onChange={(event) => setCallbackEmployeeStatus(event.target.value)} placeholder="填写主体状态" autoComplete="off" /></label>
+              <label><span><i>03</i>CJ-0713状态？</span><select value={callbackEmployeeStatus} onChange={(event) => setCallbackEmployeeStatus(event.target.value)}><option value="">选择主体状态</option><option value="active">在岗</option><option value="missing">失联</option><option value="已死亡">已死亡</option></select></label>
               <button className="primary-button">提交三项复核答案</button>
             </form>}
           </section>

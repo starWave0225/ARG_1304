@@ -773,7 +773,7 @@ test("gates the CS-046 identity archive behind explicit player confirmation", as
   assert.match(page, /cs046TraceSolved: restored\.cs046TraceSolved \?\? restored\.cs046Solved \?\? false/);
   assert.match(page, /CS-046是谁？<\/span><input/);
   assert.match(page, /1404房主和CJ-0713的关系？<\/span><input/);
-  assert.match(page, /CJ-0713状态？<\/span><input/);
+  assert.match(page, /CJ-0713状态？<\/span><select[\s\S]*?<option value="已死亡">已死亡<\/option>/);
   assert.match(page, /CS-046为陈峻，1404住户与CJ-0713为夫妻，CJ-0713已死亡/);
   assert.doesNotMatch(page, /CS-046与CJ-0713是同一意识|主角已多次调查这些住户并被清除记忆/);
   assert.match(page, /disabled=\{!game\.colleagueSolved \|\| !game\.cs046Solved\}/);
