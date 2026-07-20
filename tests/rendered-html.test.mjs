@@ -570,8 +570,20 @@ test("opens the 1104 live room view from Zhou's password-free plea", async () =>
 
   assert.match(page, /text: "一切都放在1104，救救我，我被困住了！"/);
   assert.match(page, /id: "room-1104-live"[\s\S]*?title: "1104 房间实况"[\s\S]*?available: \(game\) => hasVisited\(game, "employee-sync"\)/);
+  assert.match(page, /id: "room-1104"[\s\S]*?title: "1104墙体复测与人员流转复核"/);
+  assert.match(page, /id: "employee-mingchuan"[\s\S]*?title: "周明川员工基本信息"/);
+  assert.match(page, /const MINGCHUAN_BIRTHDAY = "1991-09-17"/);
+  assert.match(page, /const MINGCHUAN_RECORD_PASSWORD = "19910917"/);
+  assert.match(page, /normalizeText\(roomPassword\) !== MINGCHUAN_RECORD_PASSWORD/);
+  assert.doesNotMatch(page, /11·04·2713|11042713/);
   assert.match(page, /className="room-1104-live__wall-hotspot"/);
   assert.match(page, /aria-pressed=\{room1104GhostPinned\}/);
+  assert.match(page, /onClick=\{inspectRoom1104Wall\}/);
+  assert.match(page, /wallAnomalyInspected: boolean/);
+  assert.match(page, /检索关键词已记录：墙面破拆/);
+  assert.match(page, /id: "wall-demolition-1104"[\s\S]*?title: "1104西墙封闭施工派工记录"[\s\S]*?available: \(game\) => game\.wallAnomalyInspected/);
+  assert.match(page, /available: \(game\) => hasVisited\(game, "wall-demolition-1104"\)/);
+  assert.match(page, /恒目驻场设施组接收1104西墙“局部封闭”任务/);
   assert.match(page, /\/evidence\/1104\/room-live\.jpg/);
   assert.match(page, /\/evidence\/1104\/room-live-ghost\.jpg/);
   assert.doesNotMatch(page, /author: "周明川"[\s\S]{0,300}text: "[^"]*密码/);
@@ -647,8 +659,11 @@ test("makes the 1304 deduction reconstruct records before revealing the chapter"
 
   assert.match(page, /const fatherCaseRecords = \[/);
   assert.match(page, /\["incident", "death", "door-off", "child-path", "message-token"\]/);
-  assert.match(page, /重建1304关联记录的审计时序/);
+  assert.match(page, /核对1304死亡主体与异常账号链/);
   assert.match(page, /从八条记录中选出五条/);
+  assert.match(page, /历史事故.*主体状态.*凭证处置.*本次关联.*当前活动/s);
+  assert.match(page, /removeCaseRecord/);
+  assert.doesNotMatch(page, /if \(caseTimeline\.join\("\|"\) !== expected\.join\("\|"\)\) \{\s*setCaseTimeline\(\[\]\)/);
   assert.match(page, /A-1304-0821 \/ 110附件/);
   assert.match(page, /1304-FAMILY-KEEP \/ 创建于 2023-02-08 09:24/);
   assert.match(page, /CJ-0713，不得动用私情/);
