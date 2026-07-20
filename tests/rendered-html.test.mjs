@@ -715,6 +715,16 @@ test("restores game screens from static-safe hash routes", async () => {
   assert.match(page, /saved\.visited\.includes\(route\.articleId\)/);
 });
 
+test("lets the 1304 callback break CS-046's standard service voice", async () => {
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const callback = page.slice(page.indexOf('id: "1304-status-return"'), page.indexOf('id: "1104-employee-return"'));
+
+  assert.match(callback, /你跟我一样，都是这样的存在。只是苦了我的小满。/);
+  assert.match(callback, /你让这个账号一直留在房间，只会让她的记录继续被困在这里/);
+  assert.match(callback, /你也有自己的痛苦要遗忘吧/);
+  assert.doesNotMatch(callback, /请不要提及未登记的家庭成员/);
+});
+
 test("gates the CS-046 identity archive behind explicit player confirmation", async () => {
   const [page, styles, eyeAsset, eyeSource] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
