@@ -147,6 +147,8 @@ const BACKGROUND_MUSIC_VOLUME = 0.14;
 const BACKGROUND_MUSIC_DUCKED_VOLUME = 0.018;
 const CCTV_AMBIENCE_VOLUME = 0.24;
 const WIFE_NAME = "林若岚";
+const PROTAGONIST_NAME = "陈峻";
+const PROTAGONIST_ARCHIVE_REF = "DL-JJ-1104-27";
 const BASE_PATH = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
 const assetPath = (path: string) => `${BASE_PATH}${path.startsWith("/") ? path : `/${path}`}`;
 const loginBackgroundStyle = { "--login-background-image": `url("${assetPath("/cctv/cam-2358.png")}")` } as CSSProperties;
@@ -169,11 +171,11 @@ const protectedArticleGates: Record<ProtectedArticleId, { password: string; code
     hint: "读取工单中的报事人姓名，转换为不带声调和空格的完整拼音。",
   },
   "care-w04": {
-    password: "0812",
-    code: "CARE ARCHIVE / START TIME",
-    title: "冷备份回访记录需要账号建档时刻",
-    source: "可检索线索：员工账号 CJ-0713 基础索引",
-    hint: "读取当前员工账号的后台创建时刻，只保留四位时分。",
+    password: "CHENJUN",
+    code: "CARE ARCHIVE / IDENTITY NAME",
+    title: "冷备份回访记录需要历史服务人员姓名",
+    source: "可检索线索：CJ-0713基础索引中的特殊档案编号",
+    hint: "搜索特殊档案编号，在公开事故报道中找到死者姓名，转换为不带声调和空格的完整拼音。",
   },
   "on-site-device": {
     password: "1404",
@@ -714,6 +716,16 @@ const articles: ArticleMeta[] = [
     available: (game) => hasUnlockedArticle(game, "w04-directory"),
   },
   {
+    id: "accident-report-cj0713",
+    title: "河西高架11·04交通事故情况通报",
+    section: "公开信息",
+    date: "2025-11-05",
+    snippet: "昨夜河西高架发生单车事故，造成一人死亡、一人重伤，事故原因仍在调查。",
+    terms: ["DL-JJ-1104-27", "陈峻", "河西高架", "11·04交通事故", "事故报道", "单车事故"],
+    kind: "record",
+    available: (game) => hasVisited(game, "employee-cj0713-index"),
+  },
+  {
     id: "night-shift-sugar",
     title: "夜班员工低血糖应急领取记录",
     section: "员工健康",
@@ -752,7 +764,7 @@ const articles: ArticleMeta[] = [
     snippet: "账号状态与考勤记录形成无法闭合的日循环，实名附件需要人工复核。",
     terms: ["cj-0713", "cj0713", "当前员工", "员工账号", "空置房管理员", "刷卡", "下班", "有效下班", "在岗", "2025-11-05", "08:12", "08:41", "终端校验", "紧急联系人", "连接中断", "员工仍在楼内", "从未下班"],
     kind: "restricted",
-    available: always,
+    available: (game) => hasUnlockedArticle(game, "w04-directory"),
   },
   {
     id: "crash-cj0713",
@@ -3700,6 +3712,10 @@ export default function Home() {
       <aside className="article-note">冷备份没有给出人物关系结论。它只保留了前台摘要删去的生活细节、终端断线和重复自我介绍。</aside>
     </>;
 
+    if (id === "accident-report-cj0713") return <>
+      <article className="newspaper-archive"><header><span>澄江晚报数字归档 / 2025-11-05</span><strong>河西高架昨夜发生单车事故</strong><small>关联档案：{PROTAGONIST_ARCHIVE_REF}</small></header><div><p>11月4日22时31分，河西高架东向匝道发生一起单车碰撞事故。车辆撞击中央隔离设施后严重受损，驾驶人经现场抢救无效死亡，同车人员重伤送医。</p><p>经家属确认，死者为<strong>{PROTAGONIST_NAME}</strong>，男，34岁；伤者身份暂不公开。交警部门表示，现场未发现其他车辆直接接触痕迹，事故原因及车辆状态仍在进一步调查。</p><p>警方提醒，请勿传播未经证实的现场图片。知情者可凭事故档案编号向辖区交警提供行车记录资料。</p></div><footer><span>公开报道只能确认事故姓名与时间</span><b>不能证明该死者与当前员工账号属于同一主体</b></footer></article>
+    </>;
+
     if (id === "night-shift-sugar") return <>
       <div className="receipt-stack"><span>员工健康物资领取 / CJ-0713</span>{["2026-07-11 23:52", "2026-07-10 23:48", "2026-07-09 23:51", "2026-07-08 23:49"].map((time) => <p key={time}><time>{time}</time><b>葡萄糖硬糖 × 1</b><i>代签：林若岚</i></p>)}</div>
       <p>健康档案没有低血糖诊断。备注由林若岚手写：“他胃不舒服的时候不肯吃饭，只肯含一颗糖。”</p>
@@ -3723,9 +3739,9 @@ export default function Home() {
     </>;
 
     if (id === "employee-cj0713-index") return <>
-      <div className="employee-index"><section><span>当前账号</span><strong>CJ-0713</strong><small>长期空置房管理员</small></section><dl><div><dt>账号状态</dt><dd>在岗</dd></div><div><dt>劳动合同</dt><dd className="glitch-field">未关联</dd></div><div><dt>终端指纹</dt><dd>T-04-CJ-0713</dd></div><div><dt>岗位短号</dt><dd>13</dd></div><div><dt>后台创建</dt><dd>2025-11-05 08:12</dd></div><div><dt>首次打卡</dt><dd>2025-11-05 08:41</dd></div><div><dt>有效打卡</dt><dd>251次</dd></div><div><dt>有效下班</dt><dd className="glitch-field">0次</dd></div><div><dt>紧急联系人</dt><dd><MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /></dd></div></dl></div>
+      <div className="employee-index"><section><span>当前账号</span><strong>CJ-0713</strong><small>长期空置房管理员</small></section><dl><div><dt>账号状态</dt><dd>在岗</dd></div><div><dt>劳动合同</dt><dd className="glitch-field">未关联</dd></div><div><dt>终端指纹</dt><dd>T-04-CJ-0713</dd></div><div><dt>岗位短号</dt><dd>13</dd></div><div><dt>后台创建</dt><dd>2025-11-05 08:12</dd></div><div><dt>首次打卡</dt><dd>2025-11-05 08:41</dd></div><div><dt>特殊档案编号</dt><dd>{PROTAGONIST_ARCHIVE_REF}</dd></div><div><dt>有效打卡</dt><dd>251次</dd></div><div><dt>有效下班</dt><dd className="glitch-field">0次</dd></div><div><dt>紧急联系人</dt><dd><MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /></dd></div></dl></div>
       <div className="access-loop"><span>最近三次登录</span><p>08:41 打卡成功　→　00:10 连接中断</p><p>08:41 打卡成功　→　00:10 连接中断</p><p>08:41 打卡成功　→　<span>员工仍在楼内</span></p></div>
-      <aside className="article-note">后台创建时刻08:12同时被旧关怀冷备份入口标记为账号初始化时分；旧入口只读取四位时分。</aside>
+      <aside className="article-note">特殊档案编号来自账号建立时挂接的外部历史记录。当前员工索引无权显示该记录的姓名字段，可使用完整编号继续检索公开归档。</aside>
       <p className="corrupted-copy corrupted-copy--red" data-copy="如果你从未下班，今天为什么还需要重新打卡？">如果你从未下班，今天为什么还需要重新打卡？</p>
     </>;
 

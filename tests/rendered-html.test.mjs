@@ -925,13 +925,18 @@ test("locks the four 1404 records behind personal-memory passwords", async () =>
 
   assert.match(page, /type ProtectedArticleId = "w04-directory" \| "care-w04" \| "on-site-device" \| "crash-cj0713"/);
   assert.match(page, /password: "LINRUOLAN"/);
-  assert.match(page, /password: "0812"/);
+  assert.match(page, /password: "CHENJUN"/);
+  assert.match(page, /const PROTAGONIST_NAME = "陈峻"/);
+  assert.match(page, /const PROTAGONIST_ARCHIVE_REF = "DL-JJ-1104-27"/);
+  assert.match(page, /id: "accident-report-cj0713"[\s\S]*?available: \(game\) => hasVisited\(game, "employee-cj0713-index"\)/);
+  assert.match(page, /特殊档案编号<\/dt><dd>\{PROTAGONIST_ARCHIVE_REF\}/);
+  assert.match(page, /死者为<strong>\{PROTAGONIST_NAME\}<\/strong>/);
   assert.match(page, /password: "1404"/);
   assert.match(page, /password: "IMISSYOU"/);
   assert.match(page, /报事人<\/dt><dd>林若岚 \/ 住户本人/);
   assert.match(page, /报事人姓名通过住户端实名校验：林若岚/);
   assert.match(page, /后台创建<\/dt><dd>2025-11-05 08:12/);
-  assert.match(page, /旧入口只读取四位时分/);
+  assert.match(page, /搜索特殊档案编号，在公开事故报道中找到死者姓名/);
   assert.match(page, /旧库定位字段<\/th><td>仅接受四位原址房号/);
   assert.match(page, /id: 122[\s\S]*?visible: \(game\) => hasUnlockedArticle\(game, "on-site-device"\)[\s\S]*?text: "I MISS YOU\."/);
   assert.match(page, /articleId === "on-site-device"[\s\S]*?announceMessages\(\[122\]\)/);
