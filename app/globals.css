@@ -738,10 +738,13 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .operator-correlation th { width: 22%; color: #866d6e; font-weight: 400; }
 .operator-correlation td:nth-child(2) { color: #d3bdbb; font-family: var(--mono); }
 .operator-correlation td:last-child { color: #bf6863; }
-.operator-correlation > form { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; padding: 24px 25px 26px; border-top: 1px solid #553033; }
-.operator-correlation form label { color: #a48786; font-size: 9px; line-height: 1.6; }
-.operator-correlation form select { display: block; width: 100%; min-height: 46px; margin-top: 8px; border: 1px solid #5a373a; color: #e3cfcc; background: #110c0d; padding: 9px; font-size: 9px; }
-.operator-correlation form button { grid-column: 1/-1; }
+.operator-correlation > form { display: grid; grid-template-columns: 1fr; gap: 12px; padding: 24px 25px 26px; border-top: 1px solid #553033; }
+.operator-correlation form label { display: grid; grid-template-columns: minmax(220px,.8fr) minmax(240px,1.2fr); gap: 24px; align-items: center; min-height: 66px; padding: 11px 14px; border: 1px solid #422a2d; color: #c1aaa8; background: #1d1416; font-size: 11px; line-height: 1.6; }
+.operator-correlation form label > span { display: flex; align-items: center; gap: 13px; }
+.operator-correlation form label i { color: #a94b4d; font: normal 9px/1 var(--mono); }
+.operator-correlation form input { display: block; width: 100%; min-height: 44px; border: 1px solid #644044; outline: 0; color: #f0dddd; background: #100b0c; padding: 10px 13px; font-size: 12px; }
+.operator-correlation form input:focus { border-color: #b55c5d; box-shadow: 0 0 0 2px rgba(181,92,93,.14); }
+.operator-correlation form button { width: 100%; min-height: 46px; margin-top: 4px; }
 .operator-identity-confirmation { margin: 0 25px 25px; padding: 24px; border: 1px solid #6d4646; background: #241b1c; }
 .operator-identity-confirmation span { color: #a16e6d; font: 8px/1 var(--mono); }
 .operator-identity-confirmation strong { display: block; margin: 11px 0 8px; color: #ead9d7; font-size: 16px; }
@@ -2070,6 +2073,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
   .operator-correlation > table { display: block; width: auto; min-width: 0; margin-inline: 18px; overflow-x: auto; }
   .operator-correlation > table tbody { display: table; min-width: 590px; }
   .operator-correlation > form { grid-template-columns: 1fr; padding-inline: 18px; }
+  .operator-correlation form label { grid-template-columns: 1fr; gap: 9px; }
   .operator-identity-confirmation { margin-inline: 18px; }
   .operator-truth { grid-template-columns: 1fr; margin-inline: 18px; }
   .archive-app--callback-review .archive-layout { grid-template-columns: 1fr; }

@@ -768,14 +768,13 @@ test("gates the CS-046 identity archive behind explicit player confirmation", as
   assert.match(page, /const callbackReviewReachable = saved\.cs046TraceSolved[\s\S]*?callbackCoreIds\.every/);
   assert.match(page, /game\.view === "callback-review" && <div className=\{`callback-review-page/);
   assert.doesNotMatch(page, /callback-correlation-locked/);
-  assert.match(page, /callbackSequence !== "continuous-gap" \|\| callbackSystemEvent !== "consistency-review" \|\| callbackTerminalField !== "t04"/);
+  assert.match(page, /normalizeText\(callbackOperatorName\) !== "陈峻" \|\| normalizeText\(callbackResidentRelation\) !== "夫妻" \|\| normalizeText\(callbackEmployeeStatus\) !== "已死亡"/);
   assert.match(page, /cs046TraceSolved: boolean/);
   assert.match(page, /cs046TraceSolved: restored\.cs046TraceSolved \?\? restored\.cs046Solved \?\? false/);
-  assert.match(page, /setGame\(\(current\) => \(\{ \.\.\.current, cs046TraceSolved: true \}\)\)/);
-  assert.match(page, /const confirmCs046Identity = \(\) => \{/);
-  assert.match(page, /if \(!game\.cs046TraceSolved \|\| game\.cs046Solved\) return/);
-  assert.match(page, /确认两组工号属于同一人/);
-  assert.match(page, /CS-046与CJ-0713是同一个人/);
+  assert.match(page, /CS-046是谁？<\/span><input/);
+  assert.match(page, /1404房主和CJ-0713的关系？<\/span><input/);
+  assert.match(page, /CJ-0713状态？<\/span><input/);
+  assert.match(page, /CS-046为陈峻，1404住户与CJ-0713为夫妻，CJ-0713已死亡/);
   assert.doesNotMatch(page, /CS-046与CJ-0713是同一意识|主角已多次调查这些住户并被清除记忆/);
   assert.match(page, /disabled=\{!game\.colleagueSolved \|\| !game\.cs046Solved\}/);
   assert.match(page, /id: "cs046-operator-archive"[\s\S]*?available: \(game\) => game\.cs046Solved/);
@@ -924,6 +923,9 @@ test("locks the four 1404 records behind personal-memory passwords", async () =>
   const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
 
   assert.match(page, /type ProtectedArticleId = "w04-directory" \| "care-w04" \| "on-site-device" \| "crash-cj0713"/);
+  assert.match(page, /id: "care-w04"[\s\S]*?lockedTerms: \["林若岚", "1404", "回访记录", "关怀冷备份"\]/);
+  assert.match(page, /id: "on-site-device"[\s\S]*?terms: \["陈峻", "1404", "驻场设备"/);
+  assert.match(page, /id: "on-site-device"[\s\S]*?lockedTerms: \["陈峻", "1404", "zc-lh", "特殊保管物", "封存物"\]/);
   assert.match(page, /password: "LINRUOLAN"/);
   assert.match(page, /password: "CHENJUN"/);
   assert.match(page, /const PROTAGONIST_NAME = "陈峻"/);

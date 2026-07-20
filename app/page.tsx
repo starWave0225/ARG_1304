@@ -712,7 +712,7 @@ const articles: ArticleMeta[] = [
     date: "2026-07-13",
     snippet: "三次历史回访正文包含重复的生活细节，但前台只保留了标准关怀结论。",
     terms: ["1404", "林若岚", "w-04", "轮椅", "亡夫", "重点关怀", "妻子", "每天回来"],
-    lockedTerms: ["1404", "回访记录", "关怀冷备份"],
+    lockedTerms: ["林若岚", "1404", "回访记录", "关怀冷备份"],
     available: (game) => hasUnlockedArticle(game, "w04-directory"),
   },
   {
@@ -751,8 +751,8 @@ const articles: ArticleMeta[] = [
     section: "资产管理",
     date: "2025-11-05",
     snippet: "封存物外观、转出凭证和物业标签之间存在字段冲突，需核对原始附件。",
-    terms: ["1404", "驻场设备", "cj-0713", "设备", "保管人", "无功耗", "骨灰", "特殊保管物", "殡仪馆", "寄存转出单", "封存物"],
-    lockedTerms: ["1404", "zc-lh", "特殊保管物", "封存物"],
+    terms: ["陈峻", "1404", "驻场设备", "cj-0713", "设备", "保管人", "无功耗", "骨灰", "特殊保管物", "殡仪馆", "寄存转出单", "封存物"],
+    lockedTerms: ["陈峻", "1404", "zc-lh", "特殊保管物", "封存物"],
     kind: "restricted",
     available: (game) => hasUnlockedArticle(game, "care-w04"),
   },
@@ -1638,9 +1638,9 @@ export default function Home() {
   const [memoryAnchors, setMemoryAnchors] = useState<string[]>([]);
   const [articlePasswordInput, setArticlePasswordInput] = useState("");
   const [articlePasswordRejected, setArticlePasswordRejected] = useState(false);
-  const [callbackSequence, setCallbackSequence] = useState("");
-  const [callbackSystemEvent, setCallbackSystemEvent] = useState("");
-  const [callbackTerminalField, setCallbackTerminalField] = useState("");
+  const [callbackOperatorName, setCallbackOperatorName] = useState("");
+  const [callbackResidentRelation, setCallbackResidentRelation] = useState("");
+  const [callbackEmployeeStatus, setCallbackEmployeeStatus] = useState("");
   const loginTimer = useRef<number | null>(null);
   const legacyTimer = useRef<number | null>(null);
   const legacyCameraStream = useRef<MediaStream | null>(null);
@@ -2672,19 +2672,14 @@ export default function Home() {
       flash("可读取回访尚未全部核对");
       return;
     }
-    if (callbackSequence !== "continuous-gap" || callbackSystemEvent !== "consistency-review" || callbackTerminalField !== "t04") {
-      flash("附注未通过：请只记录目录和日志中可以直接核对的字段");
+    if (normalizeText(callbackOperatorName) !== "陈峻" || normalizeText(callbackResidentRelation) !== "夫妻" || normalizeText(callbackEmployeeStatus) !== "已死亡") {
+      flash("复核未通过：请根据事故报道、住户记录和主体状态填写");
       return;
     }
-    setGame((current) => ({ ...current, cs046TraceSolved: true }));
-    flash("三项客观字段已固定，可以提交坐席身份判断");
-  };
-
-  const confirmCs046Identity = () => {
-    if (!game.cs046TraceSolved || game.cs046Solved) return;
     notifyEvidenceWrite(["operatorIdentity"]);
     setGame((current) => ({
       ...current,
+      cs046TraceSolved: true,
       cs046Solved: true,
       evidence: addUnique(current.evidence, ["operatorIdentity"]),
     }));
@@ -4131,16 +4126,15 @@ export default function Home() {
         {game.view === "callback-review" && <div className={`callback-review-page ${game.cs046TraceSolved ? "is-confirming" : ""} ${game.cs046Solved ? "is-solved" : ""}`}>
           <div className="callback-review-ghosts" aria-hidden="true"><span>CS-046 / T-04 / RESULT NULL</span><span>CJ-0713 / T-04 / RESULT NULL</span><span>AUTO ATTRIBUTION WITHDRAWN</span></div>
           <header className="callback-review-head"><div><span>PROPERTY QUALITY CONTROL / LOCAL TRACE</span><h1>坐席重复字段人工复核</h1><p>该任务由回访质检系统直接下发。任务编号未写入全文索引、在办工单或档案阅读目录。</p></div><aside><span>索引状态</span><strong>未登记</strong><small>ENTRY / NOTICE-123</small></aside></header>
-          <div className="callback-review-system-line"><span>QC-T04</span><p>自动归因程序已被上级策略撤回。当前页面只能保存处理人的人工判断。</p><b>{game.cs046Solved ? "ARCHIVED" : game.cs046TraceSolved ? "WAITING FOR YOU" : "TRACE OPEN"}</b></div>
+          <div className="callback-review-system-line"><span>QC-T04</span><p>自动归因程序已被上级策略撤回。请根据已经取得的事故、住户与员工记录填写三项人工判断。</p><b>{game.cs046Solved ? "ARCHIVED" : "MANUAL REVIEW"}</b></div>
           <section className={`operator-correlation ${game.cs046Solved ? "is-solved" : ""}`}>
-            <header><div><span>QUALITY TRACE / MANUAL NOTE</span><h2>回访归档缺口复核</h2></div><b>{game.cs046Solved ? "身份判断已确认" : game.cs046TraceSolved ? "等待人工确认" : "仅核对客观字段"}</b></header>
+            <header><div><span>QUALITY TRACE / MANUAL NOTE</span><h2>回访归档缺口复核</h2></div><b>{game.cs046Solved ? "身份判断已确认" : "待填写 · 3项"}</b></header>
             <div className="operator-match-grid"><section><span>历史目录字段</span><strong>CS-046</strong><small>客服中心 / 回访质检</small></section><i>?</i><section><span>本轮终端字段</span><strong>CJ-0713</strong><small>空置房管理 / 当前会话</small></section></div>
-            <table><tbody><tr><th>终端导出</th><td>CS-046 / T-04</td><td>CJ-0713 / T-04-CJ-0713</td></tr><tr><th>音轨质检</th><td>三处呼吸停顿被标记</td><td>自动比对结果：已撤回</td></tr><tr><th>可见时序</th><td>末次回访：07-12 08:32</td><td>本轮打卡：07-13 08:41</td></tr><tr><th>夹层任务</th><td>MEM-CONSISTENCY / FILTER</td><td>结果字段：空</td></tr><tr><th>住户陈述</th><td>“又打来了” / “还是0713”</td><td>未被质检采信</td></tr></tbody></table>
-            {game.cs046Solved ? <div className="operator-truth"><EyeMark /><div><span>MANUAL CONCLUSION / CJ-0713</span><strong>人工确认：CS-046与CJ-0713是同一个人。</strong><p>这项判断来自当前处理人的交叉核对。系统自动归因仍处于撤回状态，两组编号之间被删除的录音没有恢复。</p></div></div> : game.cs046TraceSolved ? <div className="operator-identity-confirmation"><span>MANUAL JUDGMENT REQUIRED</span><strong>三项客观字段已经固定。</strong><p>系统不提供自动归因。是否依据重复终端段、连续质检序号和一致性任务时序，确认历史坐席CS-046与当前处理人CJ-0713为同一人？</p><button type="button" className="primary-button" onClick={confirmCs046Identity}>确认两组工号属于同一人</button></div> : <form onSubmit={submitCallbackReview}>
-              <label>质检目录中可以确认的状态<select value={callbackSequence} onChange={(event) => setCallbackSequence(event.target.value)}><option value="">选择记录字段</option><option value="complete">所有序号均有录音正文</option><option value="continuous-gap">质检序号连续，部分正文缺失</option><option value="renumbered">缺失文件已重新编号</option></select></label>
-              <label>末次可见回访后的系统事件<select value={callbackSystemEvent} onChange={(event) => setCallbackSystemEvent(event.target.value)}><option value="">选择日志事件</option><option value="shift-close">坐席正常签退</option><option value="consistency-review">数据一致性复训</option><option value="ticket-close">1404工单关闭</option></select></label>
-              <label>两组导出记录中重复出现的字段<select value={callbackTerminalField} onChange={(event) => setCallbackTerminalField(event.target.value)}><option value="">选择可比字段</option><option value="resident">住户房号1404</option><option value="t04">终端段T-04</option><option value="employee-name">员工实名字段</option></select></label>
-              <button className="primary-button">固定三项客观字段</button>
+            {game.cs046Solved ? <div className="operator-truth"><EyeMark /><div><span>MANUAL CONCLUSION / CJ-0713</span><strong>人工复核：CS-046为陈峻，1404住户与CJ-0713为夫妻，CJ-0713已死亡。</strong><p>结论由当前处理人根据事故报道、住户记录与主体状态填写。系统自动归因仍处于撤回状态，被删除的录音没有恢复。</p></div></div> : <form onSubmit={submitCallbackReview}>
+              <label><span><i>01</i>CS-046是谁？</span><input value={callbackOperatorName} onChange={(event) => setCallbackOperatorName(event.target.value)} placeholder="填写姓名" autoComplete="off" /></label>
+              <label><span><i>02</i>1404房主和CJ-0713的关系？</span><input value={callbackResidentRelation} onChange={(event) => setCallbackResidentRelation(event.target.value)} placeholder="填写人物关系" autoComplete="off" /></label>
+              <label><span><i>03</i>CJ-0713状态？</span><input value={callbackEmployeeStatus} onChange={(event) => setCallbackEmployeeStatus(event.target.value)} placeholder="填写主体状态" autoComplete="off" /></label>
+              <button className="primary-button">提交三项复核答案</button>
             </form>}
           </section>
           <button className="callback-review-exit" onClick={openCallbackCenter}>关闭复核页</button>
