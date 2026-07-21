@@ -374,8 +374,8 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.match(page, /\/evidence\/xu-zhiyao-health-photo\.png/);
   assert.doesNotMatch(page, /何芷遥|hezhiyao|he-zhiyao/);
   assert.match(page, /DL-0713-0041/);
-  assert.match(page, /最后确认日期<input type="date" value=\{childLastDate\}/);
-  assert.match(page, /childLastDate !== "2026-07-13"/);
+  assert.match(page, /最后确认日期（年月日）<input value=\{childLastDate\}/);
+  assert.match(page, /normalizeChineseDate\(childLastDate\) !== "2026-07-13"/);
   assert.doesNotMatch(page, /最后确认时间<input type="datetime-local"/);
   assert.doesNotMatch(page, /childStart !== "2026-07-13T00:03"/);
   assert.match(page, /terms: \["DL-0713-0041", "接警回执", "报警回执"/);
@@ -383,6 +383,12 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.doesNotMatch(page, /available: \(game\) => game\.childMissingReported && hasVisited\(game, "clinic-child"\)/);
   assert.match(page, /id: "clinic-child"[\s\S]*?title: "1204 童鞋内拾获儿童健康信息卡"[\s\S]*?available: \(game\) => game\.inspectedArticles\.includes\("vacancy-1204"\) \|\| hasVisited\(game, "clinic-child"\)/);
   assert.match(page, /<dt>监护人<\/dt><dd>许\*\*、赵\*\*<\/dd>/);
+  assert.match(page, /<dt>出生日期<\/dt><dd>2020年4月12日<\/dd>/);
+  assert.match(page, /function normalizeChineseDate\(value: string\)/);
+  assert.match(page, /normalizeChineseDate\(childBirthday\) !== "2020-04-12"/);
+  assert.match(page, /normalizeChineseDate\(childLastDate\) !== "2026-07-13"/);
+  assert.match(page, /出生日期（年月日）<input value=\{childBirthday\}[\s\S]*placeholder="例：2020年4月12日"/);
+  assert.match(page, /最后确认日期（年月日）<input value=\{childLastDate\}[\s\S]*placeholder="例：2026年7月13日"/);
   assert.doesNotMatch(page, /<dt>监护人<\/dt><dd>许建国、赵秀兰<\/dd>/);
   assert.doesNotMatch(page.slice(page.indexOf('id: "clinic-child"'), page.indexOf('id: "register-child"')), /childMissingReported|vacancyMismatch/);
   assert.match(page, /const inspectChildShoes = \(\) =>/);

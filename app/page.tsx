@@ -1469,6 +1469,13 @@ function normalizeText(value: string) {
   return value.toLowerCase().replace(/[\s·•—_\-：:，,。.、/\\（）()《》〈〉]/g, "");
 }
 
+function normalizeChineseDate(value: string) {
+  const normalized = value.normalize("NFKC").trim();
+  const parts = normalized.match(/^(\d{4})\D+(\d{1,2})\D+(\d{1,2})(?:日|号)?$/);
+  if (!parts) return normalized;
+  return `${parts[1]}-${parts[2].padStart(2, "0")}-${parts[3].padStart(2, "0")}`;
+}
+
 const genericRoomSearchEntries: Record<string, readonly string[]> = {
   "1204": ["workorder-1204", "vacancy-1204", "meter-1304"],
   "1304": ["meter-1304", "resident-1304", "height-mark", "workorder-1204", "case-correction"],
@@ -2826,7 +2833,7 @@ export default function Home() {
     const correctName = name === normalizeText("许芷遥") || name === "xuzhiyao";
     const correctFather = normalizeText(childFather) === normalizeText("许建国");
     const correctMother = normalizeText(childMother) === normalizeText("赵秀兰");
-    if (!correctName || !correctFather || !correctMother || childBirthday !== "2020-04-12" || childRelation !== "child" || childLastDate !== "2026-07-13" || normalizeText(childPoliceRef) !== normalizeText("DL-0713-0041")) {
+    if (!correctName || !correctFather || !correctMother || normalizeChineseDate(childBirthday) !== "2020-04-12" || childRelation !== "child" || normalizeChineseDate(childLastDate) !== "2026-07-13" || normalizeText(childPoliceRef) !== normalizeText("DL-0713-0041")) {
       flash("协查登记被退回：身份、监护关系、最后确认日期或报警回执无法互相印证");
       return;
     }
@@ -3258,7 +3265,7 @@ export default function Home() {
     <header><div><span>东临妇幼保健中心</span><strong>儿童健康信息卡</strong></div><b>{inline ? "鞋内折叠卡片" : "拾获物证复印件"}</b></header>
     <div className="child-health-body">
       <div className="child-health-photo"><Image src={assetPath("/evidence/xu-zhiyao-health-photo.png")} alt="许芷遥健康档案照片" fill sizes="185px" unoptimized /><span>拍摄：2025-10-12</span></div>
-      <section><strong>许芷遥</strong><small>档案号：DL-2020-0412-██</small><dl><div><dt>性别</dt><dd>女</dd></div><div><dt>出生日期</dt><dd>2020-04-12</dd></div><div><dt>监护人</dt><dd>许**、赵**</dd></div><div><dt>监护关系</dt><dd>婚生子女</dd></div><div><dt>最后登记住址</dt><dd>外区集体宿舍</dd></div><div><dt>本楼住户登记</dt><dd className="danger-text">无记录</dd></div></dl></section>
+      <section><strong>许芷遥</strong><small>档案号：DL-2020-0412-██</small><dl><div><dt>性别</dt><dd>女</dd></div><div><dt>出生日期</dt><dd>2020年4月12日</dd></div><div><dt>监护人</dt><dd>许**、赵**</dd></div><div><dt>监护关系</dt><dd>婚生子女</dd></div><div><dt>最后登记住址</dt><dd>外区集体宿舍</dd></div><div><dt>本楼住户登记</dt><dd className="danger-text">无记录</dd></div></dl></section>
     </div>
     <footer><span>拾获物：FP-0713-26</span><span>位置：1204门外左侧童鞋内</span><span>卡片状态：轻微受潮</span></footer>
   </div>;
@@ -3405,11 +3412,11 @@ export default function Home() {
       <div className="callout"><strong>紧急协查对象登记</strong><p>未成年人失联不受住户登记状态限制。此表仅用于报警协查、公共区域录像调阅和现场辨认，不补录产权、租赁或常住关系。</p></div>
       <form className="archive-form" onSubmit={submitChild} autoComplete="off">
         <label>儿童姓名<input value={childName} onChange={(event) => setChildName(event.target.value)} placeholder="输入中文姓名" /></label>
-        <label>出生日期<input type="date" value={childBirthday} onChange={(event) => setChildBirthday(event.target.value)} /></label>
+        <label>出生日期（年月日）<input value={childBirthday} onChange={(event) => setChildBirthday(event.target.value)} placeholder="例：2020年4月12日" /></label>
         <label>父亲姓名<input value={childFather} onChange={(event) => setChildFather(event.target.value)} placeholder="按监护材料填写" /></label>
         <label>母亲姓名<input value={childMother} onChange={(event) => setChildMother(event.target.value)} placeholder="按监护材料填写" /></label>
         <label>与报警人关系<select value={childRelation} onChange={(event) => setChildRelation(event.target.value)}><option value="">选择</option><option value="child">报警人监护子女</option><option value="relative">其他同行未成年人</option><option value="unknown">关系待核</option></select></label>
-        <label>最后确认日期<input type="date" value={childLastDate} onChange={(event) => setChildLastDate(event.target.value)} /></label>
+        <label>最后确认日期（年月日）<input value={childLastDate} onChange={(event) => setChildLastDate(event.target.value)} placeholder="例：2026年7月13日" /></label>
         <label>报警回执编号<input value={childPoliceRef} onChange={(event) => setChildPoliceRef(event.target.value)} placeholder="按家属留言填写" autoCapitalize="characters" spellCheck={false} /></label>
         <button className="primary-button">{game.childRegistered ? "协查对象已登记" : "提交协查登记"}</button>
       </form>
