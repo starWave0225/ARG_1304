@@ -3700,10 +3700,10 @@ export default function Home() {
     if (id === "w04-directory") return <>
       <div className="protected-unlock-trace"><span>DERIVED KEY ACCEPTED / RESIDENT INDEX</span><strong>终端派生口令已接受</strong><small>住户索引已在当前会话临时解密</small></div>
       <div className="w04-index-card"><div className="w04-index-photo"><Image src={assetPath("/residents/w-04.png")} alt="1404住户索引影像" fill sizes="260px" unoptimized/></div><section><span>住户关怀索引</span><strong><MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /></strong><dl><div><dt>房号</dt><dd>1404</dd></div><div><dt>行动状态</dt><dd>需使用轮椅</dd></div><div><dt>关怀原因</dt><dd>重大事故后长期适应支持</dd></div><div><dt>关系字段</dt><dd className="glitch-field">上级权限遮蔽</dd></div><div><dt>固定接收员工</dt><dd className="glitch-field">CJ-0713</dd></div></dl></section></div>
-      <table className="data-table"><tbody><tr><th>首次建档</th><td>2025-11-05，由恒目批量接口写入</td></tr><tr><th>服务频率</th><td>工作日每日一次，住户拒绝随机更换人员</td></tr><tr><th>旧入口提示</th><td>冷备份口令回退到固定接收员工的后台创建时分</td></tr><tr><th>异常字段</th><td>每次到场均被写为首次接触，上一条服务关系在00:10后消失</td></tr><tr><th>质检处理</th><td>7次申请修复计数，均被MEM-CONSISTENCY策略退回</td></tr></tbody></table>
+      <table className="data-table"><tbody><tr><th>首次建档</th><td>2025-11-05，由恒目批量接口写入</td></tr><tr><th>服务频率</th><td>工作日每日一次，住户拒绝随机更换人员</td></tr><tr><th>旧入口提示</th><td>冷备份口令回退到固定接收员工关联的特殊档案编号</td></tr><tr><th>异常字段</th><td>每次到场均被写为首次接触，上一条服务关系在00:10后消失</td></tr><tr><th>质检处理</th><td>7次申请修复计数，均被MEM-CONSISTENCY策略退回</td></tr></tbody></table>
       <p>住户坚持双方已经“见过很多次”，但索引没有保留任何可供前台确认私人关系的字段。可以确认的只有：同一员工编号反复到场，历史会话却没有连续性。</p>
       <div className="uncanny-counter"><span>本年度首次接触次数</span><strong>223</strong><small>计数逻辑错误 / 无法修复</small></div>
-      <aside className="article-note">旧版关怀冷备份只读取固定接收员工的账号建档时刻，并删除日期与分隔符，仅保留四位时分。</aside>
+      <aside className="article-note">旧版关怀冷备份会读取固定接收员工基础索引中的特殊档案编号。搜索该编号，在公开事故报道中找到死者姓名，并转换为无声调、无空格的完整拼音。</aside>
     </>;
 
     if (id === "care-w04") return <>
