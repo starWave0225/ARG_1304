@@ -3416,7 +3416,7 @@ export default function Home() {
         <label>父亲姓名<input value={childFather} onChange={(event) => setChildFather(event.target.value)} placeholder="按监护材料填写" /></label>
         <label>母亲姓名<input value={childMother} onChange={(event) => setChildMother(event.target.value)} placeholder="按监护材料填写" /></label>
         <label>与报警人关系<select value={childRelation} onChange={(event) => setChildRelation(event.target.value)}><option value="">选择</option><option value="child">报警人监护子女</option><option value="relative">其他同行未成年人</option><option value="unknown">关系待核</option></select></label>
-        <label>最后确认日期（年月日）<input value={childLastDate} onChange={(event) => setChildLastDate(event.target.value)} placeholder="例：2026年7月13日" /></label>
+        <label>最后确认日期（年月日）<input value={childLastDate} onChange={(event) => setChildLastDate(event.target.value)} placeholder="x年x月x日" /></label>
         <label>报警回执编号<input value={childPoliceRef} onChange={(event) => setChildPoliceRef(event.target.value)} placeholder="按家属留言填写" autoCapitalize="characters" spellCheck={false} /></label>
         <button className="primary-button">{game.childRegistered ? "协查对象已登记" : "提交协查登记"}</button>
       </form>
