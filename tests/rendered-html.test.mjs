@@ -260,6 +260,9 @@ test("grounds operational clues in auditable property records", async () => {
   assert.match(page, /公安协查回函/);
   assert.match(page, /ZC-LH/);
   assert.match(page, /殡仪馆寄存转出单/);
+  assert.match(page, /title: "恒目管理顾问供应商备案"[\s\S]*terms: \["恒目", "澄江物业"/);
+  assert.match(page, /data-copy="保留该保留的，遗忘该遗忘的。"/);
+  assert.doesNotMatch(page, /异常不是错误。异常只是尚未完成校准的记录。/);
   assert.match(page, /以上身份仅为报事人自述，不作为房屋关系结论/);
   assert.doesNotMatch(workorderBody, /<p className="is-anomalous"><time>01:29<\/time>/);
   assert.doesNotMatch(page, /楼上的人是不是已经死了/);

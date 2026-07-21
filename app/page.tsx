@@ -660,7 +660,7 @@ const articles: ArticleMeta[] = [
     section: "供应商中心",
     date: "2020-01-04",
     snippet: "供应商合同、验收附件和付款科目存在多处缺页，服务范围需要交叉核验。",
-    terms: ["恒目", "全知", "全知教会", "眼睛", "眼白向下", "供应商", "管理顾问", "一致性", "物业服务费", "资金来源", "删除过去", "普通人类组织", "数据合规", "员工复训", "特殊保管物"],
+    terms: ["恒目", "澄江物业", "全知", "全知教会", "眼睛", "眼白向下", "供应商", "管理顾问", "一致性", "物业服务费", "资金来源", "删除过去", "普通人类组织", "数据合规", "员工复训", "特殊保管物"],
     kind: "restricted",
     available: always,
   },
@@ -3656,7 +3656,7 @@ export default function Home() {
       <div className="compliance-banner compliance-banner--index"><EyeMark /><div><strong>恒目管理顾问</strong><span>OMNISIGHT MANAGEMENT</span></div></div>
       <dl className="record-grid"><div><dt>合作性质</dt><dd>物业管理与数据合规顾问</dd></div><div><dt>服务范围</dt><dd>员工复训、争议客诉与档案清理</dd></div><div><dt>图形备案</dt><dd>眼白向下的单眼标记</dd></div><div><dt>付款科目</dt><dd>物业服务费 / 专项顾问费</dd></div></dl>
       <p>近三年合同均由同一名区域负责人线下补签，验收附件只有账号清单，没有培训签到和服务成果。投标文件首页反复出现一句内部口号：</p>
-      <p className="corrupted-copy corrupted-copy--red" data-copy="异常不是错误。异常只是尚未完成校准的记录。">异常不是错误。异常只是尚未完成校准的记录。</p>
+      <p className="corrupted-copy corrupted-copy--red" data-copy="保留该保留的，遗忘该遗忘的。">保留该保留的，遗忘该遗忘的。</p>
     </>;
 
     if (id === "church-compliance") return <>
