@@ -389,7 +389,8 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.match(page, /normalizeChineseDate\(childLastDate\) !== "2026-07-13"/);
   assert.match(page, /出生日期（年月日）<input value=\{childBirthday\}[\s\S]*placeholder="x年x月x日"/);
   assert.doesNotMatch(page, /出生日期（年月日）<input value=\{childBirthday\}[\s\S]*placeholder="例：2020年4月12日"/);
-  assert.match(page, /最后确认日期（年月日）<input value=\{childLastDate\}[\s\S]*placeholder="例：2026年7月13日"/);
+  assert.match(page, /最后确认日期（年月日）<input value=\{childLastDate\}[\s\S]*placeholder="x年x月x日"/);
+  assert.doesNotMatch(page, /最后确认日期（年月日）<input value=\{childLastDate\}[\s\S]*placeholder="例：2026年7月13日"/);
   assert.doesNotMatch(page, /<dt>监护人<\/dt><dd>许建国、赵秀兰<\/dd>/);
   assert.doesNotMatch(page.slice(page.indexOf('id: "clinic-child"'), page.indexOf('id: "register-child"')), /childMissingReported|vacancyMismatch/);
   assert.match(page, /const inspectChildShoes = \(\) =>/);
