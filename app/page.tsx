@@ -3412,7 +3412,7 @@ export default function Home() {
       <div className="callout"><strong>紧急协查对象登记</strong><p>未成年人失联不受住户登记状态限制。此表仅用于报警协查、公共区域录像调阅和现场辨认，不补录产权、租赁或常住关系。</p></div>
       <form className="archive-form" onSubmit={submitChild} autoComplete="off">
         <label>儿童姓名<input value={childName} onChange={(event) => setChildName(event.target.value)} placeholder="输入中文姓名" /></label>
-        <label>出生日期（年月日）<input value={childBirthday} onChange={(event) => setChildBirthday(event.target.value)} placeholder="例：2020年4月12日" /></label>
+        <label>出生日期（年月日）<input value={childBirthday} onChange={(event) => setChildBirthday(event.target.value)} placeholder="x年x月x日" /></label>
         <label>父亲姓名<input value={childFather} onChange={(event) => setChildFather(event.target.value)} placeholder="按监护材料填写" /></label>
         <label>母亲姓名<input value={childMother} onChange={(event) => setChildMother(event.target.value)} placeholder="按监护材料填写" /></label>
         <label>与报警人关系<select value={childRelation} onChange={(event) => setChildRelation(event.target.value)}><option value="">选择</option><option value="child">报警人监护子女</option><option value="relative">其他同行未成年人</option><option value="unknown">关系待核</option></select></label>
