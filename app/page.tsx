@@ -3627,8 +3627,8 @@ export default function Home() {
           </div>
           <header><EyeMark small/><div><span>从周明川的本地终端发现加密凭据</span><strong>已注销员工账号恢复</strong></div></header>
           {!game.colleagueCredentialsRecovered ? <form onSubmit={submitCredentialDecrypt}>
-            <p>本地凭据备注由三段组成。按显示顺序连续输入，并去掉员工工号中的分隔符。</p>
-            <div className="credential-clues"><span>HENGMU</span><span>RECYCLE</span><span>该员工工号</span></div>
+            <p>本地凭据备注由三段组成。第二段为摩斯码，解码后按显示顺序连续输入，并去掉员工工号中的分隔符。</p>
+            <div className="credential-clues"><span className="credential-company-clue">公司名 <EyeMark small /></span><span>.-. . -.-. -.-- -.-. .-.. .</span><span>该员工工号</span></div>
             <label>解密结果<input value={credentialCipher} onChange={(event) => setCredentialCipher(event.target.value)} placeholder="输入完整凭据" autoComplete="off" /></label>
             <button className="primary-button">恢复登录凭据</button>
           </form> : <div className="recovered-account">

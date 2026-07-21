@@ -969,7 +969,8 @@ test("supports manual login to Zhou Mingchuan's optional local archive", async (
   assert.match(page, /type LoginMethod = "badge" \| "password"/);
   assert.match(page, /const MINGCHUAN_ACCOUNT: EmployeeAccount = "ZM-0602"/);
   assert.match(page, /const MINGCHUAN_PASSWORD = "hengmurecyclezm0602"/);
-  assert.match(page, /<span>HENGMU<\/span><span>RECYCLE<\/span><span>该员工工号<\/span>/);
+  assert.match(page, /第二段为摩斯码，解码后按显示顺序连续输入/);
+  assert.match(page, /<span className="credential-company-clue">公司名 <EyeMark small \/><\/span><span>\.\-\. \. \-\.\-\. \-\.\-\- \-\.\-\. \.\-\.\. \.<\/span><span>该员工工号<\/span>/);
   assert.doesNotMatch(page, /房号—墙体缺失厚度—员工状态修改次数|1104-42-17/);
   assert.match(page, /game\.colleagueSolved && <section className="credential-recovery">/);
   assert.match(page, /警方破拆西墙空腔，发现周明川遗体/);
