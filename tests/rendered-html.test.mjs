@@ -56,7 +56,7 @@ test("publishes a complete standalone truth archive after the endings", async ()
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /全案真相档案/);
-  assert.match(html, /他正在调查自己为什么死后仍在上班/);
+  assert.match(html, /主角不是什么传奇调查员[\s\S]*?他只是被收编的特殊员工/);
   assert.match(html, /id="case-1204"/);
   assert.match(html, /空置房里的未登记儿童/);
   assert.match(html, /id="case-1404"/);
@@ -880,9 +880,15 @@ test("stages the evidence ending as the protagonist leaving the building", async
   assert.match(page, /\/endings\/01-lobby-farewell\.png/);
   assert.match(page, /\/endings\/02-outside-threshold\.png/);
   assert.match(page, /const \[endingStep, setEndingStep\] = useState\(0\)/);
+  assert.match(page, /ending-terminal-release__status"><EyeMark small\/><span>EXTERNAL EVIDENCE TRANSFER<\/span>/);
+  assert.match(page, /<p>CJ-0713，或者说，陈峻，已经离开【物业内网】<\/p>/);
   assert.match(page, /证据已经出去。<br\/>现在轮到你了。/);
-  assert.match(page, /留下的灵魂却第一次越过了物业边界/);
-  assert.match(page, /天亮以后，<br\/>CJ-0713没有回来/);
+  assert.match(page, /className="ending-account-flash"[\s\S]*?<span>CJ-0713<\/span><del>陈峻<\/del><i>CS-046<\/i>/);
+  assert.doesNotMatch(page, /自然显现窗口/);
+  assert.match(page, /门禁这次没有让你打卡[\s\S]*?读卡器沉默无声[\s\S]*?回头就又是昨天/);
+  assert.match(page, /人这一生需要经历三次死亡[\s\S]*?菜市场买个菜那样。\\n\\n但她的眼神出卖了她[\s\S]*?要跨越数万年的再次相见的开始/);
+  assert.match(page, /天亮以后，<br\/>陈峻 成为一个可以被缅怀的名字/);
+  assert.match(page, /系统承认了死亡的存在[\s\S]*?阳光出来了，照的人很暖和[\s\S]*?你这次醒来，是为了好好告别/);
   assert.match(page, /setEndingStep\(\(current\) => current \+ 1\)/);
   assert.match(page, /结局 \/ 重新打卡/);
   assert.match(page, /const reconsiderEnding = \(\) =>/);
@@ -907,15 +913,14 @@ test("stages the loop ending around the wife's repeated loss", async () => {
   ]);
 
   assert.match(page, /const loopEndingScenes = \[/);
+  assert.match(page, /他准时来了。像第一次一样。[\s\S]*?桌上的两只杯子还冒着热气[\s\S]*?请您配合验证下户主身份/);
   assert.match(page, /\/endings\/03-loop-first-visit\.png/);
   assert.match(page, /\/endings\/04-loop-sugar-box\.png/);
   assert.match(page, /关系字段已归零。<br\/>下一班次可以开始。/);
-  assert.match(page, /今天第一次上门，请您配合身份核验/);
-  assert.match(page, /她没有再纠正“第一次”/);
-  assert.match(page, /把那盒他值夜班会吃的糖重新盖好/);
+  assert.match(page, /今天第一次上门，请您配合验证下户主身份/);
+  assert.match(page, /她没有再纠结[\s\S]*?等待是一把磨人的刀子[\s\S]*?最后一次看向你的背影了吧，陈峻[\s\S]*?谢谢你来过/);
   assert.match(page, /第224次“首次接触”/);
-  assert.match(page, /她终于不再等你想起来/);
-  assert.match(page, /不是因为问题解决了，而是林若岚不再相信下一次会有所不同/);
+  assert.match(page, /她终于不再等。[\s\S]*?任何看起来像是在找茬的投诉单[\s\S]*?她选择解救自己/);
   assert.match(css, /\.ending-performance--loop/);
   assert.match(css, /\.ending-performance--loop\.is-loop-epilogue/);
   assert.ok([doorway, sugarBox].every((image) => image.subarray(0, 8).toString("hex") === "89504e470d0a1a0a"));

@@ -219,18 +219,18 @@ const departureEndingScenes = [
     src: "/endings/01-lobby-farewell.png",
     alt: "主角从老旧住宅楼门厅走向出口，林若岚坐在门内目送他",
     time: "00:09:58 / 一层门厅",
-    title: "门第一次没有要求你刷卡。",
-    copy: "你的脚步经过门禁，读卡器没有亮。玻璃里的倒影比你慢了半拍，像这栋楼终于来不及再把你登记成一个在岗员工。",
-    quote: "“别回头。回头就又是明天。”",
+    title: "门禁这次没有让你打卡",
+    copy: "你的脚步经过门禁，读卡器沉默无声。玻璃里的倒影比你慢了半拍，像这栋楼终于来不及再把你登记在册。",
+    quote: "“别回头。回头就又是昨天。”",
     action: "走出大门",
   },
   {
     src: "/endings/02-outside-threshold.png",
     alt: "主角的灵魂走出住宅楼，林若岚留在玻璃门后向他告别",
-    time: "00:10:00 / 物业边界之外",
+    time: "00:10:00 / 澄江物业之外",
     title: "这一次，没有离场记录。",
-    copy: "你的身体早已不在，留下的灵魂却第一次越过了物业边界。身后的终端失去连接，工牌、岗位和每天清晨的首次登录都没有追上来。",
-    quote: "门内有人抬起手。你知道她终于不需要再等一次。",
+    copy: "人这一生需要经历三次死亡，看来这一刻，你的灵魂终于等到了最后一次。当身后的数据失去连接，你存留的记忆也在消散，但不论是户外的阳光还是身后温热的目光，都让你好受了些，那些重复的工序也没再追上来。",
+    quote: "门内有人在挥手告别，就像是你只是去菜市场买个菜那样。\n\n但她的眼神出卖了她，这是一次要跨越数万年的再次相见的开始。",
     action: "继续向前",
   },
 ] as const;
@@ -241,17 +241,17 @@ const loopEndingScenes = [
     alt: "失去记忆的主角以物业管理员身份站在1404门外，轮椅上的林若岚认出他",
     time: "08:41 / 1404门口",
     title: "他准时来了。像第一次一样。",
-    copy: "门铃响起时，桌上还放着两只杯子。CJ-0713站在门外，工牌端正，夹板上的表格从“住户身份核验”开始。他看见她的轮椅，也看见她，却没有认出任何一个等待过他的清晨。",
-    quote: "“林女士您好，我是物业管理员CJ-0713。今天第一次上门，请您配合身份核验。”",
+    copy: "门铃响起时，你站在门外，工牌端正，今天的工作从“住户身份核验”开始。他看见她眼里的哀伤，却没有认出任何一次重逢的清晨，桌上的两只杯子还冒着热气。",
+    quote: "“林女士您好，我是物业管理员CJ-0713。今天第一次上门，请您配合验证下户主身份。”",
     action: "继续本次回访",
   },
   {
     src: "/endings/04-loop-sugar-box.png",
     alt: "林若岚独自坐在1404餐桌旁收起为丈夫准备的糖盒",
     time: "08:46 / 1404餐桌",
-    title: "她没有再纠正“第一次”。",
-    copy: "她在服务单上写下自己的名字，没有再补充“妻子”，也没有再问他是否记得。门关上以后，她把第二只杯子里的水倒掉，把那盒他值夜班会吃的糖重新盖好。",
-    quote: "“谢谢你来。”",
+    title: "她没有再纠结。",
+    copy: "在服务单上签下自己的名字，没有再犹豫、也没有再期许。等待是一把磨人的刀子，因为不知道明天何时会来。门关上以后，也许就是最后一次看向你的背影了吧，陈峻。",
+    quote: "“谢谢你来过。”",
     action: "归档回访记录",
   },
 ] as const;
@@ -3776,7 +3776,7 @@ export default function Home() {
     </>;
 
     if (id === "clock-out") return <>
-      <div className="final-question"><span>自然显现窗口剩余</span><strong>00:01:24</strong><h2>她仍然看得见你。</h2><blockquote>“这一次，你是回来下班，还是回来和我告别？”</blockquote></div>
+      <div className="final-question"><h2>她仍然看得见你。</h2><blockquote>“这一次，你是回来下班，还是回来和我告别？”</blockquote></div>
       <div className="ending-options"><button disabled={!game.colleagueSolved || !game.cs046Solved} onClick={() => chooseEnding("expose")}><span>完整证据链</span><strong>向警方和业委会提交全部材料</strong><small>{game.colleagueSolved && game.cs046Solved ? "提交封存物、1104空腔、回访归档缺口与资金审批链" : !game.colleagueSolved ? "缺少1104工程与人事交叉证据；可继续搜索周明川" : "回访质检仍有未归档段落；可从客户回访目录补齐"}</small></button><button onClick={() => chooseEnding("loop")}><span>仅完成当前工单</span><strong>修正住户档案并重新打卡</strong><small>关闭本次异常账号，不继续追查恒目及历史内部转移</small></button></div>
     </>;
 
@@ -3975,9 +3975,9 @@ export default function Home() {
         {renderBackgroundMusicControl()}
         {endingStep === 0 ? <section className="ending-terminal-release" aria-live="polite">
           <div className="ending-terminal-release__status"><EyeMark small/><span>EXTERNAL EVIDENCE TRANSFER</span><b>100%</b></div>
-          <p>事故回执、殡仪馆转出单、1104破拆记录与回访冷备份已离开物业内网。</p>
+          <p>CJ-0713，或者说，陈峻，已经离开【物业内网】</p>
           <h1>证据已经出去。<br/>现在轮到你了。</h1>
-          <dl><div><dt>当前账号</dt><dd>CJ-0713</dd></div><div><dt>终端权限</dt><dd>已撤销</dd></div><div><dt>自然显现窗口</dt><dd>00:00:03</dd></div></dl>
+          <dl><div><dt>当前账号</dt><dd className="ending-account-flash" aria-label="CJ-0713，陈峻，CS-046"><span>CJ-0713</span><del>陈峻</del><i>CS-046</i></dd></div><div><dt>终端权限</dt><dd>已撤销</dd></div></dl>
           <button type="button" onClick={() => setEndingStep(1)}>离开终端</button>
         </section> : <section className="ending-cinematic" aria-live="polite">
           <Image key={departureScene.src} src={assetPath(departureScene.src)} alt={departureScene.alt} fill priority sizes="100vw" unoptimized />
@@ -3991,9 +3991,10 @@ export default function Home() {
             <button type="button" onClick={() => setEndingStep((current) => current + 1)}>{departureScene.action}</button>
           </article> : <article className="ending-cinematic__caption ending-cinematic__caption--epilogue">
             <span>结局 / 办理退房</span>
-            <h1>天亮以后，<br/>CJ-0713没有回来。</h1>
-            <p>系统第一次记住了所有死者，也第一次无法重新调用你的名字。大楼恢复成一栋普通的房子，而你的灵魂沿着雨停后的街道继续向前。</p>
-            <blockquote>“你这次回来，是为了好好离开。”</blockquote>
+            <h1>天亮以后，<br/>陈峻 成为一个可以被缅怀的名字。</h1>
+            <p>系统承认了死亡的存在，他不能再用那些工号封存灵魂，也许过些阵子，这栋楼也会迎来送往、恢复平静。</p>
+            <p>而你的灵魂沿着雨停后的街道继续向前，阳光出来了，照的人很暖和。</p>
+            <blockquote>“你这次醒来，是为了好好告别。”</blockquote>
             <div className="ending-epilogue-actions"><a href={`${BASE_PATH}/truth/`}>查看全案真相</a><button className="ending-choice-return" type="button" onClick={reconsiderEnding}>重新选择结局</button><button type="button" onClick={restartGame}>从新的检索记录开始</button></div>
           </article>}
         </section>}
@@ -4006,9 +4007,9 @@ export default function Home() {
       {renderBackgroundMusicControl()}
       {endingStep === 0 ? <section className="ending-terminal-release ending-terminal-release--loop" aria-live="polite">
         <div className="ending-terminal-release__status"><EyeMark small/><span>MEM-CONSISTENCY / SESSION CLOSED</span><b>100%</b></div>
-        <p>本次异常仅按物业内部工单结案。事故主体、1404关系字段及恒目审批链未向外部提交。</p>
+        <p>本次异常按物业内部工单结案。</p>
         <h1>关系字段已归零。<br/>下一班次可以开始。</h1>
-        <dl><div><dt>当前账号</dt><dd>CJ-0713 / 在岗</dd></div><div><dt>1404关系</dt><dd>普通住户 / 首次接触</dd></div><div><dt>历史投诉</dt><dd>已归档 / 不继承至新会话</dd></div></dl>
+        <dl><div><dt>当前账号</dt><dd>CJ-0713 / 在岗</dd></div><div><dt>历史投诉</dt><dd>已归档 / 不继承至新会话</dd></div></dl>
         <button type="button" onClick={() => setEndingStep(1)}>进入下一班次</button>
       </section> : <section className="ending-cinematic ending-cinematic--loop" aria-live="polite">
         <Image key={loopScene.src} src={assetPath(loopScene.src)} alt={loopScene.alt} fill priority sizes="100vw" unoptimized />
@@ -4022,9 +4023,9 @@ export default function Home() {
           <button type="button" onClick={() => setEndingStep((current) => current + 1)}>{loopScene.action}</button>
         </article> : <article className="ending-cinematic__caption ending-cinematic__caption--epilogue ending-cinematic__caption--loop">
           <span>结局 / 重新打卡</span>
-          <h1>她终于不再等你想起来。</h1>
-          <p>系统把这次回访登记为第224次“首次接触”。从这一天起，1404没有再提交固定回访人员重复上门的投诉。不是因为问题解决了，而是林若岚不再相信下一次会有所不同。</p>
-          <blockquote>今日待办：处理1204夜间滴水投诉。</blockquote>
+          <h1>她终于不再等。</h1>
+          <p>系统把这次回访登记为第224次“首次接触”。从这一天起，1404没有再提交任何看起来像是在找茬的投诉单，只因为她不再相信下一次会有所不同。</p>
+          <blockquote>系统困住了很多人，也许这一次，她选择解救自己。</blockquote>
           <div className="ending-epilogue-actions"><a href={`${BASE_PATH}/truth/`}>查看全案真相</a><button className="ending-choice-return" type="button" onClick={reconsiderEnding}>重新选择结局</button><button type="button" onClick={restartGame}>从新的检索记录开始</button></div>
         </article>}
       </section>}
@@ -4063,7 +4064,7 @@ export default function Home() {
         <section><span>当前调查</span><strong>{objective}</strong><small>系统不会自动打开下一篇记录</small></section>
         <nav><button className={game.view === "home" ? "is-active" : ""} onClick={goHome}>调查首页</button><button className={game.view === "search" ? "is-active" : ""} onClick={goSearchResults}>最近结果</button><button className={`${game.view === "callbacks" ? "is-active" : ""} ${availableCallbacks.some((record) => !game.callbackRead.includes(record.id)) ? "has-alert" : ""}`} onClick={openCallbackCenter}>客户回访{availableCallbacks.some((record) => !game.callbackRead.includes(record.id)) && <i>{availableCallbacks.filter((record) => !game.callbackRead.includes(record.id)).length}条新记录</i>}</button><button onClick={openArchiveIndex}>档案阅读</button><button className={fatherDeductionUnlocked && !game.fatherResolved ? "has-alert" : ""} onClick={openDeductionDesk}>真相推导{fatherDeductionUnlocked && !game.fatherResolved && <i>可推导</i>}</button><button onClick={openLedger}>证据台账</button><button onClick={openMessageBoard}>用户留言板</button></nav>
         <div className="history-list"><span>检索历史</span>{game.searchHistory.length ? game.searchHistory.map((term) => <button key={term} onClick={() => searchFor(term)}>{term}</button>) : <small>尚无检索记录</small>}</div>
-        <footer><span>服务器时间</span><strong>{memoryRewriteActive ? "00:09:42" : game.homeSolved ? "00:09:14" : "2026-07-13 08:43"}</strong><small>{memoryRewriteActive ? "覆盖写入进行中" : game.homeSolved ? "自然显现窗口" : "档案索引正常"}</small></footer>
+        <footer><span>服务器时间</span><strong>{memoryRewriteActive ? "00:09:42" : game.homeSolved ? "00:09:14" : "2026-07-13 08:43"}</strong><small>{memoryRewriteActive ? "覆盖写入进行中" : game.homeSolved ? "外部证据已保全" : "档案索引正常"}</small></footer>
       </aside>
 
       <section className="archive-content">

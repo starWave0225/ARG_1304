@@ -209,8 +209,8 @@ export default function TruthPage() {
         <div className={styles.heroCopy}>
           <span>完整剧透 · 创作真相与档案边界</span>
           <h1>全案真相档案</h1>
-          <p>四个房号不是四起互不相干的怪事。它们共同证明：澄江物业正在替恒目保存死者、重置目击者，并把无法离开的意识重新编进每天的工作流程。</p>
-          <div><b>04</b><span>核心案件</span><b>17</b><span>异常转移员工</span><b>223</b><span>重复的首次接触</span></div>
+          <p>四个房号不是四起互不相干的怪事。它们共同指向一个真相：恒目操纵下的澄江物业正在滞留死者的灵魂、把无法离开的意识收编、并抹除知晓了真相的目击者。</p>
+          <div><b>04</b><span>核心案件</span><b>17</b><span>异常转移员工</span><b>223</b><span>重复的第一次回访</span></div>
         </div>
       </section>
 
@@ -233,8 +233,8 @@ export default function TruthPage() {
           <div className={styles.overviewGrid}>
             <div>
               <p className={styles.kicker}>一句话总论</p>
-              <h2>主角不是在调查闹鬼的公寓。<br />他正在调查自己为什么死后仍在上班。</h2>
-              <p className={styles.lead}>恒目与其背后的全知教会发现，意外死亡者的遗物、未结关系和重复的信息系统可以形成“回返窗口”。物业被改造成一座观察设施：骨灰盒是锚点，员工账号是容器，工单是唤醒路径，记忆清除则保证实验每天可以重新开始。</p>
+              <h2>主角不是什么传奇调查员。<br />他只是被收编的特殊员工。</h2>
+              <p className={styles.lead}>恒目发现，意外死亡者的遗物、生者与往生者纠缠的执念和严谨闭环的信息系统可以形成“回返窗口”。物业被改造成一座观察设施：骨灰盒是锚点，员工账号是容器，工单是唤醒路径，记忆清除则保证实验每天可以重新开始。</p>
             </div>
             <aside className={styles.boundary}>
               <strong>这页如何陈述真相</strong>
