@@ -58,7 +58,7 @@ const caseFiles = [
     id: "case-1204",
     number: "01",
     unit: "1204",
-    title: "空置房里的未登记儿童",
+    title: "空置房间的幽灵孩子",
     verdict: "许芷遥确实住在1204。物业的“空置”只是没有被纠正的台账状态；真正把她引出房间、带到1304门外的是顾小满。",
     image: "/rescue-route/02-1204-corridor.jpg",
     imageAlt: "1204门外的潮湿脚印与孩童影子",

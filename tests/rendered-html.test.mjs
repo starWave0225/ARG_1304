@@ -58,7 +58,7 @@ test("publishes a complete standalone truth archive after the endings", async ()
   assert.match(html, /全案真相档案/);
   assert.match(html, /主角不是什么传奇调查员[\s\S]*?他只是被收编的特殊员工/);
   assert.match(html, /id="case-1204"/);
-  assert.match(html, /空置房里的未登记儿童/);
+  assert.match(html, /空置房间的幽灵孩子/);
   assert.match(html, /id="case-1404"/);
   assert.match(html, /主角是谁，以及妻子为什么一直认得他/);
   assert.match(html, /恒目不是普通外包商/);
