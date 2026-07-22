@@ -826,6 +826,8 @@ test("makes the 1404 complaint and memory rewrite the final chapter", async () =
   assert.match(page, /queuedArticle\("church-compliance", "恒目"[\s\S]*?queuedArticle\("workorder-1404", "1404"/);
   assert.match(page, /工单转派至被投诉的固定回访人员 CJ-0713/);
   assert.match(page, /id: "w04-directory"[\s\S]*?available: \(game\) => hasVisited\(game, "workorder-1404"\)/);
+  const w04Directory = page.match(/id: "w04-directory"[\s\S]*?available: \(game\) => hasVisited\(game, "workorder-1404"\)/)?.[0] ?? "";
+  assert.doesNotMatch(w04Directory, /账号建档时刻/);
   assert.match(page, /id: "identity-1404"[\s\S]*?available: \(game\) => hasUnlockedArticle\(game, "crash-cj0713"\) && hasUnlockedArticle\(game, "on-site-device"\),/);
   assert.match(page, /type MemoryRewriteStage = "none" \| "queued" \| "running" \| "resisted"/);
   assert.match(page, /restored\.homeSolved[\s\S]*?"workorder-1404"/);
