@@ -344,7 +344,7 @@ export default function TruthPage() {
           </div>
           <footer className={styles.finalNote}>
             <span>FINAL NOTE</span>
-            <p>好结局不是“战胜死亡”。主角早已无法回到日常。它只是让真相被活人保留，让死者不必再以岗位和账号证明自己仍存在。</p>
+            <p>好结局从不是“战胜死亡”的奇迹。逝去的人早已无法回到日常，活着的人也无法释怀失去的疼痛，只是，生活仍在继续，遗忘或者释怀都可以是生者做出的选择，不该被人利用，不该被人左右，大楼里的存在如是，脑海中的记忆如是。</p>
             <a href={`${BASE_PATH}/`}>返回澄江物业登录终端</a>
           </footer>
         </div>

@@ -106,6 +106,8 @@ test("publishes a complete standalone truth archive after the endings", async ()
   assert.match(html, /好结局：雨过天晴/);
   assert.match(html, /总有回忆会替两人记得/);
   assert.match(html, /林若岚选择解救独留人间的自己/);
+  assert.match(html, /好结局从不是“战胜死亡”的奇迹/);
+  assert.match(html, /大楼里的存在如是，脑海中的记忆如是/);
   assert.match(html, /hengmurecyclezm0602/);
   assert.match(html, /坏结局：第一次见，Again/);
   assert.match(gamePage, /href=\{`\$\{BASE_PATH\}\/truth\/`\}>查看全案真相/);
