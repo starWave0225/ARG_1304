@@ -3412,7 +3412,7 @@ export default function Home() {
       <div className="callout"><strong>紧急协查对象登记</strong><p>未成年人失联不受住户登记状态限制。此表仅用于报警协查、公共区域录像调阅和现场辨认，不补录产权、租赁或常住关系。</p></div>
       <form className="archive-form" onSubmit={submitChild} autoComplete="off">
         <label>儿童姓名<input value={childName} onChange={(event) => setChildName(event.target.value)} placeholder="输入中文姓名" /></label>
-        <label>出生日期（年月日）<input value={childBirthday} onChange={(event) => setChildBirthday(event.target.value)} placeholder="x年x月x日" /></label>
+        <label>出生日期（年月日）<input value={childBirthday} onChange={(event) => setChildBirthday(event.target.value)} placeholder="例：x年x月x日" /></label>
         <label>父亲姓名<input value={childFather} onChange={(event) => setChildFather(event.target.value)} placeholder="按监护材料填写" /></label>
         <label>母亲姓名<input value={childMother} onChange={(event) => setChildMother(event.target.value)} placeholder="按监护材料填写" /></label>
         <label>与报警人关系<select value={childRelation} onChange={(event) => setChildRelation(event.target.value)}><option value="">选择</option><option value="child">报警人监护子女</option><option value="relative">其他同行未成年人</option><option value="unknown">关系待核</option></select></label>
@@ -3780,10 +3780,36 @@ export default function Home() {
       <div className="ending-options"><button disabled={!game.colleagueSolved || !game.cs046Solved} onClick={() => chooseEnding("expose")}><span>完整证据链</span><strong>向警方和业委会提交全部材料</strong><small>{game.colleagueSolved && game.cs046Solved ? "提交封存物、1104空腔、回访归档缺口与资金审批链" : !game.colleagueSolved ? "缺少1104工程与人事交叉证据；可继续搜索周明川" : "回访质检仍有未归档段落；可从客户回访目录补齐"}</small></button><button onClick={() => chooseEnding("loop")}><span>仅完成当前工单</span><strong>修正住户档案并重新打卡</strong><small>关闭本次异常账号，不继续追查恒目及历史内部转移</small></button></div>
     </>;
 
-    if (id === "noise-elevator") return <><div className="callout"><strong>已排除</strong><p>00:04固件重启只影响轿厢显示屏，不影响12层摄像机、门磁或声学设备。</p></div><p>该记录与W-0713-019时间重合，但无法解释湿脚印和住户数量异常。</p></>;
-    if (id === "noise-pipe") return <><p>1203空调排水管已更换。滴水为随机发生，不具有固定时间，也没有儿童声纹。</p><aside className="article-note">相似投诉不代表同一原因。注意核对房号。</aside></>;
-    if (id === "noise-cat") return <><p>13层流浪猫脚印为四足掌印，集中在消防门外。监控中的潮湿痕迹为双足、约16厘米长。</p><div className="document-stamp">误报已关闭</div></>;
-    if (id === "noise-alcohol") return <><p>1302住户争执与酒精有关，妻子确曾报警，但双方均无伤亡。该记录因关键词相似被自动关联。</p><aside className="article-note">自动关联可信度：12%</aside></>;
+    if (id === "noise-elevator") return <div className="workorder-document service-order-document">
+      <header className="workorder-sheet-head"><div><span>澄江物业服务中心 / 设施设备服务单</span><strong>2号电梯楼层显示异常</strong><small>服务单号：DT-0710-024 · 自动转派维保单位</small></div><aside><i>电梯维保</i><b>已完成</b></aside></header>
+      <dl className="workorder-meta-grid"><div><dt>报事位置</dt><dd>2号电梯轿厢</dd></div><div><dt>报事时间</dt><dd>2026-07-10 00:06</dd></div><div><dt>报事渠道</dt><dd>夜班巡逻上报</dd></div><div><dt>到场时间</dt><dd>2026-07-10 08:35</dd></div><div><dt>服务类别</dt><dd>显示屏 / 固件维护</dd></div><div><dt>维保单位</dt><dd>澄江迅达电梯服务</dd></div><div><dt>停梯时长</dt><dd>0分钟</dd></div><div><dt>回访结果</dt><dd>运行正常</dd></div></dl>
+      <section className="workorder-section"><header><b>01</b><div><h3>报事内容</h3><span>夜班秩序员原始记录</span></div></header><p className="workorder-description">巡逻员搭乘2号电梯时发现楼层显示短暂熄灭，约十余秒后自行恢复。电梯升降、开关门及警铃均可正常使用，轿厢内无困人。</p></section>
+      <section className="workorder-section"><header><b>02</b><div><h3>处理记录</h3><span>维保人员现场填写</span></div></header><div className="workorder-history"><article><time>07-10 00:04</time><i className="is-done"/><div><strong>设备平台</strong><p>显示控制板执行例行固件重启，后台收到一次离线后恢复心跳。</p></div></article><article><time>07-10 08:35</time><i className="is-done"/><div><strong>维保员 / 罗师傅</strong><p>检查显示控制板接线并连续试运行12次，未复现黑屏；主控、门机和安全回路日志正常。</p></div></article><article><time>07-10 09:02</time><i className="is-done"/><div><strong>客服中心</strong><p>电话回访夜班巡逻员，确认早班巡查期间显示正常，同意结单。</p></div></article></div></section>
+      <footer className="workorder-signoff"><span>结单人：工程主管 / 吴正</span><span>结单时间：2026-07-10 09:08</span><span>费用：月度维保范围内</span></footer>
+    </div>;
+    if (id === "noise-pipe") return <div className="workorder-document service-order-document">
+      <header className="workorder-sheet-head"><div><span>澄江物业服务中心 / 住户报修服务单</span><strong>1203空调冷凝水滴落</strong><small>服务单号：WX-0708-118 · 一次上门完成</small></div><aside><i>户内维修</i><b>已回访</b></aside></header>
+      <dl className="workorder-meta-grid"><div><dt>报事房号</dt><dd>1号楼1203</dd></div><div><dt>报事人</dt><dd>孙女士</dd></div><div><dt>受理时间</dt><dd>2026-07-08 14:17</dd></div><div><dt>预约时段</dt><dd>当日 16:00—17:00</dd></div><div><dt>故障部位</dt><dd>次卧挂机排水</dd></div><div><dt>责任班组</dt><dd>工程维修组</dd></div><div><dt>材料使用</dt><dd>排水软管1.5米</dd></div><div><dt>费用确认</dt><dd>公共服务 / 免收</dd></div></dl>
+      <section className="workorder-section"><header><b>01</b><div><h3>住户描述</h3><span>客服受理原话摘录</span></div></header><p className="workorder-description">“次卧靠窗的位置一直滴水，我开始以为是楼上漏下来的，后来关掉空调就慢慢停了。麻烦下午来看看，家里有人。”</p></section>
+      <section className="workorder-section"><header><b>02</b><div><h3>上门处理</h3><span>现场工单 / 陈工</span></div></header><div className="workorder-history"><article><time>07-08 16:12</time><i className="is-done"/><div><strong>检查</strong><p>次卧挂机排水软管老化开裂，冷凝水沿墙角滴落；墙顶及楼板检视无渗水痕迹。</p></div></article><article><time>07-08 16:29</time><i className="is-done"/><div><strong>维修</strong><p>更换排水软管并调整外排坡度，连续制冷试机20分钟，排水通畅。</p></div></article><article><time>07-09 10:06</time><i className="is-done"/><div><strong>回访</strong><p>住户反馈昨晚使用空调后未再滴水，服务态度评价“满意”。</p></div></article></div></section>
+      <footer className="workorder-signoff"><span>维修人：工程维修组 / 陈工</span><span>住户确认：孙女士（线上）</span><span>状态：回访完成</span></footer>
+    </div>;
+    if (id === "noise-cat") return <div className="workorder-document service-order-document">
+      <header className="workorder-sheet-head"><div><span>澄江物业服务中心 / 公共区域巡查单</span><strong>13层消防门外动物活动</strong><small>服务单号：ZX-0702-063 · 秩序与保洁联合处理</small></div><aside><i>环境秩序</i><b>已关闭</b></aside></header>
+      <dl className="workorder-meta-grid"><div><dt>报事区域</dt><dd>1号楼13层北侧楼梯间</dd></div><div><dt>报事时间</dt><dd>2026-07-02 23:48</dd></div><div><dt>报事人</dt><dd>1303住户</dd></div><div><dt>现场到达</dt><dd>2026-07-03 00:03</dd></div><div><dt>问题类型</dt><dd>异响 / 动物活动</dd></div><div><dt>处理班组</dt><dd>秩序维护、环境保洁</dd></div><div><dt>发现数量</dt><dd>成猫1只</dd></div><div><dt>复查结果</dt><dd>连续三晚未再进入</dd></div></dl>
+      <section className="workorder-section"><header><b>01</b><div><h3>现场情况</h3><span>秩序员执法记录仪转写</span></div></header><p className="workorder-description">消防门外发现一只黑色成猫及少量猫粮，墙边有零散四足掌印。1303住户承认曾在安全出口旁投喂，现场未发现幼猫或人员滞留。</p><div className="workorder-tags"><span>消防通道</span><span>住户投喂</span><span>无人员受伤</span><span>现场已清洁</span></div></section>
+      <section className="workorder-section"><header><b>02</b><div><h3>现场附件</h3><span>IMG-ZX0702-063-01 · 2026-07-03 00:05</span></div></header><figure className="service-order-photo"><div><Image src={assetPath("/evidence/noise-cat-13f.png")} alt="13层楼道拐角处趴着一只蓝色与琥珀色异瞳的黑猫" fill sizes="(max-width: 760px) 100vw, 760px" unoptimized /></div><figcaption><strong>13层北侧消防门外现场照片</strong><span>夜班秩序员手机拍摄 · 原图未作图像增强</span></figcaption></figure></section>
+      <section className="workorder-section"><header><b>03</b><div><h3>处置与复查</h3><span>按公共区域动物处置流程记录</span></div></header><div className="workorder-history"><article><time>07-03 00:11</time><i className="is-done"/><div><strong>秩序维护 / 赵班长</strong><p>引导流浪猫离开楼梯间，清除猫粮碗，并向投喂住户说明消防通道管理要求。</p></div></article><article><time>07-03 06:40</time><i className="is-done"/><div><strong>环境保洁 / 刘阿姨</strong><p>完成地面清洁和消毒，消防门闭门器、门锁及疏散标识检查正常。</p></div></article><article><time>07-06 07:30</time><i className="is-done"/><div><strong>早班复查</strong><p>连续三晚未发现猫粮、动物粪便或新的掌印，工单关闭。</p></div></article></div></section>
+      <footer className="workorder-signoff"><span>现场负责人：赵志强</span><span>复查人：秩序早班 / 何立</span><span>附件：现场照片3张</span></footer>
+    </div>;
+    if (id === "noise-alcohol") return <div className="workorder-document service-order-document">
+      <header className="workorder-sheet-head"><div><span>澄江物业服务中心 / 秩序事件服务单</span><strong>1302深夜酒瓶坠落及邻里纠纷</strong><small>服务单号：ZX-0630-211 · 夜班现场协调</small></div><aside><i>秩序事件</i><b>已结案</b></aside></header>
+      <dl className="workorder-meta-grid"><div><dt>事发房号</dt><dd>1号楼1302</dd></div><div><dt>首次来电</dt><dd>2026-06-30 23:21</dd></div><div><dt>报事人</dt><dd>1301住户</dd></div><div><dt>到场时间</dt><dd>2026-06-30 23:28</dd></div><div><dt>事件类型</dt><dd>噪声 / 家庭争执</dd></div><div><dt>现场人员</dt><dd>住户2人、秩序员2人</dd></div><div><dt>物损情况</dt><dd>酒瓶1只破损</dd></div><div><dt>后续状态</dt><dd>双方自行协商</dd></div></dl>
+      <section className="workorder-section"><header><b>01</b><div><h3>报事与现场</h3><span>客服及夜班记录合并</span></div></header><p className="workorder-description">1301住户反映楼上传来争吵和玻璃破碎声。秩序员到场时，1302夫妻正在客厅争执，男方饮酒；一只空酒瓶掉落在厨房门口。两人均表示未受伤，现场无儿童。</p></section>
+      <section className="workorder-section"><header><b>02</b><div><h3>协调经过</h3><span>仅记录物业处置范围</span></div></header><div className="workorder-history"><article><time>06-30 23:31</time><i className="is-done"/><div><strong>秩序员 / 李放</strong><p>将双方暂时分开，清理通道附近碎玻璃，确认燃气阀及入户门状态正常。</p></div></article><article><time>06-30 23:44</time><i className="is-done"/><div><strong>1302女住户</strong><p>表示当晚前往亲属家休息，自行联系网约车；未要求物业代为报警或陪同就医。</p></div></article><article><time>07-01 11:20</time><i className="is-done"/><div><strong>客服回访</strong><p>双方电话均接通，确认无人员受伤及公共部位损坏；已再次告知夜间噪声管理约定。</p></div></article></div></section>
+      <aside className="workorder-audit"><div><span>隐私与权限说明</span><strong>物业仅记录现场秩序处置</strong><p>家庭关系及争执原因由当事人自行陈述，本服务单不作责任认定。</p></div><b>已归档</b></aside>
+      <footer className="workorder-signoff"><span>夜班负责人：李放</span><span>回访客服：CS-051</span><span>结单时间：2026-07-01 11:26</span></footer>
+    </div>;
     return <p>记录正文缺失。</p>;
   };
 

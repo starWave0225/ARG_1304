@@ -433,7 +433,7 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.match(page, /function normalizeChineseDate\(value: string\)/);
   assert.match(page, /normalizeChineseDate\(childBirthday\) !== "2020-04-12"/);
   assert.match(page, /normalizeChineseDate\(childLastDate\) !== "2026-07-13"/);
-  assert.match(page, /出生日期（年月日）<input value=\{childBirthday\}[\s\S]*placeholder="x年x月x日"/);
+  assert.match(page, /出生日期（年月日）<input value=\{childBirthday\}[\s\S]*placeholder="例：x年x月x日"/);
   assert.doesNotMatch(page, /出生日期（年月日）<input value=\{childBirthday\}[\s\S]*placeholder="例：2020年4月12日"/);
   assert.match(page, /最后确认日期（年月日）<input value=\{childLastDate\}[\s\S]*placeholder="x年x月x日"/);
   assert.doesNotMatch(page, /最后确认日期（年月日）<input value=\{childLastDate\}[\s\S]*placeholder="例：2026年7月13日"/);
@@ -1025,6 +1025,23 @@ test("locks the four 1404 records behind personal-memory passwords", async () =>
   assert.match(styles, /\.surveillance-eye-field/);
   assert.match(styles, /\.surveillance-eye-field \.eye-mark[\s\S]*animation: watched-eye-blink/);
   assert.match(styles, /@keyframes watched-eye-blink/);
+});
+
+test("renders all four noise records as complete property service orders", async () => {
+  const [page, styles] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(page, /noise-elevator[\s\S]*?设施设备服务单[\s\S]*?服务单号：DT-0710-024/);
+  assert.match(page, /noise-pipe[\s\S]*?住户报修服务单[\s\S]*?服务单号：WX-0708-118/);
+  assert.match(page, /noise-cat[\s\S]*?公共区域巡查单[\s\S]*?服务单号：ZX-0702-063/);
+  assert.match(page, /noise-cat-13f\.png/);
+  assert.match(page, /蓝色与琥珀色异瞳的黑猫/);
+  assert.match(page, /noise-alcohol[\s\S]*?秩序事件服务单[\s\S]*?服务单号：ZX-0630-211/);
+  assert.doesNotMatch(page, /该记录与W-0713-019时间重合|相似投诉不代表同一原因|自动关联可信度：12%/);
+  assert.match(styles, /\.service-order-document \.workorder-sheet-head/);
+  assert.match(styles, /\.service-order-photo/);
 });
 
 test("supports manual login to Zhou Mingchuan's optional local archive", async () => {

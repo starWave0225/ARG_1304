@@ -524,6 +524,15 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 
 /* Realistic work order */
 .workorder-document { border: 1px solid #cbd3d1; background: #fbfcfa; box-shadow: 0 12px 34px rgba(27,44,50,.07); }
+.service-order-document .workorder-sheet-head { border-bottom-color: #66818a; }
+.service-order-document .workorder-sheet-head aside b { background: #58786c; }
+.service-order-document .workorder-description { max-width: 76ch; }
+.service-order-photo { margin: 0; border: 1px solid #d5dcda; background: #fff; }
+.service-order-photo > div { position: relative; aspect-ratio: 16/10; overflow: hidden; background: #d9dedd; }
+.service-order-photo img { object-fit: cover; }
+.service-order-photo figcaption { display: flex; justify-content: space-between; gap: 18px; padding: 12px 14px; }
+.service-order-photo figcaption strong { color: #32464d; font-size: 10px; }
+.service-order-photo figcaption span { color: #7d8c91; font: 8px/1.4 var(--mono); text-align: right; }
 .workorder-sheet-head { display: flex; justify-content: space-between; gap: 24px; padding: 25px 28px; color: #e8eeee; background: #22343c; border-bottom: 4px solid #b14b46; }
 .workorder-sheet-head span,.workorder-sheet-head strong,.workorder-sheet-head small { display: block; }
 .workorder-sheet-head span { color: #8199a2; font: 8px/1 var(--mono); letter-spacing: .12em; }
