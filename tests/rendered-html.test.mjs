@@ -934,6 +934,8 @@ test("stages the evidence ending as the protagonist leaving the building", async
   assert.match(page, /\/endings\/01-lobby-farewell\.png/);
   assert.match(page, /\/endings\/02-outside-threshold\.png/);
   assert.match(page, /const \[endingStep, setEndingStep\] = useState\(0\)/);
+  assert.match(page, /departureEndingScenes\[endingStep - 1\] \?\? departureEndingScenes\[departureEndingScenes\.length - 1\]/);
+  assert.doesNotMatch(page, /departureEndingScenes\.at\(-1\)/);
   assert.match(page, /ending-terminal-release__status"><EyeMark small\/><span>EXTERNAL EVIDENCE TRANSFER<\/span>/);
   assert.match(page, /<p>CJ-0713，或者说，陈峻，已经离开【物业内网】<\/p>/);
   assert.match(page, /证据已经出去。<br\/>现在轮到你了。/);
@@ -970,6 +972,8 @@ test("stages the loop ending around the wife's repeated loss", async () => {
   assert.match(page, /他准时来了。像第一次一样。[\s\S]*?桌上的两只杯子还冒着热气[\s\S]*?请您配合验证下户主身份/);
   assert.match(page, /\/endings\/03-loop-first-visit\.png/);
   assert.match(page, /\/endings\/04-loop-sugar-box\.png/);
+  assert.match(page, /loopEndingScenes\[endingStep - 1\] \?\? loopEndingScenes\[loopEndingScenes\.length - 1\]/);
+  assert.doesNotMatch(page, /loopEndingScenes\.at\(-1\)/);
   assert.match(page, /关系字段已归零。<br\/>下一班次可以开始。/);
   assert.match(page, /今天第一次上门，请您配合验证下户主身份/);
   assert.match(page, /她没有再纠结[\s\S]*?等待是一把磨人的刀子[\s\S]*?最后一次看向你的背影了吧，陈峻[\s\S]*?谢谢你来过/);

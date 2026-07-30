@@ -3998,7 +3998,7 @@ export default function Home() {
 
   if (game.view === "ending" && game.ending) {
     if (game.ending === "expose") {
-      const departureScene = departureEndingScenes[endingStep - 1] ?? departureEndingScenes.at(-1)!;
+      const departureScene = departureEndingScenes[endingStep - 1] ?? departureEndingScenes[departureEndingScenes.length - 1];
       const epilogue = endingStep >= departureEndingScenes.length + 1;
       return <main className={`ending-performance ending-performance--step-${endingStep} ${epilogue ? "is-epilogue" : ""}`}>
         {backgroundMusicAudio}
@@ -4030,7 +4030,7 @@ export default function Home() {
         </section>}
       </main>;
     }
-    const loopScene = loopEndingScenes[endingStep - 1] ?? loopEndingScenes.at(-1)!;
+    const loopScene = loopEndingScenes[endingStep - 1] ?? loopEndingScenes[loopEndingScenes.length - 1];
     const loopEpilogue = endingStep >= loopEndingScenes.length + 1;
     return <main className={`ending-performance ending-performance--loop ending-performance--step-${endingStep} ${loopEpilogue ? "is-loop-epilogue" : ""}`}>
       {backgroundMusicAudio}
