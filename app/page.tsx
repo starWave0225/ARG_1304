@@ -1471,6 +1471,8 @@ function normalizeText(value: string) {
 
 function normalizeChineseDate(value: string) {
   const normalized = value.normalize("NFKC").trim();
+  const compact = normalized.match(/^(\d{4})(\d{2})(\d{2})$/);
+  if (compact) return `${compact[1]}-${compact[2]}-${compact[3]}`;
   const parts = normalized.match(/^(\d{4})\D+(\d{1,2})\D+(\d{1,2})(?:日|号)?$/);
   if (!parts) return normalized;
   return `${parts[1]}-${parts[2].padStart(2, "0")}-${parts[3].padStart(2, "0")}`;
@@ -1518,6 +1520,7 @@ function rankArticle(article: ArticleMeta, rawQuery: string, game: GameState) {
   const title = normalizeText(locked ? article.id : article.title);
   const snippet = normalizeText(locked ? article.section : article.snippet);
   const terms = (locked ? article.lockedTerms ?? [] : article.terms).map(normalizeText);
+  if (/^\d+$/.test(query)) return terms.includes(query) ? 10 : 0;
   let score = 0;
   if (title.includes(query)) score += 8;
   if (snippet.includes(query)) score += 3;
@@ -3146,7 +3149,8 @@ export default function Home() {
 
   const submitIdentity = (event: FormEvent) => {
     event.preventDefault();
-    if (normalizeText(homeWoman) !== "1404" || homeEmployee !== "2025-11-05" || normalizeText(homeDevice) !== "dl1105") {
+    const normalizedEmployeeDate = normalizeChineseDate(homeEmployee);
+    if (normalizeText(homeWoman) !== "1404" || normalizedEmployeeDate !== "2025-11-05" || normalizeText(homeDevice) !== "cj0713") {
       flash("字段核验失败：请按原始凭证填写，不要提交关系结论");
       return;
     }
@@ -3769,8 +3773,8 @@ export default function Home() {
       <aside className="identity-audit-intro"><span>人工核验要求</span><p>不要判断人物关系。只从三份原始凭证中抄录可交叉核验的字段；系统将自行计算主体关联。</p></aside>
       <form className="archive-form archive-form--wide identity-source-form" onSubmit={submitIdentity}>
         <label>事故协查回执中的紧急联系人房号<input value={homeWoman} onChange={(event) => setHomeWoman(event.target.value)} placeholder="四位房号" inputMode="numeric" /></label>
-        <label>CJ-0713账号的后台创建日期<input type="date" value={homeEmployee} onChange={(event) => setHomeEmployee(event.target.value)} /></label>
-        <label>1404封存物附件凭证编号<input value={homeDevice} onChange={(event) => setHomeDevice(event.target.value)} placeholder="例：XX-0000" /></label>
+        <label>CJ-0713账号的后台创建日期<input value={homeEmployee} onChange={(event) => setHomeEmployee(event.target.value)} placeholder="例：yyyymmdd" inputMode="numeric" /></label>
+        <label>1404封存物关联系统字段<input value={homeDevice} onChange={(event) => setHomeDevice(event.target.value)} placeholder="按标签字段填写" autoCapitalize="characters" spellCheck={false} /></label>
         <button className="primary-button">提交原始字段核验</button>
       </form>
     </>;

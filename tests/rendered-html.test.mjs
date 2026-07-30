@@ -431,6 +431,7 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.match(page, /<dt>监护人<\/dt><dd>许\*\*、赵\*\*<\/dd>/);
   assert.match(page, /<dt>出生日期<\/dt><dd>2020年4月12日<\/dd>/);
   assert.match(page, /function normalizeChineseDate\(value: string\)/);
+  assert.match(page, /const compact = normalized\.match\(\/\^\(\\d\{4\}\)\(\\d\{2\}\)\(\\d\{2\}\)\$\//);
   assert.match(page, /normalizeChineseDate\(childBirthday\) !== "2020-04-12"/);
   assert.match(page, /normalizeChineseDate\(childLastDate\) !== "2026-07-13"/);
   assert.match(page, /出生日期（年月日）<input value=\{childBirthday\}[\s\S]*placeholder="例：x年x月x日"/);
@@ -624,6 +625,7 @@ test("treats room numbers as narrow entry searches instead of master keys", asyn
   assert.match(page, /"1404": \["workorder-1404", "w04-directory"\]/);
   assert.match(page, /query\.match\(\/\^\(\?:房间\|房号\|单元\)\?\(1204\|1304\|1104\|1404\)\(\?:室\|房\|户\)\?\$\/\)/);
   assert.match(page, /if \(roomQuery\) \{[\s\S]*?if \(entryIndex === -1\) return 0;[\s\S]*?if \(!article\.available\(game\) && !indexedWhileLocked\) return 0;[\s\S]*?return 100 - entryIndex;/);
+  assert.match(page, /if \(\/\^\\d\+\$\/\.test\(query\)\) return terms\.includes\(query\) \? 10 : 0;/);
 });
 
 test("opens the 1104 live room view from Zhou's password-free plea", async () => {
@@ -884,6 +886,12 @@ test("makes the 1404 complaint and memory rewrite the final chapter", async () =
   assert.match(page, /正在写入员工标准记忆/);
   assert.match(page, /用原始记录阻断覆盖写入/);
   assert.match(page, /事故协查回执中的紧急联系人房号/);
+  assert.match(page, /CJ-0713账号的后台创建日期<input value=\{homeEmployee\}[\s\S]*placeholder="例：yyyymmdd"/);
+  assert.match(page, /1404封存物关联系统字段<input value=\{homeDevice\}[\s\S]*placeholder="按标签字段填写"/);
+  assert.match(page, /const normalizedEmployeeDate = normalizeChineseDate\(homeEmployee\)/);
+  assert.match(page, /normalizedEmployeeDate !== "2025-11-05" \|\| normalizeText\(homeDevice\) !== "cj0713"/);
+  assert.doesNotMatch(page, /1404封存物附件凭证编号<input/);
+  assert.doesNotMatch(page, /normalizeText\(homeDevice\) !== "dl1105"/);
   assert.match(page, /className="memory-admin-table"><p><span>REL-1404<\/span><b>来源冲突 · 3/);
   assert.match(page, /className="rewrite-diff"><article><span>REL-1404<\/span><b>原始字段已隔离/);
   assert.doesNotMatch(page, /className="memory-admin-table"><p><span>1404 \/ 林若岚/);
