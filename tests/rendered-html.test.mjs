@@ -887,11 +887,11 @@ test("makes the 1404 complaint and memory rewrite the final chapter", async () =
   assert.match(page, /用原始记录阻断覆盖写入/);
   assert.match(page, /事故协查回执中的紧急联系人房号/);
   assert.match(page, /CJ-0713账号的后台创建日期<input value=\{homeEmployee\}[\s\S]*placeholder="例：yyyymmdd"/);
-  assert.match(page, /1404封存物关联系统字段<input value=\{homeDevice\}[\s\S]*placeholder="按标签字段填写"/);
+  assert.match(page, /1404封存物附件凭证编号<input value=\{homeDevice\}[\s\S]*placeholder="例：XX-0000"/);
   assert.match(page, /const normalizedEmployeeDate = normalizeChineseDate\(homeEmployee\)/);
-  assert.match(page, /normalizedEmployeeDate !== "2025-11-05" \|\| normalizeText\(homeDevice\) !== "cj0713"/);
-  assert.doesNotMatch(page, /1404封存物附件凭证编号<input/);
-  assert.doesNotMatch(page, /normalizeText\(homeDevice\) !== "dl1105"/);
+  assert.match(page, /normalizedEmployeeDate !== "2025-11-05" \|\| normalizeText\(homeDevice\) !== "dl1105"/);
+  assert.match(page, /东临殡仪馆寄存转出单 DL-1105<\/dd>/);
+  assert.doesNotMatch(page, /DL-1105-██/);
   assert.match(page, /className="memory-admin-table"><p><span>REL-1404<\/span><b>来源冲突 · 3/);
   assert.match(page, /className="rewrite-diff"><article><span>REL-1404<\/span><b>原始字段已隔离/);
   assert.doesNotMatch(page, /className="memory-admin-table"><p><span>1404 \/ 林若岚/);

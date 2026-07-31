@@ -3150,7 +3150,7 @@ export default function Home() {
   const submitIdentity = (event: FormEvent) => {
     event.preventDefault();
     const normalizedEmployeeDate = normalizeChineseDate(homeEmployee);
-    if (normalizeText(homeWoman) !== "1404" || normalizedEmployeeDate !== "2025-11-05" || normalizeText(homeDevice) !== "cj0713") {
+    if (normalizeText(homeWoman) !== "1404" || normalizedEmployeeDate !== "2025-11-05" || normalizeText(homeDevice) !== "dl1105") {
       flash("字段核验失败：请按原始凭证填写，不要提交关系结论");
       return;
     }
@@ -3737,7 +3737,7 @@ export default function Home() {
 
     if (id === "on-site-device") return <>
       <div className="protected-unlock-trace protected-unlock-trace--3"><span>ASSET ISOLATION OPEN / ZC-LH</span><strong>资产隔离区已临时打开</strong><small>检测到当前账号与封存物标签同名</small></div>
-      <div className="device-record"><EyeMark /><span>ZC-LH 标签</span><strong>CJ-0713</strong><dl><div><dt>物品性质</dt><dd>住户自有封存物</dd></div><div><dt>附件凭证</dt><dd>东临殡仪馆寄存转出单 DL-1105-██</dd></div><div><dt>保管地址</dt><dd>1404</dd></div><div><dt>关联系统</dt><dd>外部打卡终端 / CJ-0713</dd></div></dl></div>
+      <div className="device-record"><EyeMark /><span>ZC-LH 标签</span><strong>CJ-0713</strong><dl><div><dt>物品性质</dt><dd>住户自有封存物</dd></div><div><dt>附件凭证</dt><dd>东临殡仪馆寄存转出单 DL-1105</dd></div><div><dt>保管地址</dt><dd>1404</dd></div><div><dt>关联系统</dt><dd>外部打卡终端 / CJ-0713</dd></div></dl></div>
       <section className="field-record"><header><span>SEALED ITEM / CUSTODY LOG</span><strong>封存物巡检与移交链</strong></header><div><p><time>2025-11-05</time><b>原址接收</b><span>住户提交东临殡仪馆转出凭证；物业仅拍摄外包装与封签，不接触内容物。</span></p><p><time>2025-11-06</time><b>标签写入</b><span>恒目管理员追加CJ-0713字段，未填写修改依据；物品本身无芯片、电源或网络模块。</span></p><p><time>2026-06-01</time><b>移库申请</b><span>公共寄存室提出统一保管，住户书面拒绝，要求继续留在1404原位置。</span></p><p><time>2026-07-13</time><b>例行核验</b><span>封签编号与原始照片一致，未见启封、移动或受潮痕迹。</span></p></div></section>
       <p>转出单中的姓名字段被上级权限遮蔽。当前页面只能核对紧急联系人电话尾号、转出日期、经办网点和封签编号；任何人物关系都必须等待外部事故回执交叉验证。</p>
       <aside className="article-note article-note--dark">事故协查接口的最后一层口令未写入资产库。封存物解锁后，住户端恢复了一条此前未归档的英文留言。</aside>
@@ -3774,7 +3774,7 @@ export default function Home() {
       <form className="archive-form archive-form--wide identity-source-form" onSubmit={submitIdentity}>
         <label>事故协查回执中的紧急联系人房号<input value={homeWoman} onChange={(event) => setHomeWoman(event.target.value)} placeholder="四位房号" inputMode="numeric" /></label>
         <label>CJ-0713账号的后台创建日期<input value={homeEmployee} onChange={(event) => setHomeEmployee(event.target.value)} placeholder="例：yyyymmdd" inputMode="numeric" /></label>
-        <label>1404封存物关联系统字段<input value={homeDevice} onChange={(event) => setHomeDevice(event.target.value)} placeholder="按标签字段填写" autoCapitalize="characters" spellCheck={false} /></label>
+        <label>1404封存物附件凭证编号<input value={homeDevice} onChange={(event) => setHomeDevice(event.target.value)} placeholder="例：XX-0000" autoCapitalize="characters" spellCheck={false} /></label>
         <button className="primary-button">提交原始字段核验</button>
       </form>
     </>;
