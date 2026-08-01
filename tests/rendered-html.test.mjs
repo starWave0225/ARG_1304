@@ -563,6 +563,8 @@ test("hides the 1204 service contacts inside a mixed building schedule", async (
   assert.match(page, /available: \(game\) => hasVisited\(game, "vacancy-1204"\)/);
   assert.match(page, /绿植养护[\s\S]*?净水滤芯更换[\s\S]*?室内保洁[\s\S]*?信件代收转交[\s\S]*?独居住户物资代办/);
   assert.match(page, /许建国 \/ 赵秀兰/);
+  assert.match(page, /产权登记人陈大国此前要求暂停续费，系统关闭后续保洁计划/);
+  assert.doesNotMatch(page, /预约联系人许建国未续费/);
   assert.match(page, /"scheduled-service-1204": \["vacancyMismatch"\]/);
   assert.doesNotMatch(vacancyBody, /许建国|赵秀兰|每月两次保洁/);
 });

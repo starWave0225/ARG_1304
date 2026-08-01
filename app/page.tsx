@@ -3325,7 +3325,7 @@ export default function Home() {
         <tr><td>1602</td><td>独居住户物资代办</td><td>潘月华 / 护工签收</td><td>每周一</td><td>正常履约</td></tr>
         <tr><td>1803</td><td>空调滤网清洗</td><td>宋明礼 / 租户签收</td><td>双月一次</td><td>已改期</td></tr>
       </tbody></table></div>
-      <section className="field-record"><header><span>SERVICE TRACE / 1204</span><strong>1204服务终止前后记录</strong></header><div><p><time>03-18 09:12</time><b>最后履约</b><span>赵秀兰现场签字，保洁人员归还一次性门禁授权。</span></p><p><time>03-31 18:00</time><b>停止派单</b><span>预约联系人许建国未续费，系统关闭后续保洁计划。</span></p><p><time>04-03 07:46</time><b>门禁事件</b><span>原服务关联卡再次进入1号楼；当日没有保洁工单、人员排班或前台钥匙借用。</span></p><p><time>04-04起</time><b>持续出现</b><span>同一关联卡几乎每日通行，客户服务系统没有生成新的履约记录。</span></p></div></section>
+      <section className="field-record"><header><span>SERVICE TRACE / 1204</span><strong>1204服务终止前后记录</strong></header><div><p><time>03-18 09:12</time><b>最后履约</b><span>赵秀兰现场签字，保洁人员归还一次性门禁授权。</span></p><p><time>03-31 18:00</time><b>停止派单</b><span>产权登记人陈大国此前要求暂停续费，系统关闭后续保洁计划。</span></p><p><time>04-03 07:46</time><b>门禁事件</b><span>原服务关联卡再次进入1号楼；当日没有保洁工单、人员排班或前台钥匙借用。</span></p><p><time>04-04起</time><b>持续出现</b><span>同一关联卡几乎每日通行，客户服务系统没有生成新的履约记录。</span></p></div></section>
       <aside className="article-note">排班表只能证明两人曾以服务联系人身份进入1204，不能自动证明产权、租赁或家庭关系。服务终止后的持续门禁需要与空置巡检原图另行核对。</aside>
       {renderArticleVerification("scheduled-service-1204")}
     </>;
