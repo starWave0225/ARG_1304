@@ -1089,7 +1089,10 @@ test("supports manual login to Zhou Mingchuan's optional local archive", async (
 });
 
 test("keeps the Zhou Mingchuan breach playable when camera access is unavailable", async () => {
-  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const [page, css] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
 
   assert.match(page, /type LegacyBreachStage = "none" \| "camera" \| "question"/);
   assert.match(page, /type LegacyCameraState = .*"fallback"/);
@@ -1110,6 +1113,8 @@ test("keeps the Zhou Mingchuan breach playable when camera access is unavailable
   assert.match(page, /track\.stop\(\)/);
   assert.match(page, /setLegacyBreachStage\("question"\)/);
   assert.doesNotMatch(page, /completeLegacyCameraCheck/);
+  assert.match(css, /\.legacy-camera-panel \{[^}]*max-height: calc\(100dvh - 56px\);[^}]*overflow-y: auto;[^}]*overscroll-behavior: contain;/);
+  assert.match(css, /\.legacy-camera-panel \{ max-height: calc\(100dvh - 24px\); \}/);
 });
 
 test("leaves only emerging red eyes after Zhou Mingchuan's account collapses", async () => {

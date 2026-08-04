@@ -1554,7 +1554,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .legacy-empty span { color: #445559; font: 600 18px/1 var(--serif); }
 .legacy-empty p { max-width: 340px; margin: 0; font-size: 10px; line-height: 1.8; }
 .legacy-camera-gate { position: fixed; z-index: 105; inset: 0; display: grid; place-items: center; padding: 28px; color: #d9dfde; background: radial-gradient(circle at 50% 38%,rgba(49,66,68,.25),transparent 42%),rgba(4,8,9,.96); backdrop-filter: blur(8px); }
-.legacy-camera-panel { width: min(620px,100%); border: 1px solid #39494c; background: #0d1517; box-shadow: 0 28px 100px rgba(0,0,0,.75),inset 0 0 50px rgba(112,143,144,.025); }
+.legacy-camera-panel { width: min(620px,100%); max-height: calc(100dvh - 56px); overflow-y: auto; overscroll-behavior: contain; border: 1px solid #39494c; background: #0d1517; box-shadow: 0 28px 100px rgba(0,0,0,.75),inset 0 0 50px rgba(112,143,144,.025); }
 .legacy-camera-panel > header { min-height: 82px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 17px; padding: 18px 22px; border-bottom: 1px solid #344245; background: #111b1e; }
 .legacy-camera-panel > header .eye-mark { color: #829699; }
 .legacy-camera-panel > header span { display: block; color: #72868a; font: 8px/1 var(--mono); letter-spacing: .12em; }
@@ -1979,6 +1979,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
   .legacy-document > footer b { text-align: right; }
   .legacy-return-eyes > div { inset: -3% -14%; grid-template-columns: repeat(7,minmax(0,1fr)); grid-template-rows: repeat(16,minmax(0,1fr)); }
   .legacy-camera-gate { padding: 12px; }
+  .legacy-camera-panel { max-height: calc(100dvh - 24px); }
   .legacy-camera-panel > header { grid-template-columns: auto 1fr; }
   .legacy-camera-panel > header b { display: none; }
   .legacy-camera-panel > footer { align-items: stretch; flex-direction: column; }
