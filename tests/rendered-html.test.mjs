@@ -36,13 +36,22 @@ test("server-renders the Room 1304 ARG opening performance", async () => {
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape/i);
 });
 
-test("keeps dense desktop investigation screens readable", async () => {
-  const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+test("keeps dense investigation screens readable across breakpoints", async () => {
+  const [styles, truthStyles] = await Promise.all([
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/truth/truth.module.css", import.meta.url), "utf8"),
+  ]);
+  const belowMinimumFontSize = /font-size\s*:\s*(?:[0-9](?:\.[0-9]+)?|1[01](?:\.[0-9]+)?)px/;
 
-  assert.match(styles, /@media \(min-width: 1100px\)/);
+  assert.match(styles, /@media \(min-width: 561px\)/);
+  assert.match(styles, /@media \(max-width: 560px\)[\s\S]*?\.record-article p[\s\S]*?font-size: 14px/);
   assert.match(styles, /\.record-article p[\s\S]*?font-size: 14px/);
   assert.match(styles, /\.archive-sidebar button[\s\S]*?font-size: 12px/);
   assert.match(styles, /\.callback-center-head p[\s\S]*?font-size: 13px/);
+  assert.doesNotMatch(styles, belowMinimumFontSize);
+  assert.match(truthStyles, /Cross-device readability floor/);
+  assert.match(truthStyles, /\.sectionHeading > p[\s\S]*?font-size: 13px/);
+  assert.doesNotMatch(truthStyles, belowMinimumFontSize);
 });
 
 test("publishes a complete standalone truth archive after the endings", async () => {
