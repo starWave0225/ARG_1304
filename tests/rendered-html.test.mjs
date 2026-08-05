@@ -1,6 +1,20 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import test from "node:test";
+
+async function listPublicImages(directory, prefix = "") {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const images = [];
+  for (const entry of entries) {
+    const publicPath = `${prefix}/${entry.name}`;
+    if (entry.isDirectory()) {
+      images.push(...await listPublicImages(new URL(`${entry.name}/`, directory), publicPath));
+    } else if (/\.(?:png|jpe?g|webp|gif|avif)$/i.test(entry.name)) {
+      images.push(publicPath);
+    }
+  }
+  return images.sort();
+}
 
 async function render(pathname = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
@@ -52,6 +66,26 @@ test("keeps dense investigation screens readable across breakpoints", async () =
   assert.match(truthStyles, /Cross-device readability floor/);
   assert.match(truthStyles, /\.sectionHeading > p[\s\S]*?font-size: 13px/);
   assert.doesNotMatch(truthStyles, belowMinimumFontSize);
+});
+
+test("preloads gameplay images in bounded background batches during the opening", async () => {
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const preloadDefinition = page.match(/const IMAGE_PRELOAD_GROUPS = \[[\s\S]*?\] as const;/)?.[0] ?? "";
+  const gameplayImages = (await listPublicImages(new URL("../public/", import.meta.url)))
+    .filter((path) => !/^\/(?:cover(?:-v\d+)?|og)\.png$/i.test(path));
+  const missingPreloads = gameplayImages.filter((path) => !preloadDefinition.includes(JSON.stringify(path)));
+
+  assert.equal(gameplayImages.length, 35);
+  assert.deepEqual(missingPreloads, []);
+  assert.match(page, /new window\.Image\(\)/);
+  assert.match(page, /image\.decoding = "async"/);
+  assert.match(page, /image\.fetchPriority = "low"/);
+  assert.match(page, /image\.onerror = finish/);
+  assert.match(page, /requestIdleCallback\(finish, \{ timeout: 1200 \}\)/);
+  assert.match(page, /Math\.min\(concurrency, paths\.length\)/);
+  assert.match(page, /connection\?\.saveData[\s\S]*?IMAGE_PRELOAD_GROUPS\.slice\(0, 1\)/);
+  assert.match(page, /slowNetwork[\s\S]*?IMAGE_PRELOAD_GROUPS\.slice\(0, 2\)/);
+  assert.match(page, /return \(\) => controller\.abort\(\)/);
 });
 
 test("publishes a complete standalone truth archive after the endings", async () => {

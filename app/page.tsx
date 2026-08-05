@@ -141,6 +141,16 @@ type RescueRouteDrag = {
   sourceIndex: number | null;
 };
 
+type NetworkInformationHint = {
+  effectiveType?: string;
+  saveData?: boolean;
+};
+
+type IdlePreloadWindow = Window & {
+  requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+  cancelIdleCallback?: (handle: number) => void;
+};
+
 const SAVE_KEY = "chengjiang-search-arg-v1";
 const MUSIC_PREF_KEY = "chengjiang-background-music-muted";
 const BACKGROUND_MUSIC_VOLUME = 0.14;
@@ -254,6 +264,56 @@ const loopEndingScenes = [
     quote: "“谢谢你来过。”",
     action: "归档回访记录",
   },
+] as const;
+
+const IMAGE_PRELOAD_GROUPS = [
+  [
+    "/cctv/cam-2358.png",
+  ],
+  [
+    "/memories/kitchen-evening.png",
+    "/memories/rainy-morning.png",
+    "/memories/weekend-laundry.png",
+  ],
+  [
+    "/cctv/cam-0004.png",
+    "/cctv/cam-0007.png",
+    "/cctv/cam-0010.png",
+    "/cctv/cam-0012.png",
+    "/evidence/xu-zhiyao-health-photo.png",
+    "/evidence/1204-child-shoes.png",
+    "/evidence/1204-ceiling-inspection.png",
+    "/evidence/1204-vacancy/01-covered-living-room.png",
+    "/evidence/1204-vacancy/02-covered-air-conditioner.png",
+    "/evidence/1204-vacancy/03-kitchen-recent-use.png",
+  ],
+  [
+    "/rescue-route/01-1204-child-room.jpg",
+    "/rescue-route/02-1204-corridor.jpg",
+    "/rescue-route/03-fire-stair.jpg",
+    "/rescue-route/04-13f-vestibule.jpg",
+    "/rescue-route/05-1304-door.jpg",
+    "/rescue-route/06-12f-elevator-lobby.png",
+    "/rescue-route/07-1304-archive-interior.png",
+    "/rescue-route/08-b2-parking.png",
+    "/rescue-route/09-1304-gu-changhe-ghost.png",
+    "/evidence/gu-changhe-cut-id.png",
+    "/evidence/1304-rescue-newspaper-aged.png",
+  ],
+  [
+    "/evidence/1104/room-live.jpg",
+    "/evidence/1104/room-live-ghost.jpg",
+    "/evidence/cs046-eye-cc0.jpg",
+    "/evidence/noise-cat-13f.png",
+    "/residents/w-04.png",
+    "/backgrounds/access-denied-corridor.png",
+  ],
+  [
+    "/endings/01-lobby-farewell.png",
+    "/endings/02-outside-threshold.png",
+    "/endings/03-loop-first-visit.png",
+    "/endings/04-loop-sugar-box.png",
+  ],
 ] as const;
 
 const legacyFiles = [
@@ -1581,6 +1641,79 @@ function Cs046SearchIntrusion({ stage }: { stage: number }) {
   </section>;
 }
 
+function waitForImagePreloadSlot(signal: AbortSignal) {
+  return new Promise<void>((resolve) => {
+    if (signal.aborted) {
+      resolve();
+      return;
+    }
+
+    const idleWindow = window as IdlePreloadWindow;
+    let idleHandle: number | null = null;
+    let timeoutHandle: number | null = null;
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      signal.removeEventListener("abort", finish);
+      if (idleHandle !== null) idleWindow.cancelIdleCallback?.(idleHandle);
+      if (timeoutHandle !== null) window.clearTimeout(timeoutHandle);
+      resolve();
+    };
+
+    signal.addEventListener("abort", finish, { once: true });
+    if (idleWindow.requestIdleCallback) {
+      idleHandle = idleWindow.requestIdleCallback(finish, { timeout: 1200 });
+    } else {
+      timeoutHandle = window.setTimeout(finish, 120);
+    }
+  });
+}
+
+function preloadImage(path: string, signal: AbortSignal) {
+  return new Promise<void>((resolve) => {
+    if (signal.aborted) {
+      resolve();
+      return;
+    }
+
+    const image = new window.Image();
+    let settled = false;
+    const timeout = window.setTimeout(finish, 15000);
+    function finish() {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timeout);
+      signal.removeEventListener("abort", finish);
+      image.onload = null;
+      image.onerror = null;
+      resolve();
+    }
+
+    signal.addEventListener("abort", finish, { once: true });
+    image.decoding = "async";
+    image.fetchPriority = "low";
+    image.onload = finish;
+    image.onerror = finish;
+    image.src = assetPath(path);
+    if (image.complete) finish();
+  });
+}
+
+async function preloadImageBatch(paths: readonly string[], concurrency: number, signal: AbortSignal) {
+  let nextIndex = 0;
+  const worker = async () => {
+    while (!signal.aborted) {
+      const imageIndex = nextIndex;
+      nextIndex += 1;
+      if (imageIndex >= paths.length) return;
+      await preloadImage(paths[imageIndex], signal);
+    }
+  };
+
+  await Promise.all(Array.from({ length: Math.min(concurrency, paths.length) }, worker));
+}
+
 export default function Home() {
   const [game, setGame] = useState<GameState>(initialGame);
   const [entryStage, setEntryStage] = useState<EntryStage>("dream");
@@ -1818,6 +1951,28 @@ export default function Home() {
       window.removeEventListener("popstate", applyBrowserRoute);
       window.removeEventListener("hashchange", applyBrowserRoute);
     };
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const connection = (navigator as Navigator & { connection?: NetworkInformationHint }).connection;
+    const slowNetwork = connection?.effectiveType === "slow-2g" || connection?.effectiveType === "2g";
+    const groups = connection?.saveData
+      ? IMAGE_PRELOAD_GROUPS.slice(0, 1)
+      : slowNetwork
+        ? IMAGE_PRELOAD_GROUPS.slice(0, 2)
+        : IMAGE_PRELOAD_GROUPS;
+    const concurrency = slowNetwork || connection?.saveData ? 1 : 3;
+
+    void (async () => {
+      for (const group of groups) {
+        await waitForImagePreloadSlot(controller.signal);
+        if (controller.signal.aborted) return;
+        await preloadImageBatch(group, concurrency, controller.signal);
+      }
+    })();
+
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {
