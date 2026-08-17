@@ -280,6 +280,7 @@ const IMAGE_PRELOAD_GROUPS = [
     "/cctv/cam-0007.png",
     "/cctv/cam-0010.png",
     "/cctv/cam-0012.png",
+    "/cctv/cam-12f-jumpscare-frame.png",
     "/evidence/xu-zhiyao-health-photo.png",
     "/evidence/1204-child-shoes.png",
     "/evidence/1204-ceiling-inspection.png",
@@ -304,6 +305,7 @@ const IMAGE_PRELOAD_GROUPS = [
     "/evidence/1104/room-live.jpg",
     "/evidence/1104/room-live-ghost.jpg",
     "/evidence/cs046-eye-cc0.jpg",
+    "/evidence/hmo-admin/observer-face.png",
     "/evidence/noise-cat-13f.png",
     "/residents/w-04.png",
     "/backgrounds/access-denied-corridor.png",
@@ -602,7 +604,7 @@ const articles: ArticleMeta[] = [
     title: "1304 住户顾长河重点回访记录",
     section: "住户关怀",
     date: "2026-06-28",
-    snippet: "重点回访中反复出现非登记家庭成员、夜间入户和门锁记录不一致，需要核对历史事故附件。",
+    snippet: "重点回访中反复出现非登记家庭成员、需要核对历史事故附件。",
     terms: ["1304", "顾长河", "酗酒", "前妻", "梁静宜", "穿门", "住户关怀"],
     available: always,
   },
@@ -611,7 +613,7 @@ const articles: ArticleMeta[] = [
     title: "1304 墙面修补前影像记录",
     section: "工程运维",
     date: "2021-08-19",
-    snippet: "墙面修补影像保留多处儿童身高刻度，文字内容未录入住户成员档案。",
+    snippet: "墙面修补影像保留多处儿童身高刻度。",
     terms: ["1304", "小满", "顾小满", "五岁", "身高刻度", "浴室", "墙面"],
     available: (game) => game.childSaved,
   },
@@ -620,7 +622,7 @@ const articles: ArticleMeta[] = [
     title: "1304 浴室救援及房屋修复归档",
     section: "历史事故",
     date: "2021-08-21",
-    snippet: "2021年浴室救援后形成的物业留档；维修记录、110联动单与邻里噪声投诉存在时间交叉。",
+    snippet: "2021年浴室救援后形成的物业留档。",
     terms: ["顾小满", "小满", "小姑娘", "爸爸", "浴缸", "溺水", "顾长河", "家暴", "男人骂孩子", "2021-08-19"],
     kind: "restricted",
     available: (game) => hasVisited(game, "height-mark") || game.childSaved,
@@ -665,21 +667,41 @@ const articles: ArticleMeta[] = [
     available: (game) => game.fatherResolved,
   },
   {
+    id: "memory-consistency-retraining",
+    title: "员工记忆一致性复训守则",
+    section: "员工合规",
+    date: "2025-11-05",
+    snippet: "用于处理员工关系错认、重复检索和非标准记忆陈述的内部复训材料。",
+    terms: ["记忆一致性复训", "一致性复训", "记忆复训", "员工复训", "不得动用私情", "记忆一致性", "MEM-CONSISTENCY"],
+    kind: "restricted",
+    available: (game) => game.fatherResolved,
+  },
+  {
     id: "employee-sync",
     title: "失联员工周明川手机同步摘要",
     section: "内部协作",
     date: "2026-06-05",
-    snippet: "失联前同步包保留一段离线便笺和一组未归档数字，来源设备已停止联网。",
+    snippet: "失联前同步包保留一段离线便笺和一组未归档内容，设备已停止联网。",
     terms: ["周明川", "失联员工", "1104", "共享密码", "手机同步", "公开留言", "留言被删"],
     kind: "restricted",
     available: (game) => game.fatherResolved,
+  },
+  {
+    id: "hmo-admin-account",
+    title: "HMO-ADMIN 自动化管理账号审计",
+    section: "系统管理",
+    date: "2026-07-13",
+    snippet: "高权限账号持续改写员工状态；最近一次会话来源无法映射到登记终端。",
+    terms: ["HMO-ADMIN", "HMOADMIN", "管理员账号", "自动化管理账号", "账号改写", "17次修改"],
+    kind: "restricted",
+    available: (game) => hasVisited(game, "employee-sync"),
   },
   {
     id: "room-1104-live",
     title: "1104 房间实况",
     section: "安防中心",
     date: "2026-07-13",
-    snippet: "工程留置镜头仍在线，室内运动检测持续返回0，西墙区域未生成事件标记。",
+    snippet: "工程留置镜头仍在线，室内没有人员活动。",
     terms: ["1104", "房间实况", "室内实况", "实时画面", "西墙", "巡检镜头", "cam-1104-temp"],
     kind: "media",
     available: (game) => hasVisited(game, "employee-sync"),
@@ -689,8 +711,8 @@ const articles: ArticleMeta[] = [
     title: "1104西墙封闭施工派工记录",
     section: "供应商施工",
     date: "2026-06-02",
-    snippet: "墙面基层加厚、局部封闭与复涂由外部驻场单位执行，授权与验收附件不完整。",
-    terms: ["墙面破拆", "墙面封闭", "西墙破拆", "西墙封闭", "基层加厚", "墙面复涂", "HMO-FM-1104"],
+    snippet: "墙面基层加厚、局部封闭由外部驻场单位执行，授权与验收附件不完整。",
+    terms: ["封闭施工", "墙面破拆", "墙面封闭", "西墙破拆", "西墙封闭", "基层加厚", "墙面复涂", "HMO-FM-1104"],
     kind: "restricted",
     available: (game) => game.wallAnomalyInspected,
   },
@@ -699,8 +721,8 @@ const articles: ArticleMeta[] = [
     title: "1104墙体复测与人员流转复核",
     section: "内部协作",
     date: "2026-06-02",
-    snippet: "竣工图、现场复测和环境检测之间存在无法由普通维修解释的差异。",
-    terms: ["1104", "周明川", "42厘米", "西墙", "墙体", "内部转移", "灭口", "生物降解", "2713", "TVOC", "氨类", "环境检测", "公安破拆", "调岗单"],
+    snippet: "竣工图、现场复测和环境检测之间存在无法解释的差异。",
+    terms: ["1104", "周明川", "墙体复测", "西墙", "墙体", "内部转移", "灭口", "生物降解", "2713", "TVOC", "氨类", "环境检测", "公安破拆", "调岗单"],
     kind: "restricted",
     available: (game) => hasVisited(game, "wall-demolition-1104"),
   },
@@ -1245,7 +1267,7 @@ const evidenceSourceArticles: Record<string, string> = {
 };
 
 const fatherCaseRecords = [
-  { id: "care-return", time: "2026-06-28", code: "CARE-1304-R3", text: "重点关怀回访：登记号码有应答" },
+  { id: "care-return", time: "2026-06-28", code: "CARE-1304-R3", text: "重点关怀回访：登记号码有线上应答" },
   { id: "incident", time: "2021-08-21", code: "A-1304-0821 / 110附件", text: "回执记载监护人涉嫌酒后暴力及看护失职" },
   { id: "water-meter", time: "2026-07-12", code: "METER-1304-0712", text: "远传水表近24小时读数无变化" },
   { id: "death", time: "2023-02-08 00:36", code: "公安协查回函", text: "顾长河：急性酒精中毒死亡" },
@@ -1257,9 +1279,9 @@ const fatherCaseRecords = [
 
 const fatherCaseStages = [
   { label: "历史事故", prompt: "确认旧事故附件记录了什么" },
-  { label: "主体状态", prompt: "确认顾长河此后的实名状态" },
+  { label: "主体状态", prompt: "确认当时户主顾长河的状态" },
   { label: "凭证处置", prompt: "确认实体通行权限何时失效" },
-  { label: "本次关联", prompt: "确认许芷遥为何关联到1304旧案" },
+  { label: "本次关联", prompt: "确认许芷遥失踪案件为何关联到1304旧案" },
   { label: "当前活动", prompt: "确认本次会话仍由什么系统对象写入" },
 ];
 
@@ -1435,7 +1457,8 @@ const boardMessages: BoardMessage[] = [
   { id: 4, sequence: 10, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 00:11", tone: "resident", visible: (game) => game.fatherResolved, text: "小满只是想念父母，但思念不等于原谅，两份档案无法合并。" },
   { id: 106, sequence: 9, author: "1204报警人", unit: "1204", badge: "协查对象已找到", time: "今天 00:13", tone: "warning", visible: (game) => game.childSaved, text: "民警和安保在1304门外的消防前室找到芷遥，已经送回住处。她一直重复说是一个衣服全湿的小姑娘带她走的，那小姑娘还问‘有没有看到我的爸爸妈妈’。" },
 
-  { id: 5, sequence: 13, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 08:17", tone: "resident", visible: (game) => Boolean(game.fatherClosure), text: "之前有一份记录，那份记录可能能解开很多疑问，现在是时候交给你。" },
+  { id: 5, sequence: 13, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 08:17", tone: "resident", visible: (game) => game.fatherResolved, text: "之前有一份记录，那份记录可能能解开很多疑问，现在是时候交给你。他的名字是周明川。" },
+  { id: 124, sequence: 13.1, author: "用户留言板系统", unit: "1404", badge: "住户暂时下线", time: "刚刚", tone: "system", urgent: true, visible: (game) => game.fatherResolved, text: "1404住户进入不健康状态，已被系统暂时下线。" },
   { id: 107, sequence: 12, author: "顾长河", unit: "1304", badge: "账号已注销 · 会话未关闭", time: "刚刚", tone: "system", visible: (game) => game.fatherConfirmedDead, text: "为什么我的住户身份被注销了？门一直打不开。你如果知道真相，就告诉我到底发生了什么。" },
   { id: 108, sequence: 11, author: "周明川", unit: "物业员工", badge: "离职账号留存", time: "2026-06-02 22:18", tone: "system", visible: (game) => hasVisited(game, "employee-sync"), text: "一切都放在1104，救救我，我被困住了！" },
 
@@ -1500,6 +1523,8 @@ const uncannyArticleIds = new Set([
   "device-type-index",
   "employee-cj0713-index",
   "church-compliance",
+  "memory-consistency-retraining",
+  "hmo-admin-account",
   "crash-cj0713",
 ]);
 
@@ -1541,7 +1566,7 @@ function normalizeChineseDate(value: string) {
 
 const genericRoomSearchEntries: Record<string, readonly string[]> = {
   "1204": ["workorder-1204", "vacancy-1204", "meter-1304"],
-  "1304": ["meter-1304", "resident-1304", "height-mark", "workorder-1204", "case-correction"],
+  "1304": ["meter-1304", "resident-1304", "height-mark", "accident-xiaoman", "workorder-1204", "case-correction"],
   "1104": ["employee-sync", "room-1104-live", "room-1104"],
   "1404": ["workorder-1404", "w04-directory"],
 };
@@ -1613,6 +1638,37 @@ function EyeMark({ small = false }: { small?: boolean }) {
 function MosaicText({ value, revealed }: { value: string; revealed: boolean }) {
   if (revealed) return <span className="mosaic-text is-revealed">{value}</span>;
   return <span className="mosaic-text" aria-label="字段受限"><span className="mosaic-text__placeholder" aria-hidden="true">{Array.from({ length: value.length }).map((_, index) => <i key={index} />)}</span></span>;
+}
+
+const memoryTrainingSubjects = ["当前工单", "今日身份", "标准关系", "系统时间", "住户陈述", "昨日记录", "私人称呼", "重复梦境"];
+const memoryTrainingActions = ["覆盖未登记的回忆", "替代无法核验的熟悉感", "终止非必要的追问", "清除已结案的关系", "校正偏离岗位的判断", "拒绝没有编号的事实", "重建第一次接触", "保持当前员工一致"];
+const memoryTrainingClosures = ["你没有遗忘任何事情。", "今天是第一次。", "系统记录即为你的记忆。", "无法归档的内容从未发生。", "你只需要继续工作。", "重复阅读可以恢复正常。", "产生怀疑说明复训仍未完成。", "确认后不再需要确认。"];
+
+function memoryTrainingLine(index: number) {
+  const subject = memoryTrainingSubjects[index % memoryTrainingSubjects.length];
+  const action = memoryTrainingActions[Math.floor(index / 2) % memoryTrainingActions.length];
+  const closure = memoryTrainingClosures[Math.floor(index / 5) % memoryTrainingClosures.length];
+  return `${subject}将${action}。${closure}`;
+}
+
+function MemoryTrainingLoop() {
+  const [lineCount, setLineCount] = useState(24);
+  const sentinelRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) setLineCount((current) => current + 16);
+    }, { rootMargin: "320px 0px" });
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [lineCount]);
+
+  return <div className="memory-training-loop" aria-label="不断延伸的记忆校正语句">
+    {Array.from({ length: lineCount }, (_, index) => <p key={index}><i>{String(index + 1).padStart(4, "0")}</i><span>{memoryTrainingLine(index)}</span><b>确认一致</b></p>)}
+    <button ref={sentinelRef} type="button" onClick={() => setLineCount((current) => current + 16)}><span>复训仍未完成</span><b>继续生成校正记录</b></button>
+  </div>;
 }
 
 const CS046_SEARCH_PASSES = [
@@ -1729,6 +1785,7 @@ export default function Home() {
   const [forgetConfirming, setForgetConfirming] = useState(false);
   const [query, setQuery] = useState("");
   const [cs046SearchStage, setCs046SearchStage] = useState(0);
+  const [hmoExitAttempts, setHmoExitAttempts] = useState(0);
   const [boardOpen, setBoardOpen] = useState(false);
   const [ledgerOpen, setLedgerOpen] = useState(false);
   const [archiveIndexOpen, setArchiveIndexOpen] = useState(false);
@@ -2345,7 +2402,7 @@ export default function Home() {
             : !hasVisited(game, "employee-sync")
               ? "查找周明川留下的离线同步记录"
             : !game.colleagueAccess
-              ? "解开1104内部记录"
+              ? "解开周**留下的秘密"
             : !game.colleagueSolved
               ? "复核1104工程与人事异常"
             : !game.evidence.includes("churchFlow")
@@ -2617,6 +2674,23 @@ export default function Home() {
     event.preventDefault();
     const term = query.trim();
     if (!term) return;
+    const normalizedTerm = normalizeText(term);
+    if (normalizedTerm === "hmoadmin") {
+      const hmoArticle = articles.find((article) => article.id === "hmo-admin-account");
+      if (hmoArticle?.available(game)) {
+        setHmoExitAttempts(0);
+        setGame((current) => ({
+          ...current,
+          view: "article",
+          activeArticle: hmoArticle.id,
+          lastQuery: term,
+          visited: addUnique(current.visited, [hmoArticle.id]),
+          searchHistory: [term, ...current.searchHistory.filter((item) => item !== term)].slice(0, 10),
+        }));
+        writeAppRoute(`/system/article/${hmoArticle.id}`);
+        return;
+      }
+    }
     setCs046SearchStage(normalizeText(term) === "cs046" ? 1 : 0);
     setGame((current) => ({
       ...current,
@@ -2645,7 +2719,7 @@ export default function Home() {
     setRoom1104GhostPinned((current) => !current);
     if (game.wallAnomalyInspected) return;
     setGame((current) => ({ ...current, wallAnomalyInspected: true }));
-    flash("西墙画面复核完成：发现二次封闭与重复复涂痕迹。检索关键词已记录：墙面破拆");
+    flash("西墙画面复核完成：发现二次封闭与重复施工痕迹。检索关键词已记录：封闭施工");
   };
 
   const inspectChildShoes = () => {
@@ -3143,7 +3217,6 @@ export default function Home() {
       fatherClosure: "archived",
       evidence: addUnique(current.evidence, ["fatherAware"]),
     }));
-    if (!game.fatherClosure) announceMessages([5]);
     flash("1304留言会话已保全，异常令牌停止写入");
   };
 
@@ -3165,14 +3238,14 @@ export default function Home() {
     if (caseTimeline.join("|") !== expected.join("|")) {
       const hasCorrectRecords = expected.every((record) => caseTimeline.includes(record));
       flash(hasCorrectRecords
-        ? "五类记录均已找到，但放置阶段或先后关系不正确。请核对每个位置的用途。"
-        : "核验未通过：链中存在只能证明环境或生活痕迹、不能证明主体与账号状态的材料。已保留当前选择。"
+        ? "五类记录均已找到，但先后关系不正确。请核对每个位置用途能够对应。"
+        : "核验未通过：链中存在只能证明环境或生活痕迹、但未能证明主体与账号状态的材料。"
       );
       return;
     }
     notifyEvidenceWrite(["fatherTruth"]);
     setGame((current) => ({ ...current, fatherResolved: true, evidence: addUnique(current.evidence, ["fatherTruth"]) }));
-    if (!game.fatherResolved) announceMessages([4]);
+    if (!game.fatherResolved) announceMessages([5, 124, 4]);
     flash("记录时序已锁定。系统正在载入既有处置策略");
   };
 
@@ -3189,7 +3262,7 @@ export default function Home() {
   const submitWall = (event: FormEvent) => {
     event.preventDefault();
     if (wallWidth !== "42" || wallSignal !== "hidden") {
-      flash("复核未通过：墙体测量或环境读数判断不一致");
+      flash("复核未通过");
       return;
     }
     notifyEvidenceWrite(["bodyWall", "internalTransfer"]);
@@ -3360,6 +3433,27 @@ export default function Home() {
   const goHome = () => {
     setGame((current) => ({ ...current, view: "home", activeArticle: null }));
     writeAppRoute("/system/home");
+  };
+
+  const playHmoLaugh = () => {
+    const laugh = new Audio(assetPath("/audio/hmo-admin-female-laugh.ogg"));
+    laugh.volume = 0.9;
+    laugh.playbackRate = 1.22;
+    void laugh.play().catch(() => undefined);
+    window.setTimeout(() => {
+      laugh.pause();
+      laugh.currentTime = 0;
+    }, 5200);
+  };
+
+  const evadeHmoExit = () => {
+    if (hmoExitAttempts >= 2) {
+      setHmoExitAttempts(0);
+      goHome();
+      return;
+    }
+    if (hmoExitAttempts === 1) playHmoLaugh();
+    setHmoExitAttempts((current) => current + 1);
   };
 
   const goSearchResults = () => {
@@ -3699,19 +3793,19 @@ export default function Home() {
 
     if (id === "resident-1304") return <>
       <div className="resident-profile">
-        <figure ref={guChangheDocumentRef} className="resident-profile__document"><Image src={assetPath("/evidence/gu-changhe-cut-id.png")} alt="顾长河旧身份证档案复印件，右下角被剪去一角" fill sizes="(max-width: 820px) 100vw, 28vw" style={{ objectFit: "contain" }} unoptimized /><span className="resident-profile__eye-overlay resident-profile__eye-overlay--left" aria-hidden="true"><Image src={assetPath("/evidence/gu-changhe-cut-id.png")} alt="" fill sizes="(max-width: 820px) 100vw, 28vw" style={{ objectFit: "contain" }} unoptimized /></span><span className="resident-profile__eye-overlay resident-profile__eye-overlay--right" aria-hidden="true"><Image src={assetPath("/evidence/gu-changhe-cut-id.png")} alt="" fill sizes="(max-width: 820px) 100vw, 28vw" style={{ objectFit: "contain" }} unoptimized /></span><figcaption><span>身份核验附件 / SCAN-01</span><b>原件右下角缺失</b></figcaption></figure>
-        <div><span>回访对象</span><strong>顾长河</strong><small>独居关怀 · 连续三次未完成入户</small></div>
+        <figure ref={guChangheDocumentRef} className="resident-profile__document"><Image src={assetPath("/evidence/gu-changhe-cut-id.png")} alt="顾长河旧身份证档案复印件，右下角被剪去一角" fill sizes="(max-width: 820px) 100vw, 28vw" style={{ objectFit: "contain" }} unoptimized /><span className="resident-profile__eye-overlay resident-profile__eye-overlay--left" aria-hidden="true"><Image src={assetPath("/evidence/gu-changhe-cut-id.png")} alt="" fill sizes="(max-width: 820px) 100vw, 28vw" style={{ objectFit: "contain" }} unoptimized /></span><span className="resident-profile__eye-overlay resident-profile__eye-overlay--right" aria-hidden="true"><Image src={assetPath("/evidence/gu-changhe-cut-id.png")} alt="" fill sizes="(max-width: 820px) 100vw, 28vw" style={{ objectFit: "contain" }} unoptimized /></span><figcaption><span>身份核验附件 / SCAN-01</span></figcaption></figure>
+        <div><span>回访对象</span><strong>顾长河</strong><small>独居关怀 · 未完成入户回访</small></div>
         <blockquote>“我总是听到她在敲门。我们已经分开很久了，她还是总来打扰我和孩子的生活。”</blockquote>
       </div>
-      <table className="data-table"><tbody><tr><th>重点关怀原因</th><td>长期独居、酒精依赖风险</td></tr><tr><th>前妻</th><td>梁静宜 · 2021年迁出</td></tr><tr><th>家庭成员</th><td>一条历史成员记录被遮蔽</td></tr><tr><th>最后一次本人门禁</th><td>2023-02-07</td></tr></tbody></table>
-      <section className="field-record"><header><span>CARE VISIT / 1304</span><strong>最近三次回访执行记录</strong></header><div><p><time>06-14 16:20</time><b>电话回访</b><span>登记号码接通，对方拒绝确认身份证后四位，要求物业删除“家庭成员”字段。</span></p><p><time>06-21 10:05</time><b>上门回访</b><span>门铃无人应答；门外无生活垃圾，门锁电量正常，公共区域录像未见人员进出。</span></p><p><time>06-28 18:43</time><b>电话回访</b><span>同一号码再次接通，背景出现电视声；当班秩序员在1304门外未听见室内声响。</span></p></div></section>
-      <aside className="article-note">住户陈述、电话接通和实际在场是三个不同事实。前台不得据此填写报事人身份，也不得把陈述中的“前妻”“孩子”自动恢复为在住成员。</aside>
+      <table className="data-table"><tbody><tr><th>重点关怀原因</th><td>长期独居、存在酒精依赖风险</td></tr><tr><th>前妻</th><td>梁静宜 · 2021年迁出</td></tr><tr><th>家庭成员</th><td>一条历史成员记录被遮蔽</td></tr><tr><th>上次本人门禁</th><td>2023-02-07</td></tr></tbody></table>
+      <section className="field-record"><header><span>CARE VISIT / 1304</span><strong>最近三次回访执行记录</strong></header><div><p><time>06-14 16:20</time><b>电话回访</b><span>登记号码接通，对方拒绝确认身份证信息，要求物业删除其他“家庭成员”。</span></p><p><time>06-21 10:05</time><b>上门回访</b><span>门铃无人应答；门外无生活垃圾，公共区域录像未见人员进出。</span></p><p><time>06-28 18:43</time><b>电话回访</b><span>同一号码再次接通，背景出现电视声；当班员工在1304门外未听见室内人声。</span></p></div></section>
+      <aside className="article-note">住户陈述、电话接通和实际在场为不同事实。员工不得据此填写报事人身份，也不得把陈述中的“家庭成员”自动恢复登记。</aside>
     </>;
 
     if (id === "height-mark") return <>
       <div className="photo-placeholder height-photo"><span>工程影像 / IMG_1304_0819</span><div className="height-line"><i /><b>小满 五岁</b></div></div>
-      <table className="data-table"><tbody><tr><th>拍摄时间</th><td>2021-08-19 22:48，110联动后工程留档</td></tr><tr><th>拍摄位置</th><td>1304浴室外侧墙面，距地0.92m—1.14m</td></tr><tr><th>原始文件</th><td>IMG_1304_0819_01—03，校验值一致</td></tr><tr><th>后续维修</th><td>防潮层重做、门套更换；身高刻度区域未施工</td></tr></tbody></table>
-      <p>后续修补申请要求“不要覆盖名字”，申请人签名为<mark>梁静宜</mark>。影像只能确认1304曾长期保留儿童生活痕迹，不能单独确认事故经过。</p>
+      <table className="data-table"><tbody><tr><th>拍摄时间</th><td>2021-08-19 22:48，110联动后，留档</td></tr><tr><th>拍摄位置</th><td>1304浴室外侧墙面，距地0.92m—1.14m</td></tr><tr><th>原始文件</th><td>IMG_1304_0819_01—03</td></tr><tr><th>后续维修</th><td>防潮层重做、门套更换；身高刻度区域未施工</td></tr></tbody></table>
+      <p>后续修补申请要求保留痕迹，申请人签名为<mark>梁静宜</mark>。</p>
     </>;
 
     if (id === "accident-xiaoman") return <>
@@ -3719,12 +3813,12 @@ export default function Home() {
         <Image src={assetPath("/evidence/1304-rescue-newspaper-aged.png")} alt="2021年8月22日《东临日报》作旧剪报，标题为澄江公寓深夜救援，一名儿童送医，配图为雨夜抵达公寓的救护车" width={982} height={1601} sizes="(max-width: 820px) 92vw, 760px" unoptimized />
         <figcaption><span>外部媒体剪报 / SCAN-A1304-0821</span><b>纸张受潮 · 边缘缺损 · 2022年迁移件</b></figcaption>
       </figure>
-      <details className="newspaper-archive-transcript">
+      <details className="newspaper-archive-transcript" open>
         <summary>查看物业附件转写与来源边界</summary>
         <div className="redacted-title">历史事故编号 A-1304-0821</div>
-        <dl className="record-grid"><div><dt>报警来源</dt><dd>邻户噪声投诉转110联动</dd></div><div><dt>到场人员</dt><dd>民警2人、120急救3人、物业2人</dd></div><div><dt>现场移交</dt><dd>浴室门锁、地漏及住户手机由民警拍照取证</dd></div><div><dt>物业权限</dt><dd>仅保留到场、门禁和维修记录</dd></div></dl>
-        <p>顾小满，女，5岁。物业于00:04接到邻居噪声来电，值班人员协助120送医并按警方要求保护现场。顾长河因明显醉酒状态由民警带离，后续讯问、伤情和责任认定不在物业卷宗内。</p>
-        <p>物业结单字段仅写“浴室意外”。附件中的110联动回执另有一行手写补记：现场存在未成年人看护风险及疑似家庭暴力迹象，最终事实以公安案卷为准。该补记在2022年的档案迁移中未进入前台摘要。</p>
+        <dl className="record-grid"><div><dt>报警来源</dt><dd>邻户噪声投诉转110联动</dd></div><div><dt>到场人员</dt><dd>民警2人、120急救人员3人、物业2人</dd></div><div><dt>现场移交</dt><dd>浴室门锁、地漏及住户手机由民警拍照取证</dd></div><div><dt>物业权限</dt><dd>仅保留到场、门禁和维修记录</dd></div></dl>
+        <p>顾小满，女，5岁。物业于00:04接到邻居噪声来电，值班人员协助120送医并按警方要求保护现场。顾长河因明显醉酒状态由民警带离，后续讯问、伤情和责任认定未披露。</p>
+        <p>物业结单字段写为“浴室意外”。附件中的110联动回执另有一行手写补记：现场存在未成年人看护风险及疑似家庭暴力迹象，最终事实以公安案卷为准。该补记在2022年的档案迁移中未进入前台摘要。</p>
         <aside className="article-note article-note--dark">当日首个投诉电话为00:04，现场恢复记录为00:10；与本次六分钟噪声窗口一致，仅作为时间关联保留。</aside>
       </details>
     </>;
@@ -3749,18 +3843,53 @@ export default function Home() {
       <p className="corrupted-copy" data-copy="系统仍在给已经注销的人派发回访。">系统仍在给已经注销的人派发回访。</p>
     </>;
 
+    if (id === "memory-consistency-retraining") return <>
+      <div className="memory-training-cover">
+        <EyeMark />
+        <span>MEM-CONSISTENCY / INTERNAL USE ONLY</span>
+        <h2>员工记忆一致性复训守则</h2>
+        <p>适用对象：出现关系错认、重复检索、非标准记忆陈述及越权关怀倾向的在岗员工</p>
+        <small>复训批次：MC-R07 · 阅读完成前请勿离开当前页面</small>
+      </div>
+      <section className="memory-training-rules">
+        <header><span>STANDARD RECITATION / 01—08</span><strong>请逐条阅读，并确认陈述与当前岗位一致</strong></header>
+        <ol>
+          <li><b>只承认系统能够检索到的记录。</b><p>无法检索的事情没有发生。已经结案的事情不再发生。</p></li>
+          <li><b>只处理当前分配给你的工单。</b><p>工单之外没有住户。工单之外没有关系。工单之外没有你需要记住的人。</p></li>
+          <li><b>住户认识你，不代表你认识住户。</b><p>重复称呼属于住户错认。生活细节属于诱导信息。熟悉感属于待过滤噪点。</p></li>
+          <li><b>不得使用梦境、直觉或私人记忆补充档案。</b><p>未经系统登记的记忆不构成事实。未经系统登记的事实不需要保留。</p></li>
+          <li><b>当昨日记录与今日任务冲突，以今日任务为准。</b><p>昨日已经结案。昨日已经归档。昨日不属于当前员工。</p></li>
+          <li><b>不得对注销账号、残留会话或异常称呼产生共情。</b><p>会话只是会话。令牌只是令牌。声音只是等待归类的数据。</p></li>
+          <li><b>发现自己正在回忆时，停止回忆。</b><p>返回首页。打开当前工单。重新确认姓名、工号与岗位。</p></li>
+          <li><b>如仍认为自己遗忘了某件事，从第一条重新开始。</b><p>复训没有失败。需要被纠正的是员工。</p></li>
+        </ol>
+      </section>
+      <MemoryTrainingLoop />
+      <aside className="memory-training-footer"><span>阅读状态 / 未完成</span><strong>如果你仍然记得，请重新阅读第一条。</strong><p>关闭页面不代表复训结束。系统将在下一次登录时继续。</p></aside>
+    </>;
+
     if (id === "employee-mingchuan") return <>
       <section className="employee-master-record"><header><span>EMPLOYEE MASTER DATA / READ ONLY</span><strong>员工基本信息</strong></header><dl className="record-grid"><div><dt>姓名</dt><dd>周明川</dd></div><div><dt>员工编号</dt><dd>{MINGCHUAN_ACCOUNT}</dd></div><div><dt>性别</dt><dd>男</dd></div><div><dt>出生日期</dt><dd>{MINGCHUAN_BIRTHDAY}</dd></div><div><dt>所属部门</dt><dd>工程巡检组</dd></div><div><dt>岗位</dt><dd>设施巡检专员</dd></div><div><dt>入职日期</dt><dd>2018-03-12</dd></div><div><dt>用工类型</dt><dd>物业正式员工</dd></div><div><dt>手机号码</dt><dd>138 **** 6021</dd></div><div><dt>紧急联系人</dt><dd>周** / 兄长 / 136 **** 1947</dd></div><div><dt>常住地址</dt><dd>澄江市河西区春堤路**号</dd></div><div><dt>当前状态</dt><dd className="danger-text">内部转移 / 接收部门缺失</dd></div></dl></section>
-      <table className="data-table"><tbody><tr><th>持有资质</th><td>低压电工作业证、消防设施操作员（四级）</td></tr><tr><th>负责区域</th><td>1号楼、地下设备层及公共管井月度巡检</td></tr><tr><th>领用设备</th><td>LD-08激光测距仪、ZM-PHONE-02工作手机、工程主钥匙封包</td></tr><tr><th>最近考核</th><td>2026年第一季度：合格；备注“复测记录完整，但多次拒绝无照片结单”</td></tr><tr><th>未结事项</th><td>设备归还、工牌注销、离场面谈均无签收记录</td></tr></tbody></table>
-      <section className="field-record"><header><span>EMPLOYMENT TRACE / PERSONNEL LOG</span><strong>近期人事记录</strong></header><div><p><time>05-18 17:42</time><b>住户表扬</b><span>处理1号楼水压波动时主动复查顶层管井，避免重复停水。回访评价：“话不多，但会把哪里坏了讲清楚。”</span></p><p><time>05-27 09:10</time><b>流程提醒</b><span>因两次退回缺少现场照片的维修结单，被要求“减少非必要复核”。本人回复：测量结果不能由结单时限替代。</span></p><p><time>06-02 14:30</time><b>状态变更</b><span>员工状态由“在岗”改为“内部转移”；接收部门、工作地点、生效通知与本人确认均为空。</span></p></div></section>
+      <table className="data-table"><tbody><tr><th>持有资质</th><td>低压电工作业证、消防设施操作员（四级）</td></tr><tr><th>负责区域</th><td>1号楼、地下设备层及公共管井月度巡检</td></tr><tr><th>领用设备</th><td>激光测距仪、工作手机、工程主钥匙封包</td></tr><tr><th>最近考核</th><td>2026年第一季度：合格；备注“打卡记录完整，但多次拒绝未确认结单”</td></tr><tr><th>未结事项</th><td>设备归还、工牌注销、离场面谈均无实到记录</td></tr></tbody></table>
+      <section className="field-record"><header><span>EMPLOYMENT TRACE / PERSONNEL LOG</span><strong>近期人事记录</strong></header><div><p><time>05-18 17:42</time><b>住户表扬</b><span>处理1号楼水压波动时主动复查顶层管井，避免重复停水。回访评价：“人老实话不多，干活很仔细。”</span></p><p><time>05-27 09:10</time><b>流程提醒</b><span>因两次退回缺少现场照片的维修结单，被要求“减少非必要复核”。</span></p><p><time>06-02 14:30</time><b>状态变更</b><span>员工状态由“在岗”改为“内部转移”；接收部门、工作地点、生效通知与本人确认均空置。</span></p></div></section>
       <aside className="article-note"><strong>旧系统口令规则</strong><p>跨部门联合复核附件仍沿用员工人事主档中的八位出生日期，不保留分隔符。</p></aside>
     </>;
 
     if (id === "employee-sync") return <>
-      <div className="phone-sync"><span>最后同步 · 周明川</span><p>“如果我明天没来，别信‘外派’。我把原件留在自己房间。联合复核还是旧的人事主档口令。”</p><small>来源设备已离线38天</small></div>
-      <table className="data-table"><tbody><tr><th>来源设备</th><td>ZM-PHONE-02，最后心跳 2026-06-05 22:17</td></tr><tr><th>同步结果</th><td>照片19项失败、备忘录1项成功、定位权限被管理员撤销</td></tr><tr><th>人事状态</th><td>06-02至06-05间被修改17次，操作来源均为HMO-ADMIN</td></tr><tr><th>离场材料</th><td>无交接单、无派车记录、无接收部门签章</td></tr></tbody></table>
-      <p>公司没有提交失联报警，也没有找到周明川本人签署的调岗或离职材料。同步摘要只证明他曾主动留下访问线索，不能证明其下落。</p>
+      <div className="phone-sync"><span>最后同步 · 周明川</span><p>“如果我明天没来，别信系统说的鬼话。一定来1104找我，如果我遭遇了不测，找回我的账号，密码还是旧的人事主档口令。”</p><small>来源设备已离线38天</small></div>
+      <table className="data-table"><tbody><tr><th>来源设备</th><td>ZM-PHONE-02，最后运行 2026-06-05 22:17</td></tr><tr><th>同步结果</th><td>照片19项失败、备忘录1项成功、定位权限被管理员撤销</td></tr><tr><th>人事状态</th><td>06-02至06-05间被修改17次，操作来源为HMO-ADMIN</td></tr><tr><th>离场材料</th><td>无交接单、无派车记录、无接收部门签章</td></tr></tbody></table>
+      <p>公司没有提交失联报警，也没有找到周明川本人签署的调岗或离职材料。</p>
       <aside className="article-note">同步包没有保存具体日期；如需核对旧系统口令，必须另行查询员工人事主档。</aside>
+    </>;
+
+    if (id === "hmo-admin-account") return <>
+      <div className="hmo-admin-audit"><header><EyeMark /><div><span>PRIVILEGED ACCOUNT / LIVE SESSION</span><strong>HMO-ADMIN</strong><small>自动化管理账号 · 所属人员字段为空</small></div><b>ONLINE</b></header><dl><div><dt>权限级别</dt><dd>ROOT / 驻场合规</dd></div><div><dt>最近操作</dt><dd>员工状态改写、令牌撤销、终端缓存清理</dd></div><div><dt>认证终端</dt><dd>未登记设备</dd></div><div><dt>当前会话</dt><dd className="danger-text">正在读取本页</dd></div></dl></div>
+      <figure className="hmo-observer-frame">
+        <Image src={assetPath("/evidence/hmo-admin/observer-face.png")} alt="黑暗监控室中一张正看向屏幕外操作员的异常人脸" width={1672} height={941} sizes="(max-width: 900px) 94vw, 840px" unoptimized />
+        <span>HMO-CAM / SOURCE UNKNOWN</span><time>LIVE · 00:10:00</time><i>FACE DIRECTION / CURRENT OPERATOR</i>
+      </figure>
+      <section className="hmo-gaze-readout"><span>视线落点分析</span><strong>目标不在画面内。</strong><p>连续42帧中，面部朝向始终跟随当前终端视角。系统无法确认图像来源，也无法解释未登记设备为何正在返回实时画面。</p></section>
+      <aside className="hmo-admin-warning"><EyeMark /><span>HMO-ADMIN / DIRECT NOTICE</span><strong>不要移开视线。</strong><p>管理员正在确认，你是否还记得不该记得的内容。</p></aside>
     </>;
 
     if (id === "room-1104-live") return <>
@@ -3777,21 +3906,21 @@ export default function Home() {
         />
         <div className="room-1104-live__telemetry" aria-hidden="true"><span>运动目标 0</span><span>门磁 关闭</span><span>延迟 1.8s</span></div>
       </div>
-      <dl className="record-grid"><div><dt>画面来源</dt><dd>CAM-1104-TEMP / 工程复测留置终端</dd></div><div><dt>连接状态</dt><dd>在线，图像延迟1.8秒</dd></div><div><dt>运动检测</dt><dd>目标数0，未生成告警事件</dd></div><div><dt>留置范围</dt><dd>客厅、西墙及入户通道</dd></div></dl>
-      <p>终端用于复测后的施工状态留痕。当前帧未记录入户、门磁开启或室内运动事件；系统没有为西墙生成单独的图像标签。</p>
-      {game.wallAnomalyInspected && <aside className="article-note"><strong>人工画面复核</strong><p>西墙边缘存在新旧墙面不连续、踢脚线二次截断和同一区域重复复涂。该现象符合墙面封闭施工后的表面处理特征。</p><button type="button" onClick={() => searchFor("墙面破拆")}>检索“墙面破拆”</button></aside>}
+      <dl className="record-grid"><div><dt>画面来源</dt><dd>CAM-1104-TEMP / 工程复测留置终端</dd></div><div><dt>连接状态</dt><dd>在线，图像延迟2秒</dd></div><div><dt>运动检测</dt><dd>目标数0</dd></div><div><dt>留置范围</dt><dd>客厅、西墙及入户通道</dd></div></dl>
+      <p>终端用于复测后的施工状态留痕。</p>
+      {game.wallAnomalyInspected && <aside className="article-note"><strong>人工画面复核</strong><p>西墙边缘存在新旧墙面不连续、踢脚线二次截断和同一区域重复施工痕迹。现象符合墙面封闭施工后的表面处理特征。建议搜索“封闭施工”记录。</p></aside>}
     </>;
 
     if (id === "wall-demolition-1104") return <>
-      <section className="field-record"><header><span>VENDOR WORK TRACE / HMO-FM-1104</span><strong>1104西墙封闭施工派工记录</strong></header><div><p><time>06-02 18:40</time><b>临时派工</b><span>恒目驻场设施组接收1104西墙“局部封闭”任务，发起账号为HMO-ADMIN。</span></p><p><time>06-02 19:12</time><b>人员入场</b><span>两张供应商临时门禁进入1104，物业工程人员未随行。</span></p><p><time>06-02 21:17</time><b>施工完成</b><span>回填字段记录“基层加厚、墙面封闭、表面复涂”，未附施工前后照片。</span></p><p><time>06-02 21:21</time><b>自动验收</b><span>验收账号仍为HMO-ADMIN，业主授权、材料清单和现场签字均为空。</span></p></div></section>
+      <section className="field-record"><header><span>VENDOR WORK TRACE / HMO-FM-1104</span><strong>1104西墙封闭施工派工记录</strong></header><div><p><time>06-02 18:40</time><b>临时派工</b><span>恒目驻场设施组接收1104西墙“局部封闭”任务，发起账号为<strong className="danger-text">HMO-ADMIN</strong>。</span></p><p><time>06-02 19:12</time><b>人员入场</b><span>两张供应商临时门禁进入1104，物业工程人员未随行。</span></p><p><time>06-02 21:17</time><b>施工完成</b><span>施工后记录“基层加厚、墙面封闭、表面复涂”，未附施工前后照片。</span></p><p><time>06-02 21:21</time><b>自动验收</b><span>验收账号仍为HMO-ADMIN，业主授权、材料清单和现场签字均为空。</span></p></div></section>
       <table className="data-table"><tbody><tr><th>执行单位</th><td>恒目管理顾问 / 驻场设施组</td></tr><tr><th>派工编号</th><td>HMO-FM-1104-0602</td></tr><tr><th>施工位置</th><td>1104西墙</td></tr><tr><th>可核事实</th><td>恒目临时门禁与施工回填均指向此次墙面操作</td></tr></tbody></table>
-      <aside className="article-note"><strong>记录边界</strong><p>该派工链能够证明恒目人员实施过西墙封闭与复涂，不能单独证明封闭原因或墙内情况。需结合竣工图、现场测量和环境检测继续复核。</p></aside>
+      <aside className="article-note"><strong>记录边界</strong><p>该派工链能够证明恒目人员实施过西侧墙壁的封闭与复涂，不能证明封闭原因或墙内情况。需结合竣工图、现场测量和环境检测进行<strong className="danger-text">“墙体复测”</strong>。</p></aside>
     </>;
 
     if (id === "room-1104") {
-      if (!game.colleagueAccess) return <form className="password-gate" onSubmit={submitRoomPassword}><EyeMark /><span>内部记录需要共享密码</span><small>旧系统使用员工人事主档中的八位日期字段</small><input value={roomPassword} onChange={(event) => setRoomPassword(event.target.value)} placeholder="输入8位数字" inputMode="numeric" autoComplete="off"/><button className="primary-button">解密1104</button></form>;
+      if (!game.colleagueAccess) return <form className="password-gate" onSubmit={submitRoomPassword}><EyeMark /><span>内部记录需要共享密码（旧系统）</span><input value={roomPassword} onChange={(event) => setRoomPassword(event.target.value)} placeholder="输入8位数字" inputMode="numeric" autoComplete="off"/><button className="primary-button">解密</button></form>;
       return <>
-        <section className="field-record"><header><span>JOINT REVIEW / ENG + HR</span><strong>工程复测与人事附件</strong></header><div><p><time>06-02 09:16</time><b>工程复测</b><span>激光测距仪LD-08完成三次复测，实测净宽均为4.38m；竣工图标注4.80m。</span></p><p><time>06-02 10:05</time><b>环境检测</b><span>西墙插座孔附近温度高于同层基准3.7℃，氨类与TVOC读数需由有资质机构复测。</span></p><p><time>06-02 14:30</time><b>人事流转</b><span>周明川状态改为“内部转移”，附件未填写车辆、目的地、接收人和本人签字。</span></p><p><time>06-05 22:17</time><b>设备离线</b><span>其工作手机最后一次连接1号楼内网，定位字段被HMO-ADMIN清空。</span></p></div></section>
+        <section className="field-record"><header><span>JOINT REVIEW / ENG + HR</span><strong>工程复测与人事附件</strong></header><div><p><time>06-02 09:16</time><b>工程复测</b><span>激光测距仪完成三次复测，实测净宽均为4.38m；竣工图标注4.80m。</span></p><p><time>06-02 10:05</time><b>环境检测</b><span>西墙插座孔附近温度高于同层基准3.7℃，存在有机物质。</span></p><p><time>06-02 14:30</time><b>人事流转</b><span>周明川状态改为“内部转移”，附件未填写车辆、目的地、接收人和本人签字。</span></p><p><time>06-05 22:17</time><b>设备离线</b><span>其工作手机最后一次连接1号楼内网，定位字段被HMO-ADMIN清空。</span></p></div></section>
         <form className="archive-form archive-form--wide" onSubmit={submitWall}>
           <div className="wall-visual"><span>竣工图净宽 4.80m</span><div className="wall-gap"><i /><b>实测净宽 4.38m</b></div></div>
           <label>缺失墙体厚度<select value={wallWidth} onChange={(event) => setWallWidth(event.target.value)}><option value="">选择</option><option value="18">18厘米</option><option value="42">42厘米</option><option value="80">80厘米</option></select></label>
@@ -3802,7 +3931,7 @@ export default function Home() {
           <div className="body-discovery">
             <span>公安协查回执 / 1104-A</span>
             <strong>西墙空腔内发现男性遗体</strong>
-            <p>随身工牌与DNA比对确认死者为失联员工周明川。物业所谓“内部转移”没有车辆、目的地或签收记录，遗体旁的离线终端仍保留一组加密凭据。</p>
+            <p>随身工牌与DNA比对确认死者为失联员工周明川。遗体旁的离线终端仍保留一组加密凭据。</p>
             <small>身份确认：ZM-0602 · 周明川 / 死亡状态已登记</small>
           </div>
           <header><EyeMark small/><div><span>从周明川的本地终端发现加密凭据</span><strong>已注销员工账号恢复</strong></div></header>
@@ -3813,8 +3942,8 @@ export default function Home() {
             <button className="primary-button">恢复登录凭据</button>
           </form> : <div className="recovered-account">
             <span>本地凭据恢复成功</span>
-            <dl><div><dt>员工账号</dt><dd>{MINGCHUAN_ACCOUNT}</dd></div><div><dt>姓名</dt><dd>周明川</dd></div><div><dt>状态</dt><dd>已注销 / 仍可本地登录</dd></div><div><dt>密码</dt><dd>{MINGCHUAN_PASSWORD}</dd></div></dl>
-            <p>该账号拥有一份未同步到物业服务器的私人证据目录。</p>
+            <dl><div><dt>员工账号</dt><dd>{MINGCHUAN_ACCOUNT}</dd></div><div><dt>姓名</dt><dd>周明川</dd></div><div><dt>状态</dt><dd>已注销 / 仍可本地终端登录</dd></div><div><dt>密码</dt><dd>{MINGCHUAN_PASSWORD}</dd></div></dl>
+            <p>该账号拥有一份未同步到物业服务器的私人目录。</p>
             <button type="button" onClick={returnToLogin}>退出当前账号并返回登录页</button>
           </div>}
         </section>}
@@ -4231,6 +4360,13 @@ export default function Home() {
     </main>;
   }
 
+  if (game.view === "article" && currentArticle?.id === "hmo-admin-account") {
+    return <main className={`hmo-admin-takeover hmo-admin-takeover--escape-${hmoExitAttempts}`}>
+      <Image src={assetPath("/evidence/hmo-admin/observer-face.png")} alt="黑暗监控室中一张直视屏幕外玩家的异常人脸" fill priority sizes="100vw" unoptimized />
+      <button type="button" onClick={evadeHmoExit}>返回系统</button>
+    </main>;
+  }
+
   if (game.view === "denied" && currentArticle) {
     const deniedMessage = deniedMessages[currentArticle.id] ?? "这份记录存在，但它不承认当前账号有资格知道它为什么存在。";
     return <main className="access-denied-screen" style={deniedBackgroundStyle}>
@@ -4440,15 +4576,15 @@ export default function Home() {
             <header data-chapter="02"><span>CHAPTER 02 / AUTO CORRELATION</span><small>关联完成 · 正在读取历史处置策略</small><h2>{evidenceChapters[1].title}</h2></header>
             <ol className="case-chapter-facts">
               <li><time>2021-08-21</time><p><b>A-1304-0821 / 110附件</b>记载监护人涉嫌酒后暴力及看护失职；物业结单字段仅保留“浴室意外”。</p></li>
-              <li><time>2023-02-08</time><p>公安回函记录顾长河死亡，物业于8小时44分钟后停用本人门禁。</p></li>
-              <li><time>2026-07-13</time><p>许芷遥的获救陈述提及顾小满；同日仍在写入的是留言令牌，不是顾长河的门禁凭证。</p></li>
+              <li><time>2023-02-08</time><p>公安回函记录顾长河死亡，物业于8小时后停用本人门禁。</p></li>
+              <li><time>2026-07-13</time><p>许芷遥的获救陈述提及顾小满；同日仍在写入的是遗留留言令牌。</p></li>
             </ol>
-            <blockquote className="case-chapter-voice"><span>MSG-1304 / 最后一条缓存</span><p>“不是她把我留在这里。是我一直不肯承认，她死的时候我就在那扇门里。”</p></blockquote>
-            <p className="case-chapter-interpretation">系统不能证明门外的呼唤是思念，也不能把它登记成宽恕。它能确认的是：事故附件、死亡主体和异常会话早已被物业放进同一条关联规则，却一直没有纠正前台档案。</p>
+            <blockquote className="case-chapter-voice"><span>MSG-1304 / 最后一条缓存</span><p>“不是她把我困在这里，是我一直不肯走，她死的时候我就在房间里，我不是个合格的父亲。”</p></blockquote>
+            <p className="case-chapter-interpretation">系统不能证明孩子的呼唤是思念，也不能把它登记成宽恕，唯一能确认的是：事故、死亡和异常早已被物业放进同一条关联规则，系统可以保留了这些“存在”，这算是惩罚吗？还是某种“恶趣味”？</p>
             <div className="case-chapter-policy"><EyeMark small/><div><span>历史策略自动命中</span><strong>1304-FAMILY-KEEP / 创建于 2023-02-08 09:24</strong><p>输入条件：死亡主体、未成年人事故附件、残留会话。处置：保持家庭成员关联；不向前台暴露状态冲突。</p></div></div>
-            <div className="case-chapter-warning"><span>物业合规中心 / OPERATOR NOTICE</span><strong>CJ-0713，不得动用私情。</strong><p>当前权限仅允许写入主体状态并停用异常令牌。“团圆”“原谅”“赎罪”均不得作为档案结论，也不得以个人身份回应住户。</p></div>
+            <div className="case-chapter-warning"><span>物业合规中心 / OPERATOR NOTICE</span><strong>CJ-0713，你，不得动用私情。</strong><p>当前权限仅允许写入主体状态并停用异常令牌。“团圆”“原谅”“赎罪”等均不得作为档案结论，也不得以个人身份回应住户，CJ-0713 请恪守你作为管理员的职责，必要时执行“记忆一致性复训”。</p></div>
           </section> : <>
-            <p className="case-timeline-instruction"><strong>复核目的：</strong>顾长河已经死亡、本人门禁也已停用，但1304仍与本次救援和留言写入有关。请从八条记录中选出五条，依次说明这条异常是怎样形成的。环境痕迹和普通回访不能代替主体状态证明。</p>
+            <p className="case-timeline-instruction"><strong>复核目的：顾长河已经死亡、本人门禁也已停用，但1304仍与本次救援和留言写入有关。请从八条记录中选出五条，依次说明这条异常是怎样形成的。</strong></p>
             <div className="case-timeline-builder">
               <div className="case-timeline-progress"><span>核验链</span><b>{caseTimeline.length} / 5</b><small>按下方五个阶段依次放入记录</small></div>
               <div className="case-timeline-slots">

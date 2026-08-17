@@ -75,7 +75,7 @@ test("preloads gameplay images in bounded background batches during the opening"
     .filter((path) => !/^\/(?:cover(?:-v\d+)?|og)\.png$/i.test(path));
   const missingPreloads = gameplayImages.filter((path) => !preloadDefinition.includes(JSON.stringify(path)));
 
-  assert.equal(gameplayImages.length, 35);
+  assert.equal(gameplayImages.length, 37);
   assert.deepEqual(missingPreloads, []);
   assert.match(page, /new window\.Image\(\)/);
   assert.match(page, /image\.decoding = "async"/);
@@ -372,7 +372,8 @@ test("pairs Gu Changhe's subjective callback statement with a damaged identity c
   assert.match(residentBody, /我总是听到她在敲门。我们已经分开很久了，她还是总来打扰我和孩子的生活。/);
   assert.doesNotMatch(residentBody, /是不是有人冒用住户资料/);
   assert.match(residentBody, /\/evidence\/gu-changhe-cut-id\.png/);
-  assert.match(residentBody, /原件右下角缺失/);
+  assert.match(residentBody, /顾长河旧身份证档案复印件，右下角被剪去一角/);
+  assert.doesNotMatch(residentBody, /<b>原件右下角缺失<\/b>/);
   assert.match(page, /const guChangheDocumentRef = useRef<HTMLElement \| null>\(null\)/);
   assert.match(page, /window\.addEventListener\("pointermove", trackEyes\)/);
   assert.match(page, /documentFigure\.style\.setProperty\("--eye-track-x"/);
@@ -397,7 +398,8 @@ test("presents the 1304 rescue archive as an aged newspaper scan", async () => {
   assert.match(accidentBody, /className="aged-newspaper-scan"/);
   assert.match(accidentBody, /\/evidence\/1304-rescue-newspaper-aged\.png/);
   assert.match(accidentBody, /查看物业附件转写与来源边界/);
-  assert.match(accidentBody, /后续讯问、伤情和责任认定不在物业卷宗内/);
+  assert.match(accidentBody, /<details className="newspaper-archive-transcript" open>/);
+  assert.match(accidentBody, /后续讯问、伤情和责任认定未披露/);
   assert.match(css, /\.aged-newspaper-scan \{/);
   assert.match(css, /filter: sepia\(\.16\) saturate\(\.72\) contrast\(1\.04\)/);
   assert.ok(newspaper.length > 1_000_000);
@@ -686,7 +688,7 @@ test("treats room numbers as narrow entry searches instead of master keys", asyn
 
   assert.match(page, /const genericRoomSearchEntries: Record<string, readonly string\[]> = \{/);
   assert.match(page, /"1204": \["workorder-1204", "vacancy-1204", "meter-1304"\]/);
-  assert.match(page, /"1304": \["meter-1304", "resident-1304", "height-mark", "workorder-1204", "case-correction"\]/);
+  assert.match(page, /"1304": \["meter-1304", "resident-1304", "height-mark", "accident-xiaoman", "workorder-1204", "case-correction"\]/);
   assert.match(page, /if \(!article\.available\(game\) && !indexedWhileLocked\) return 0/);
   assert.match(page, /id: "height-mark"[\s\S]*?available: \(game\) => game\.childSaved/);
   assert.match(page, /"1104": \["employee-sync", "room-1104-live", "room-1104"\]/);
@@ -709,19 +711,38 @@ test("opens the 1104 live room view from Zhou's password-free plea", async () =>
   assert.match(page, /id: "room-1104"[\s\S]*?title: "1104墙体复测与人员流转复核"/);
   assert.match(page, /id: "employee-mingchuan"[\s\S]*?title: "周明川员工基本信息"/);
   assert.match(page, /设施巡检专员/);
-  assert.match(page, /多次拒绝无照片结单/);
-  assert.match(page, /话不多，但会把哪里坏了讲清楚/);
+  assert.match(page, /多次拒绝未确认结单/);
+  assert.match(page, /人老实话不多，干活很仔细/);
   assert.match(page, /const MINGCHUAN_BIRTHDAY = "1991-09-17"/);
   assert.match(page, /const MINGCHUAN_RECORD_PASSWORD = "19910917"/);
   assert.match(page, /normalizeText\(roomPassword\) !== MINGCHUAN_RECORD_PASSWORD/);
+  assert.match(page, /内部记录需要共享密码（旧系统）/);
+  assert.match(page, /<button className="primary-button">解密<\/button>/);
+  assert.match(page, /西墙插座孔附近温度高于同层基准3\.7℃，存在有机物质/);
+  assert.match(page, /已注销 \/ 仍可本地终端登录/);
+  assert.match(page, /id: "hmo-admin-account"[\s\S]*?terms: \["HMO-ADMIN"[\s\S]*?available: \(game\) => hasVisited\(game, "employee-sync"\)/);
+  assert.match(page, /observer-face\.png/);
+  assert.match(page, /normalizedTerm === "hmoadmin"[\s\S]*?view: "article"[\s\S]*?activeArticle: hmoArticle\.id/);
+  assert.match(page, /hmo-admin-takeover hmo-admin-takeover--escape-/);
+  assert.match(page, /if \(hmoExitAttempts >= 2\)[\s\S]*?goHome\(\)/);
+  assert.match(page, /if \(hmoExitAttempts === 1\) playHmoLaugh\(\)/);
+  assert.match(page, /new Audio\(assetPath\("\/audio\/hmo-admin-female-laugh\.ogg"\)\)/);
+  assert.match(page, /laugh\.playbackRate = 1\.22/);
+  assert.doesNotMatch(page, /const playHmoLaugh = \(\) => \{[\s\S]*?createOscillator/);
+  assert.match(css, /hmo-takeover-zoom 8s/);
+  assert.match(css, /hmo-exit-reveal 0s linear 8s forwards/);
   assert.doesNotMatch(page, /11·04·2713|11042713/);
   assert.match(page, /className="room-1104-live__wall-hotspot"/);
   assert.match(page, /aria-pressed=\{room1104GhostPinned\}/);
   assert.match(page, /onClick=\{inspectRoom1104Wall\}/);
   assert.match(page, /wallAnomalyInspected: boolean/);
-  assert.match(page, /检索关键词已记录：墙面破拆/);
+  assert.match(page, /检索关键词已记录：封闭施工/);
+  assert.match(page, /terms: \["封闭施工"/);
   assert.match(page, /id: "wall-demolition-1104"[\s\S]*?title: "1104西墙封闭施工派工记录"[\s\S]*?available: \(game\) => game\.wallAnomalyInspected/);
   assert.match(page, /available: \(game\) => hasVisited\(game, "wall-demolition-1104"\)/);
+  assert.match(page, /terms: \["1104", "周明川", "墙体复测"/);
+  assert.match(page, /发起账号为<strong className="danger-text">HMO-ADMIN<\/strong>/);
+  assert.match(page, /进行<strong className="danger-text">“墙体复测”<\/strong>/);
   assert.match(page, /恒目驻场设施组接收1104西墙“局部封闭”任务/);
   assert.doesNotMatch(page, /<label>“内部转移”流程合规性/);
   assert.doesNotMatch(page, /wallArchive/);
@@ -807,11 +828,13 @@ test("makes the 1304 deduction reconstruct records before revealing the chapter"
   assert.doesNotMatch(page, /if \(caseTimeline\.join\("\|"\) !== expected\.join\("\|"\)\) \{\s*setCaseTimeline\(\[\]\)/);
   assert.match(page, /A-1304-0821 \/ 110附件/);
   assert.match(page, /1304-FAMILY-KEEP \/ 创建于 2023-02-08 09:24/);
-  assert.match(page, /CJ-0713，不得动用私情/);
-  assert.match(page, /系统不能证明门外的呼唤是思念，也不能把它登记成宽恕/);
+  assert.match(page, /CJ-0713，你，不得动用私情/);
+  assert.match(page, /系统不能证明孩子的呼唤是思念，也不能把它登记成宽恕/);
+  assert.match(page, /<strong>复核目的：顾长河已经死亡[\s\S]*?依次说明这条异常是怎样形成的。<\/strong>/);
+  assert.match(page, /重点关怀回访：登记号码有线上应答/);
   assert.match(page, /附加事故回执，保全会话并停用令牌/);
   assert.match(page, /visible: \(game\) => game\.fatherResolved, text: "小满只是想念父母，但思念不等于原谅/);
-  assert.match(page, /if \(!game\.fatherResolved\) announceMessages\(\[4\]\)/);
+  assert.match(page, /if \(!game\.fatherResolved\) announceMessages\(\[5, 124, 4\]\)/);
   assert.doesNotMatch(page, /<label>顾小满死亡责任/);
   assert.doesNotMatch(page, /<label>每日呼唤的含义/);
   assert.doesNotMatch(page, /<option value="longing">儿童思念，不构成宽恕/);
@@ -1216,4 +1239,32 @@ test("renders Zhou Mingchuan's live account as a dark disabled admin console", a
   assert.match(page, /onClick=\{\(\) => openLegacyFile\(file\.id\)\}/);
   assert.match(css, /\.legacy-console \{ --ink:/);
   assert.match(css, /\.legacy-evidence-grid > button/);
+});
+
+test("reveals Lin Ruolan's Zhou Mingchuan lead only after the 1304 deduction", async () => {
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+
+  assert.match(page, /id: 5[\s\S]*?visible: \(game\) => game\.fatherResolved[\s\S]*?他的名字是周明川/);
+  assert.match(page, /id: 124[\s\S]*?unit: "1404"[\s\S]*?badge: "住户暂时下线"[\s\S]*?1404住户进入不健康状态，已被系统暂时下线/);
+  assert.doesNotMatch(page, /if \(!game\.fatherClosure\) announceMessages\(\[5\]\)/);
+  assert.match(page, /if \(!game\.fatherResolved\) announceMessages\(\[5, 124, 4\]\)/);
+  assert.match(page, /setMessagePopup\(\{ message: messages\[0\], count: messages\.length \}\)/);
+});
+
+test("unlocks the memory consistency retraining rules after the 1304 deduction", async () => {
+  const [page, css] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(page, /id: "memory-consistency-retraining"[\s\S]*?title: "员工记忆一致性复训守则"[\s\S]*?available: \(game\) => game\.fatherResolved/);
+  assert.match(page, /terms: \["记忆一致性复训"[\s\S]*?"MEM-CONSISTENCY"\]/);
+  assert.match(page, /无法检索的事情没有发生。已经结案的事情不再发生。/);
+  assert.match(page, /function MemoryTrainingLoop\(\)/);
+  assert.match(page, /new IntersectionObserver/);
+  assert.match(page, /setLineCount\(\(current\) => current \+ 16\)/);
+  assert.match(page, /不断延伸的记忆校正语句/);
+  assert.match(page, /系统记录即为你的记忆/);
+  assert.match(page, /如果你仍然记得，请重新阅读第一条/);
+  assert.match(css, /\.memory-training-loop/);
 });
