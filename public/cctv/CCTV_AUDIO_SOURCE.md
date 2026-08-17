@@ -8,4 +8,4 @@
 - License: Public domain (released worldwide by the author)
 - Source description: elevator doors closing, elevator running and stopping, then doors opening
 
-The game plays the recording at reduced volume under the 12th-floor event-review video. It is environmental texture only: no dialogue or clue-bearing sound was added, and failure to load this audio does not block the frame-review puzzle.
+The game plays the recording at reduced volume under the 12th-floor event-review video. It is environmental texture only: no dialogue or clue-bearing sound was added, and failure to load this audio does not block the frame-review puzzle. The short synthetic noise burst embedded in the standard video is documented separately in `CCTV_JUMPSCARE_SOURCE.md`.

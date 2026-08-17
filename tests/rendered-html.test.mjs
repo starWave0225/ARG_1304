@@ -404,7 +404,7 @@ test("presents the 1304 rescue archive as an aged newspaper scan", async () => {
 });
 
 test("turns the 1204 rescue into an evidence-led emergency workflow", async () => {
-  const [page, css, livingRoomPhoto, airConditionerPhoto, kitchenPhoto, childShoesPhoto, cctvAmbience, cctvAudioSource, rescueGhostFrame] = await Promise.all([
+  const [page, css, livingRoomPhoto, airConditionerPhoto, kitchenPhoto, childShoesPhoto, cctvAmbience, cctvAudioSource, cctvJumpscareSource, cctvJumpscareVideo, cctvReducedVideo, cctvJumpscareFrame, rescueGhostFrame] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../public/evidence/1204-vacancy/01-covered-living-room.png", import.meta.url)),
@@ -413,6 +413,10 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
     readFile(new URL("../public/evidence/1204-child-shoes.png", import.meta.url)),
     readFile(new URL("../public/cctv/cam-12f-elevator-ambience.mp3", import.meta.url)),
     readFile(new URL("../public/cctv/CCTV_AUDIO_SOURCE.md", import.meta.url), "utf8"),
+    readFile(new URL("../public/cctv/CCTV_JUMPSCARE_SOURCE.md", import.meta.url), "utf8"),
+    readFile(new URL("../public/cctv/cam-12f-event-review-jumpscare.mp4", import.meta.url)),
+    readFile(new URL("../public/cctv/cam-12f-event-review-reduced.mp4", import.meta.url)),
+    readFile(new URL("../public/cctv/cam-12f-jumpscare-frame.png", import.meta.url)),
     readFile(new URL("../public/rescue-route/09-1304-gu-changhe-ghost.png", import.meta.url)),
   ]);
   const cctvMeta = page.slice(page.indexOf('id: "cctv-1204"'), page.indexOf('id: "audio-1304"'));
@@ -431,7 +435,8 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.ok(kitchenPhoto.length > 1_000_000);
   assert.ok(childShoesPhoto.length > 1_000_000);
   assert.match(css, /\.vacancy-photo-grid \{ display: grid; grid-template-columns: repeat\(4,minmax\(0,1fr\)\);/);
-  assert.match(page, /cam-12f-event-review\.mp4/);
+  assert.match(page, /cam-12f-event-review-jumpscare\.mp4/);
+  assert.match(page, /media="\(prefers-reduced-motion: reduce\)" src=\{assetPath\("\/cctv\/cam-12f-event-review-reduced\.mp4"\)\}/);
   assert.match(page, /cam-12f-elevator-ambience\.mp3/);
   assert.match(page, /ref=\{cctvAmbienceRef\}/);
   assert.match(page, /ambience\.volume = Math\.max\(0, Math\.min\(1, video\.volume \* CCTV_AMBIENCE_VOLUME\)\)/);
@@ -441,6 +446,11 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.ok(cctvAmbience.length > 700_000);
   assert.match(cctvAudioSource, /Recordist: stephan/);
   assert.match(cctvAudioSource, /License: Public domain/);
+  assert.match(cctvJumpscareSource, /United States Library of Congress/);
+  assert.match(cctvJumpscareSource, /License: Public domain \/ PD-US-expired/);
+  assert.ok(cctvJumpscareVideo.length > 2_000_000);
+  assert.ok(cctvReducedVideo.length > 500_000);
+  assert.ok(cctvJumpscareFrame.length > 50_000);
   assert.match(cctvMeta, /available: \(game\) => game\.childMissingReported/);
   assert.match(cctvMeta, /接到失联儿童协查后/);
   assert.doesNotMatch(workorderBody, /openRelatedArticle\("cctv-1204"\)|12层公共区域事件录像/);
