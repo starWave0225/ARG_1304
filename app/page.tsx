@@ -326,41 +326,42 @@ const legacyFiles = [
     title: "第一个没有去向的人",
     summary: "我原本只是想替老孙补一张调岗交接单，结果名单里不止他一个。",
     paragraphs: [
-      "老孙的状态写着“内部转移”，可接收部门是空的，派车单里没有他的名字，他爱人也还在问工资为什么停了。我把人事库、门禁和派车记录对了一遍，过去三年一共有17个人这样消失：没有目的地，没有接收人，也没有本人签字。",
-      "他们离开前都被恒目做过一次“数据合规复核”。其中6个人最后刷门禁的地方，后来都出现过封闭施工。我先把名单抄在本机里，明天再去问工程部。服务器上的表，我已经不敢只看一遍了。",
+      "老孙的状态写着“内部转移”，可接收部门？没有。派车单里也没有他的名字，他爱人也在问工资为什么停发了。我把人事记录、门禁和派车记录都对了一遍，过去三年一共有17个人这样内部转移，都有一致的特征：没有目的地，没有派车单，也没有本人签字，他们就像是人间蒸发一样消失了，变成了失踪的数字，他们的亲人朋友都很少，也许就是这个原因，事情并没有闹大。",
+      "他们离开前都被恒目做过一次“数据合规复核”。其中6个人最后刷门禁的地方，后来都出现过封闭施工的工单。我先把名单抄在本机里，工程部的人换了一茬又一茬，我得想办法拿到服务器上的数据，这些内部转移的名字看得人心很慌。",
     ],
   },
   {
     id: "property-ledger",
     code: "ZM-DIARY-02",
     date: "2026-05-24 / 01:12",
-    title: "钱最后都去了同一个地方",
+    title: "钱归于一处去了",
     summary: "白天看起来互不相干的三项支出，到了夜里都汇进恒目的账户。",
     paragraphs: [
-      "我把“特殊保管服务”“终端校准”和“数据过滤”三项费用逐笔导出来。名称不同，项目编号也不同，可中转两次以后，钱都进了恒目关联的文化基金。没有验收单，也找不到实际维护过的设备。",
-      "审批页上没有负责人姓名，只有那枚向下看的单眼电子章。财务系统说证书校验失败，第二次刷新后却又自动显示“已通过”。我打印了一份，纸放在工具柜最下面。要是明天系统里什么都没有，至少我知道今晚不是我看错了。",
+      "我把“特殊保管服务”、“终端校准”和“数据过滤”三项费用逐笔导出来。名称不同，项目编号也不同，可中转几次以后，钱都进了恒目关联的文化基金。没有外包工程验收单，也找不到实际维护过的设备。看来，这个恒目公司就是最后钱的去处。",
+      "审批页上没有负责人姓名，只有那枚单眼章盖着，这里面一定有秘密。起初，财务系统说证书校验失败，第二次刷新后却又显示为“已通过”。我打印了一份，纸放在工具柜最下面。最近我的记性总是不好，我把这些记下来，放在私人服务器里藏着，这网路设备也藏在房间的暗格里，要是明天我又什么都不记得，至少能通过这份藏起来的笔记找回今天的线索。",
     ],
   },
   {
     id: "device-notes",
     code: "ZM-DIARY-03",
     date: "2026-05-29 / 00:14",
-    title: "没有电的标签亮了",
-    summary: "我拆开了一个ZC-LH标签，里面什么都没有，但终端仍说它刚刚在线。",
+    title: "终端设备不需要电也能联通",
+    summary: "我拆开了一个ZC-LH标签，里面什么都没有，甚至没有连通电路的电线，但终端仍能捕捉它刚刚在线的消息。",
     paragraphs: [
-      "标签里没有芯片、电池或天线，只是一张压过膜的纸。可外部终端打卡以后，它在00:04到00:10之间连续生成了在线记录。查到的几件物品都是骨灰盒或遗物箱，我不明白物业为什么要让这些东西“上线”。",
-      "我拔掉终端网线再查，检索历史立刻被一个叫“过滤”的任务清空，第二天的工单又从头生成。同一个人可能已经来过很多次，却会被系统写成第一次。我给客服046留了消息。奇怪的是，我明明没见过他，却觉得他会相信我。",
+      "标签里没有芯片、电池或天线，只是一张压过膜的铝箔。在外部终端打卡以后，它在00:04到00:10之间连续生成了在线记录。查到的几件物品都是不可名状的东西——骨灰盒或遗物箱，他们都是死人的东西，为什么会出现在这里？我不明白物业为什么要让这些东西“上线”。",
+      "我拔掉终端网线再查，检索历史立刻被一个叫“过滤”的任务清空，执行者是HMO-ADMIN，第二天的工单又从头生成了。不同的身份，同一个归属，我在线上给CS-046留了消息，他近期一直在帮助住户解决问题，奇怪的是，我明明没见过他，却隐约觉得他会相信我，也许奇迹会发生在他身上，我已经没有回头路可以走了。",
     ],
   },
   {
     id: "church-fragment",
     code: "ZM-DIARY-04",
     date: "2026-06-02 / 21:48",
-    title: "如果明天我没有来",
-    summary: "他们已经知道我在查什么。今晚有人先改了我的状态，然后才来找我。",
+    title: "如果没有明天",
+    summary: "他们已经知道我在查什么。今晚有人先改了我的状态，然后一直在跟踪我。",
     paragraphs: [
-      "旧邮件里反复出现“观察者”“回返窗口”和“记忆一致性”。他们要求物业优先接收意外死亡者家属的特殊保管委托，再把每天被清掉的账号重新放回原来的任务里。发件组织、项目地址和附件都被删了，只剩恒目的单眼章。",
-      "21:17，系统先生成了我的处置记录；21:40，我的人事状态才被改成“内部转移”。顺序反了，不是系统出错，是有人提前知道接下来会发生什么。走廊里已经有人停了很久。我把四篇日记留在本地，不再上传。别用账号还在活动证明我还活着。先看原始时间，再看他们删掉了什么。",
+      "旧邮件里反复出现“观察者”“回返窗口”和“记忆一致性”什么的。我的思绪很乱很乱，仿佛我的脑袋都不属于我了。他们要求物业优先接收意外死亡者家属的特殊保管委托，再把每天被清掉的账号重新放回原来的任务队列。只剩那枚单眼章，只要盖上了，一切都归于寂静。",
+      "但，好像来不及了，我的行为已经被恒目组织发现，我能记住的事情越来越少，脑子里的声音，啊，那股声音快要把我吞噬了。",
+      "21时17分，系统生成了我的处置记录，我看到我被离线了；而刚才，我的人事状态被改成“内部转移”。我有很不好的预感，这个房间我可能出不去了，所有异常都不是系统出错，而是它刻意为之的。有人知道接下来会发生什么。走廊里那道身影已经停了很久，我预感就是今天了。我把这些日记都留在本地，不再上传。如果你能看到这里，尽快离开这座大楼吧，找到自己的记忆吧。",
     ],
   },
 ] as const;
@@ -754,15 +755,15 @@ const articles: ArticleMeta[] = [
     snippet: "供应商培训附件与员工账号变更记录存在时间重合，部分签到及验收页缺失。",
     terms: ["恒目", "全知", "眼睛", "教会", "合规", "过滤器", "记忆清除", "驻场设备", "数据过滤", "一致性复训", "终端重置", "DLP"],
     kind: "restricted",
-    available: (game) => game.colleagueSolved,
+    available: (game) => game.legacyAccountCollapsed,
   },
   {
     id: "workorder-1404",
     title: "1404 固定回访人员投诉工单",
     section: "客服工单",
     date: "2026-07-13",
-    snippet: "1404住户投诉物业反复安排同一名员工上门，却每次均按首次接触登记。",
-    terms: ["1404", "林若岚", "投诉", "固定回访", "首次接触", "重复上门", "不要再让他明天重新来一次", "w-0713-1404", "cj-0713", "报事人姓名", "丈夫", "封存物"],
+    snippet: "1404住户投诉物业反复安排同一名员工上门。",
+    terms: ["1404", "林若岚", "投诉", "固定回访", "首次接触", "重复上门", "不要再让他明天再来了", "w-0713-1404", "cj-0713", "报事人姓名", "丈夫", "封存物"],
     kind: "restricted",
     available: (game) => game.colleagueSolved && game.evidence.includes("churchFlow"),
   },
@@ -1050,20 +1051,19 @@ function getPendingWorkItem(game: GameState): PendingWorkItem | null {
     };
   }
   if (!game.evidence.includes("churchFlow")) {
-    return hasVisited(game, "church-compliance")
-      ? queuedArticle("church-compliance", "恒目", {
-          eyebrow: "合规复核 · HMO-11",
-          action: "填写核验回执 →",
-          whisper: "按已查到的原始字段填写。",
-        })
-      : null;
+    return queuedArticle("church-compliance", "恒目", {
+      eyebrow: "合规复核 · HMO-11",
+      action: "填写核验回执 →",
+      direct: true,
+      whisper: "按已查到的原始字段填写。",
+    });
   }
   if (!hasVisited(game, "workorder-1404")) {
     return queuedArticle("workorder-1404", "1404", {
       eyebrow: "合规关注 · W-0713-1404",
       action: "进入工单 →",
       direct: true,
-      whisper: "不要再让他明天重新来一次。",
+      whisper: "不要再让他明天再来了。",
       tone: "final",
     });
   }
@@ -1790,6 +1790,7 @@ export default function Home() {
   const [ledgerOpen, setLedgerOpen] = useState(false);
   const [archiveIndexOpen, setArchiveIndexOpen] = useState(false);
   const [deductionOpen, setDeductionOpen] = useState(false);
+  const [ledgerRailCollapsed, setLedgerRailCollapsed] = useState(false);
   const [serviceTraceOpen, setServiceTraceOpen] = useState(false);
   const [activeDeduction, setActiveDeduction] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
@@ -3436,14 +3437,13 @@ export default function Home() {
   };
 
   const playHmoLaugh = () => {
-    const laugh = new Audio(assetPath("/audio/hmo-admin-female-laugh.ogg"));
+    const laugh = new Audio(assetPath("/audio/hmo-admin-creepy-laugh.mp3"));
     laugh.volume = 0.9;
-    laugh.playbackRate = 1.22;
     void laugh.play().catch(() => undefined);
     window.setTimeout(() => {
       laugh.pause();
       laugh.currentTime = 0;
-    }, 5200);
+    }, 4500);
   };
 
   const evadeHmoExit = () => {
@@ -3970,10 +3970,10 @@ export default function Home() {
 
     if (id === "church-compliance") return <>
       <div className="compliance-banner"><EyeMark /><div><strong>恒目管理顾问</strong><span>看见 · 纠正 · 保持一致</span></div></div>
-      <section className="field-record"><header><span>TRAINING BATCH / HMO-11</span><strong>附件完整性检查</strong></header><div><p><time>11-03 08:30</time><b>课程通知</b><span>参训17人，邮件附件含名单但无员工确认回执。</span></p><p><time>11-03 18:10</time><b>验收提交</b><span>供应商提交“已完成”截图，画面未包含场地、讲师或签到页。</span></p><p><time>11-04 08:00</time><b>终端工单</b><span>14个参训账号进入缓存清理与令牌重建队列。</span></p><p><time>11-05 09:12</time><b>人事同步</b><span>6个账号状态改为内部转移，均缺少接收部门。</span></p></div></section>
+      <section className="field-record"><header><span>TRAINING BATCH / HMO-11</span><strong>附件完整性检查</strong></header><div><p><time>11-03 08:30</time><b>课程通知</b><span>参训17人，邮件附件含名单但无员工确认回执。</span></p><p><time>11-03 18:10</time><b>验收提交</b><span>供应商提交“已完成”截图。</span></p><p><time>11-04 08:00</time><b>终端工单</b><span>14个参训账号进入缓存清理与令牌重建队列。</span></p><p><time>11-05 09:12</time><b>人事同步</b><span>6个账号状态改为内部转移，均缺少接收部门。</span></p></div></section>
       <p>培训材料将偏离标准口径的记录称为“噪点”，将批量删除、重建索引和终端缓存清理统称为<mark>过滤</mark>。文件只说明数据操作，没有写明员工记忆或医疗处置；“复训”是否包含其他内容，现有物业附件无法证明。</p>
       <table className="data-table"><tbody><tr><th>ZC-LH</th><td>住户特殊保管物标签，内容物字段仅合规管理员可见</td></tr><tr><th>外部终端</th><td>临时账号认证及标签关联设备</td></tr><tr><th>离岗流程</th><td>清除本机缓存、撤销令牌并重建次日任务队列</td></tr><tr><th>异常资金</th><td>“特殊保管服务费”经物业科目转入恒目关联文化基金</td></tr></tbody></table>
-      <p className="muted-copy">付款申请由物业区域负责人审批，供应商验收栏只有单眼图形电子章。财务导出表显示服务费在三个工作日内转入恒目关联文化基金，但用途字段为空。</p>
+      <p className="muted-copy">付款申请由物业区域负责人审批，供应商验收栏有单眼图形电子章。财务导出表显示服务费在三个工作日内转入恒目关联文化基金。</p>
       {renderArticleVerification("church-compliance")}
     </>;
 
@@ -3981,10 +3981,10 @@ export default function Home() {
       <div className="workorder-document workorder-document--1404">
         <header className="workorder-sheet-head"><div><span>澄江物业服务中心 / 客服工单</span><strong>固定回访人员重复上门投诉</strong><small>系统流水号：W-0713-1404 · 住户本人发起</small></div><aside><i>合规关注</i><b>待处理</b></aside></header>
         <dl className="workorder-facts"><div><dt>报事地址</dt><dd>1404</dd></div><div><dt>报事人</dt><dd>林若岚 / 住户本人</dd></div><div><dt>受理时间</dt><dd>2026-07-13 08:32</dd></div><div><dt>当前处理人</dt><dd className="glitch-field">CJ-0713</dd></div></dl>
-        <section className="workorder-statement"><span>住户原话</span><blockquote>“每天来的都是同一个人。你们却让他每次都说第一次见我，再把回访记成首次接触。请复核他以前的客服编号，也请核对我留在家里的封存物。不要再让他明天重新来一次。”</blockquote></section>
-        <div className="workorder-routing"><span>系统派单记录</span><p><b>08:32</b> 住户提交投诉</p><p><b>08:32</b> 报事人姓名通过住户端实名校验：林若岚</p><p><b>08:33</b> 关系错认风险自动标记</p><p><b>08:33</b> 工单转派至被投诉的固定回访人员 CJ-0713</p></div>
+        <section className="workorder-statement"><span>住户原话</span><blockquote>“每天来的都是同一个人，事情也不会有任何进展，我很痛苦，不要再让他明天再来了。”</blockquote></section>
+        <div className="workorder-routing"><span>系统派单记录</span><p><b>08:32</b> 住户提交投诉</p><p><b>08:32</b> 报事人姓名通过住户端实名校验：林若岚</p><p><b>08:33</b> 工单转派至被投诉的固定回访人员 CJ-0713</p></div>
       </div>
-      <aside className="compliance-threat"><EyeMark /><div><span>员工合规警示 / 强制确认</span><strong>不得使用本工单建立你与1404住户的私人关系。</strong><p>当前处理人、投诉所述对象及固定回访人员出现自指冲突。继续调阅历史坐席、事故主体或住户封存物，将启动员工记忆一致性校正。</p></div></aside>
+      <aside className="compliance-threat"><EyeMark /><div><span>员工合规警示 / 强制确认</span><strong>不得利用本工单建立与1404住户的任何关系。</strong><p>当前处理人、投诉所述对象及固定回访人员出现关系冲突。继续调阅相关信息或住户封存物，将启动员工记忆一致性校正。</p></div></aside>
       <div className="article-actions"><button onClick={() => openRelatedArticle("w04-directory")}>核对住户关怀索引</button><button onClick={() => openRelatedArticle("employee-cj0713-index")}>核对当前处理人终端字段</button></div>
     </>;
 
@@ -4491,8 +4491,8 @@ export default function Home() {
         </article>}
       </section>
 
-      <aside className="evidence-rail">
-        <header><span>调查台账</span><strong>{game.evidence.length.toString().padStart(2, "0")}</strong></header>
+      <aside className={`evidence-rail ${ledgerRailCollapsed ? "is-collapsed" : ""}`}>
+        <header><span>调查台账</span><div><strong>{game.evidence.length.toString().padStart(2, "0")}</strong><button type="button" className="evidence-rail__toggle" aria-expanded={!ledgerRailCollapsed} aria-label={ledgerRailCollapsed ? "向下展开调查台账" : "向上收起调查台账"} onClick={() => setLedgerRailCollapsed((current) => !current)}>{ledgerRailCollapsed ? "向下展开 ↓" : "向上收起 ↑"}</button></div></header>
         <p>章节标题只会在对应推导完成后归档。</p>
         <div>{renderLedgerChapters()}</div>
         <section className="coverage"><span>档案阅读覆盖</span><strong>{game.visited.length} / {articles.length}</strong><i><b style={{ width: `${Math.min(100, (game.visited.length / articles.length) * 100)}%` }} /></i><button onClick={openArchiveIndex}>查看全部档案 →</button></section>
@@ -4553,15 +4553,15 @@ export default function Home() {
       </div> : <div className="deduction-detail">
         <button className="deduction-back" onClick={() => setActiveDeduction(null)}>← 返回推导档案</button>
         {activeDeduction === "1204" && <section className="case-chapter-performance">
-          <header data-chapter="01"><span>CHAPTER 01 / EMERGENCY TRACE</span><small>搜救结束 · 原始材料转入事件保全</small><h2>{evidenceChapters[0].title}</h2></header>
+          <header data-chapter="01"><span>CHAPTER 01 / EMERGENCY TRACE</span><small>搜救结束 · 原始材料转入事件档案</small><h2>{evidenceChapters[0].title}</h2></header>
           <ol className="case-chapter-facts">
-            <li><time>2026-07-01</time><p>1204服务已终止，但门禁启用记录与巡检原图仍显示近期生活痕迹。此前台账没有触发实际占用复核。</p></li>
-            <li><time>00:03—00:04</time><p>监护人最后确认许芷遥位于1204次卧；一分钟后入户门磁触发，公共区域没有匹配到成人门禁通行。</p></li>
-            <li><time>00:07—00:13</time><p>消防楼梯影像与网关记录形成连续路径。民警和安保在1304门外前室找到许芷遥，第二个矮小轮廓未通过目标识别。</p></li>
+            <li><time>2026-07-01</time><p>1204服务已终止，但门禁启用记录与巡检图仍显示近期生活痕迹。</p></li>
+            <li><time>00:03—00:04</time><p>监护人最后确认许芷遥位于1204次卧；一分钟后入户门磁触发，公共区域没有匹配到门禁通行。</p></li>
+            <li><time>00:07—00:13</time><p>消防楼梯影像与网关记录形成连续路径。民警和安保在1304门外消防前室找到许芷遥，存在第二个矮小轮廓未通过目标实体识别。</p></li>
           </ol>
-          <blockquote className="case-chapter-voice"><span>RESCUE-0713 / 儿童原话摘录</span><p>“她说楼上一直有人等，所以带我走楼梯。她没有穿鞋，衣服一直往下滴水。”</p></blockquote>
-          <p className="case-chapter-interpretation">搜救记录能够确认许芷遥的移动路线，不能确认引导者身份。她提到的姓名与1304旧事故附件重合，应作为待核信息保留，而不是写入住户身份。</p>
-          <div className="case-chapter-policy"><EyeMark small/><div><span>历史巡检策略命中</span><strong>VACANT-CLOSE / 最近执行 2026-07-08 16:22</strong><p>生活痕迹已被自动归入“产权人临时存放物”。该规则使实际占用异常连续两次未进入人工复核。</p></div></div>
+          <blockquote className="case-chapter-voice"><span>RESCUE-0713 / 儿童原话摘录</span><p>“她说要带我出去，带我走楼梯。她浑身都湿透了，要找自己的爸爸妈妈。”</p></blockquote>
+          <p className="case-chapter-interpretation">搜救记录能够确认许芷遥的移动路线，不能确认引导者身份。她提到的姓名与1304旧事故附件重合，作为待核信息保留。</p>
+          <div className="case-chapter-policy"><EyeMark small/><div><span>历史巡检策略命中</span><strong>VACANT-CLOSE / 最近执行 2026-07-08 16:22</strong><p>生活痕迹已被自动归入“产权人临时存放物”。该规则使实际占用异常连续数次未进入人工复核。</p></div></div>
           <div className="truth-seal">搜救链已保全 · 引导者未核实</div>
         </section>}
         {activeDeduction === "1304" && <>
@@ -4603,12 +4603,12 @@ export default function Home() {
         {activeDeduction === "1104" && <section className="case-chapter-performance">
           <header data-chapter="03"><span>CHAPTER 03 / INTERNAL REVIEW</span><small>工程复测与人事材料交叉完成</small><h2>{evidenceChapters[2].title}</h2></header>
           <ol className="case-chapter-facts">
-            <li><time>2026-06-02 21:40</time><p>1104西墙现场净宽比竣工图少42厘米；空腔区域存在持续人体尺度回波，表面修补批次晚于交付日期。</p></li>
-            <li><time>2026-06-02 22:03</time><p>周明川的“内部转移”状态写入人事系统。单据没有车辆、目的地、接收部门或签收人。</p></li>
+            <li><time>2026-06-02 21:40</time><p>1104西墙现场净宽比竣工图少42厘米；空腔区域存在持续有机体，墙面修补晚于首次交付日期。</p></li>
+            <li><time>2026-06-02 22:03</time><p>周明川的“内部转移”状态写入人事系统。单据没有车辆、目的地、接收部门或本人签字。</p></li>
             <li><time>警方破拆后</time><p>西墙空腔内发现的遗体经身份核验为周明川。其离线同步包和本机账号令牌仍保留在物业终端。</p></li>
           </ol>
-          <blockquote className="case-chapter-voice"><span>ZM-0602 / 离线便笺</span><p>“先量墙，再查转移单。别用账号还在活动，证明我还活着。”</p></blockquote>
-          <p className="case-chapter-interpretation">现有材料足以否定“正常调岗”和“人员失联”的内部口径。注销账号为何仍能调用本机缓存，不属于工程与人事复核可以证明的范围。</p>
+          <blockquote className="case-chapter-voice"><span>ZM-0602 / 离线便笺</span><p>“以我残躯化烈火，照亮这里的黑暗吧。”</p></blockquote>
+          <p className="case-chapter-interpretation">现有材料足以否定“正常调岗”和“人员失联”的内部口径。</p>
           <div className="case-chapter-policy"><EyeMark small/><div><span>预生成处置记录</span><strong>EMP-TRANSFER-CLOSE / 2026-06-02 21:17</strong><p>该记录早于人事状态写入46分钟，也早于现场异常上报。执行人字段来自恒目驻场合规组。</p></div></div>
           <div className="truth-seal">遗体身份已确认 · 转移记录不成立</div>
         </section>}

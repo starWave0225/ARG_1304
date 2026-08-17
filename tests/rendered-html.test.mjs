@@ -61,6 +61,8 @@ test("keeps dense investigation screens readable across breakpoints", async () =
   assert.match(styles, /@media \(max-width: 560px\)[\s\S]*?\.record-article p[\s\S]*?font-size: 14px/);
   assert.match(styles, /\.record-article p[\s\S]*?font-size: 14px/);
   assert.match(styles, /\.archive-sidebar button[\s\S]*?font-size: 12px/);
+  assert.match(styles, /\.evidence-rail\.is-collapsed/);
+  assert.doesNotMatch(styles, /\.evidence-rail\.is-collapsed > section \{ display: none; \}/);
   assert.match(styles, /\.callback-center-head p[\s\S]*?font-size: 13px/);
   assert.doesNotMatch(styles, belowMinimumFontSize);
   assert.match(truthStyles, /Cross-device readability floor/);
@@ -726,8 +728,8 @@ test("opens the 1104 live room view from Zhou's password-free plea", async () =>
   assert.match(page, /hmo-admin-takeover hmo-admin-takeover--escape-/);
   assert.match(page, /if \(hmoExitAttempts >= 2\)[\s\S]*?goHome\(\)/);
   assert.match(page, /if \(hmoExitAttempts === 1\) playHmoLaugh\(\)/);
-  assert.match(page, /new Audio\(assetPath\("\/audio\/hmo-admin-female-laugh\.ogg"\)\)/);
-  assert.match(page, /laugh\.playbackRate = 1\.22/);
+  assert.match(page, /new Audio\(assetPath\("\/audio\/hmo-admin-creepy-laugh\.mp3"\)\)/);
+  assert.doesNotMatch(page, /laugh\.playbackRate/);
   assert.doesNotMatch(page, /const playHmoLaugh = \(\) => \{[\s\S]*?createOscillator/);
   assert.match(css, /hmo-takeover-zoom 8s/);
   assert.match(css, /hmo-exit-reveal 0s linear 8s forwards/);
@@ -962,8 +964,11 @@ test("makes the 1404 complaint and memory rewrite the final chapter", async () =
   assert.match(page, /title: "1404 固定回访人员投诉工单"/);
   assert.match(page, /available: \(game\) => game\.colleagueSolved && game\.evidence\.includes\("churchFlow"\)/);
   assert.match(page, /查找周明川留下的离线同步记录[\s\S]*?核验恒目复训与账号变更记录[\s\S]*?处理1404重复回访投诉/);
-  assert.match(page, /queuedArticle\("church-compliance", "恒目"[\s\S]*?queuedArticle\("workorder-1404", "1404"/);
+  assert.match(page, /queuedArticle\("church-compliance", "恒目"[\s\S]*?direct: true[\s\S]*?queuedArticle\("workorder-1404", "1404"/);
   assert.match(page, /工单转派至被投诉的固定回访人员 CJ-0713/);
+  assert.match(page, /事情也不会有任何进展，我很痛苦，不要再让他明天再来了/);
+  assert.match(page, /不得利用本工单建立与1404住户的任何关系/);
+  assert.doesNotMatch(page, /关系错认风险自动标记/);
   assert.match(page, /id: "w04-directory"[\s\S]*?available: \(game\) => hasVisited\(game, "workorder-1404"\)/);
   const w04Directory = page.match(/id: "w04-directory"[\s\S]*?available: \(game\) => hasVisited\(game, "workorder-1404"\)/)?.[0] ?? "";
   assert.doesNotMatch(w04Directory, /账号建档时刻/);
@@ -1004,13 +1009,17 @@ test("limits the dashboard queue to discovered receipts instead of revealing the
   assert.match(queue, /eyebrow: "失联人员核对 · DL-0713-0041"/);
   assert.match(queue, /eyebrow: "录像保全 · DL-0713-0041"/);
   assert.match(queue, /kind: "search"[\s\S]*?title: "确认1304户主状态"[\s\S]*?query: "1304"/);
+  assert.match(queue, /if \(!game\.evidence\.includes\("churchFlow"\)\)[\s\S]*?queuedArticle\("church-compliance", "恒目"[\s\S]*?direct: true/);
   assert.doesNotMatch(queue, /queuedArticle\("vacancy-1204"|queuedArticle\("meter-1304"|queuedArticle\("audio-1304"|queuedArticle\("alibi-liang"|queuedArticle\("resident-1304"|queuedArticle\("height-mark"|queuedArticle\("accident-xiaoman"|queuedArticle\("employee-sync"|queuedArticle\("w04-directory"|queuedArticle\("care-w04"/);
   assert.match(queue, /if \(!hasUnlockedArticle\(game, "w04-directory"\)\) \{[\s\S]*?queuedArticle\("workorder-1404", "1404"[\s\S]*?action: "返回工单 →"/);
   assert.match(queue, /if \(!hasUnlockedArticle\(game, "care-w04"\)\) \{\s*return null;/);
   assert.match(page, /if \(pendingWork\.direct \|\| game\.visited\.includes\(article\.id\)\)[\s\S]*?openArticle\(article\)[\s\S]*?searchFor\(pendingWork\.query \?\? article\.title\)/);
   assert.match(page, /暂无待填回执/);
   assert.match(page, /系统不会列出后续证据/);
+  assert.match(page, /供应商提交“已完成”截图。/);
+  assert.match(page, /供应商验收栏有单眼图形电子章。财务导出表显示服务费在三个工作日内转入恒目关联文化基金。/);
   assert.match(page, /onClick=\{openPendingWork\}/);
+  assert.match(page, /aria-label=\{ledgerRailCollapsed \? "向下展开调查台账" : "向上收起调查台账"\}/);
 });
 
 test("stages the evidence ending as the protagonist leaving the building", async () => {
@@ -1082,7 +1091,8 @@ test("keeps chapter summaries factual and leaves supernatural attribution unreso
   ]);
 
   assert.match(page, /引导者未核实/);
-  assert.match(page, /账号为何仍能调用本机缓存，不属于工程与人事复核可以证明的范围/);
+  assert.match(page, /现有材料足以否定“正常调岗”和“人员失联”的内部口径/);
+  assert.doesNotMatch(page, /账号为何仍能调用本机缓存/);
   assert.match(page, /系统无法据此判断当前操作者的生命状态或意识来源/);
   assert.match(page, /预生成处置记录/);
   assert.match(page, /任务模板与前三次1404投诉使用同一策略编号/);
@@ -1171,9 +1181,18 @@ test("supports manual login to Zhou Mingchuan's optional local archive", async (
   assert.match(page, /PRIVATE DIARY/);
   assert.match(page, /四篇日记/);
   assert.match(page, /第一个没有去向的人/);
-  assert.match(page, /钱最后都去了同一个地方/);
-  assert.match(page, /没有电的标签亮了/);
-  assert.match(page, /如果明天我没有来/);
+  assert.match(page, /钱归于一处去了/);
+  assert.match(page, /终端设备不需要电也能联通/);
+  assert.match(page, /如果没有明天/);
+  assert.match(page, /过去三年一共有17个人这样内部转移/);
+  assert.match(page, /执行者是HMO-ADMIN/);
+  assert.match(page, /尽快离开这座大楼吧，找到自己的记忆吧/);
+  assert.match(page, /空腔区域存在持续有机体，墙面修补晚于首次交付日期/);
+  assert.match(page, /搜救结束 · 原始材料转入事件档案/);
+  assert.match(page, /她浑身都湿透了，要找自己的爸爸妈妈/);
+  assert.match(page, /实际占用异常连续数次未进入人工复核/);
+  assert.match(page, /以我残躯化烈火，照亮这里的黑暗吧/);
+  assert.doesNotMatch(page, /注销账号为何仍能调用本机缓存/);
   assert.doesNotMatch(page, /title: "内部转移人员复核表"|title: "物业服务费异常流水"|title: "ZC-LH 标签观察笔记"|title: "恒目旧项目通讯残片"/);
 });
 
