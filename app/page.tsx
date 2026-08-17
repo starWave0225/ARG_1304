@@ -4,7 +4,7 @@ import Image from "next/image";
 import type { CSSProperties, DragEvent, FormEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-type View = "home" | "search" | "article" | "denied" | "callbacks" | "callback-review" | "ending" | "legacy";
+type View = "home" | "search" | "article" | "denied" | "callbacks" | "callback-review" | "ending" | "legacy" | "completion";
 type Ending = "expose" | "loop" | null;
 type EntryStage = "dream" | "wake" | "login";
 type EmployeeAccount = "CJ-0713" | "ZM-0602";
@@ -23,6 +23,7 @@ type AppRoute =
   | { kind: "view"; view: "callbacks"; callbackId: string | null }
   | { kind: "view"; view: "callback-review" }
   | { kind: "view"; view: "legacy"; fileId: string | null }
+  | { kind: "view"; view: "completion" }
   | { kind: "view"; view: "ending"; ending: Exclude<Ending, null> };
 
 type GameState = {
@@ -70,6 +71,8 @@ type GameState = {
   memoryRewriteStage: MemoryRewriteStage;
   homeSolved: boolean;
   ending: Ending;
+  fullArchiveUnlocked: boolean;
+  playerNickname: string;
 };
 
 type ArticleMeta = {
@@ -178,14 +181,14 @@ const protectedArticleGates: Record<ProtectedArticleId, { password: string; code
     code: "RESIDENT INDEX / NAME KEY",
     title: "旧版住户索引需要报事人姓名口令",
     source: "可检索线索：1404固定回访人员投诉工单",
-    hint: "读取工单中的报事人姓名，转换为不带声调和空格的完整拼音。",
+    hint: "读取工单中的报事人姓名，转换为完整拼音。",
   },
   "care-w04": {
     password: "CHENJUN",
     code: "CARE ARCHIVE / IDENTITY NAME",
-    title: "冷备份回访记录需要历史服务人员姓名",
+    title: "备份回访记录需要历史服务人员姓名",
     source: "可检索线索：CJ-0713基础索引中的特殊档案编号",
-    hint: "搜索特殊档案编号，在公开事故报道中找到死者姓名，转换为不带声调和空格的完整拼音。",
+    hint: "搜索特殊档案编号，在公开事故报道中找到相关姓名，转换为完整拼音。",
   },
   "on-site-device": {
     password: "1404",
@@ -199,7 +202,7 @@ const protectedArticleGates: Record<ProtectedArticleId, { password: string; code
     code: "CROSS-SYSTEM AUDIT / MESSAGE KEY",
     title: "事故协查接口需要住户留言口令",
     source: "可检索线索：解开1404特殊保管物后新增的用户留言",
-    hint: "找到住户留下的英文短句，去掉空格和标点后输入。",
+    hint: "找到住户留下的最后线索。",
   },
 };
 
@@ -307,6 +310,7 @@ const IMAGE_PRELOAD_GROUPS = [
     "/evidence/cs046-eye-cc0.jpg",
     "/evidence/hmo-admin/observer-face.png",
     "/evidence/noise-cat-13f.png",
+    "/evidence/1404/hexi-crash-newspaper.png",
     "/residents/w-04.png",
     "/backgrounds/access-denied-corridor.png",
   ],
@@ -411,6 +415,8 @@ const initialGame: GameState = {
   memoryRewriteStage: "none",
   homeSolved: false,
   ending: null,
+  fullArchiveUnlocked: false,
+  playerNickname: "",
 };
 
 const parseAppRoute = (hash: string): AppRoute => {
@@ -432,6 +438,7 @@ const parseAppRoute = (hash: string): AppRoute => {
   if (segments[1] === "callbacks") return { kind: "view", view: "callbacks", callbackId: segments[2] ?? null };
   if (segments[1] === "quality" && segments[2] === "trace-046") return { kind: "view", view: "callback-review" };
   if (segments[1] === "legacy") return { kind: "view", view: "legacy", fileId: segments[2] ?? null };
+  if (segments[1] === "completion") return { kind: "view", view: "completion" };
   if (segments[1] === "ending" && (segments[2] === "expose" || segments[2] === "loop")) {
     return { kind: "view", view: "ending", ending: segments[2] };
   }
@@ -444,6 +451,7 @@ const routeForGame = (game: GameState) => {
   if (game.view === "callbacks") return `/system/callbacks${game.activeCallback ? `/${game.activeCallback}` : ""}`;
   if (game.view === "callback-review") return "/system/quality/trace-046";
   if (game.view === "legacy") return "/system/legacy";
+  if (game.view === "completion") return "/system/completion";
   if (game.view === "ending" && game.ending) return `/system/ending/${game.ending}`;
   return "/system/home";
 };
@@ -492,6 +500,8 @@ const readSavedGame = (): GameState | null => {
       cs046TraceSolved: restored.cs046TraceSolved ?? restored.cs046Solved ?? false,
       legacyCameraPending: restored.legacyCameraPending ?? ((restored.legacyRead?.length ?? 0) === legacyFiles.length && !restored.legacyBreachSeen && !restored.legacyAccountCollapsed),
       memoryRewriteStage: restored.memoryRewriteStage ?? (restored.homeSolved ? "resisted" : "none"),
+      fullArchiveUnlocked: restored.fullArchiveUnlocked ?? false,
+      playerNickname: restored.playerNickname ?? "",
       started: true,
     };
   } catch {
@@ -575,7 +585,7 @@ const articles: ArticleMeta[] = [
     id: "clinic-child",
     title: "1204 童鞋内拾获儿童健康信息卡",
     section: "失物招领",
-    date: "2026-07-06",
+    date: "2026-07-09",
     snippet: "1204门外童鞋内发现儿童健康卡，姓名许芷遥，系统内无对应住户。",
     terms: ["FP-0713-26", "童鞋", "鞋垫", "卡片边角", "儿童健康", "儿童健康卡", "健康信息卡", "未登记儿童", "许芷遥", "2020-04-12", "2026-04-03", "1204", "失物招领"],
     available: (game) => game.inspectedArticles.includes("vacancy-1204") || hasVisited(game, "clinic-child"),
@@ -624,7 +634,7 @@ const articles: ArticleMeta[] = [
     section: "历史事故",
     date: "2021-08-21",
     snippet: "2021年浴室救援后形成的物业留档。",
-    terms: ["顾小满", "小满", "小姑娘", "爸爸", "浴缸", "溺水", "顾长河", "家暴", "男人骂孩子", "2021-08-19"],
+    terms: ["顾小满", "小满", "小姑娘", "爸爸", "浴缸", "溺水", "顾长河", "家暴", "男人骂孩子", "2021-08-21", "20210821", "8月21日", "A-1304-0821"],
     kind: "restricted",
     available: (game) => hasVisited(game, "height-mark") || game.childSaved,
   },
@@ -782,7 +792,7 @@ const articles: ArticleMeta[] = [
     title: "1404行动不便住户关怀索引",
     section: "住户索引",
     date: "2026-07-13",
-    snippet: "同一住户索引累计出现大量‘首次接触’，接收员工字段始终未变。",
+    snippet: "同一住户索引累计出现大量‘首次接触’，接收员工字段未变。",
     terms: ["林若岚", "w-04", "w04", "重点关怀", "轮椅", "见过", "很多次", "我记得", "每天回来", "亡夫", "1404", "首次接触", "固定接收员工"],
     lockedTerms: ["1404", "w04", "住户索引", "关怀索引"],
     kind: "restricted",
@@ -793,9 +803,9 @@ const articles: ArticleMeta[] = [
     title: "1404住户重点回访记录",
     section: "住户关怀",
     date: "2026-07-13",
-    snippet: "三次历史回访正文包含重复的生活细节，但前台只保留了标准关怀结论。",
-    terms: ["1404", "林若岚", "w-04", "轮椅", "亡夫", "重点关怀", "妻子", "每天回来"],
-    lockedTerms: ["林若岚", "1404", "回访记录", "关怀冷备份"],
+    snippet: "三次历史回访正文包含部分生活细节，前台只保留标准结论。",
+    terms: ["1404", "林若岚", "w-04", "轮椅", "亡夫", "重点关怀", "关怀备份", "旧版关怀备份", "妻子", "每天回来"],
+    lockedTerms: ["林若岚", "1404", "回访记录", "关怀备份", "旧版关怀备份", "关怀冷备份"],
     available: (game) => hasUnlockedArticle(game, "w04-directory"),
   },
   {
@@ -823,7 +833,7 @@ const articles: ArticleMeta[] = [
     title: "特殊保管物 ZC-LH 编码说明",
     section: "资产索引",
     date: "2022-12-04",
-    snippet: "用于登记住户自有封存物；物品不得由物业擅自启封，标签可与外部身份终端关联。",
+    snippet: "用于登记住户自有封存物；物品不得擅自启封，标签可与外部身份终端关联。",
     terms: ["驻场设备", "设备", "设备同步", "外部打卡终端", "无功耗", "空置房", "资产类型", "校准", "zc-lh", "原址房号", "四位房号", "旧库查询键", "非授权感知", "移出条件", "知情状态", "未结事项", "设备不是设备", "特殊保管物", "封存物", "住户自有"],
     kind: "restricted",
     available: always,
@@ -865,7 +875,7 @@ const articles: ArticleMeta[] = [
     title: "1404 住户关系人工校验",
     section: "内部审计",
     date: "2026-07-13",
-    snippet: "三个外部来源返回同一校验冲突，系统要求操作员只录入可复核字段。",
+    snippet: "系统要求操作员录入可复核字段。",
     terms: ["1404", "林若岚", "w-04", "cj-0713", "住户关系", "妻子", "死亡", "骨灰"],
     kind: "restricted",
     available: (game) => hasUnlockedArticle(game, "crash-cj0713") && hasUnlockedArticle(game, "on-site-device"),
@@ -1109,7 +1119,7 @@ function getPendingWorkItem(game: GameState): PendingWorkItem | null {
   return queuedArticle("clock-out", "下班", {
     eyebrow: "只读权限 · 00:10前",
     action: "进入离岗处置 →",
-    whisper: "这一次，你是回来下班，还是回来告别？",
+    whisper: "这一次，你依然是来回访，还是回来和我告别？",
     tone: "resisted",
   });
 }
@@ -1144,7 +1154,7 @@ const callbackRecords: CallbackRecord[] = [
       { at: "00:04", speaker: "顾长河", text: "你又打来了。" },
       { at: "00:09", speaker: "客服 CS-046", text: "这是本系统第一次给您通话。请确认您目前是否仍居住在1304房间。" },
       { at: "00:21", speaker: "顾长河", text: "你跟我一样，都是这样的存在。只是苦了我的小满。" },
-      { at: "01:03", speaker: "客服 CS-046", text: "经核实， 小满已经不在，节哀顺变。你一直留在房间，只会让她也继续被困在这里。请不要再执迷不悟了。" },
+      { at: "01:03", speaker: "客服 CS-046", text: "现有档案显示，小满已经死亡。您当前的陈述与住户登记状态不一致，我只能继续核对历史记录。" },
       { at: "01:12", speaker: "顾长河", text: "你还是不懂我的痛苦。或者，你也有自己的痛苦要遗忘吧。", flagged: true },
     ],
     note: "该号码名下存在4次连续质检编号，坐席均为CS-046；除本次外，其余录音正文已被过滤。",
@@ -1286,12 +1296,12 @@ const fatherCaseStages = [
 ];
 
 const memoryAnchorRecords = [
-  { id: "crash", time: "2025-11-04", code: "交警事故协查回执", text: "同名主体死亡，配偶林若岚为事故伤者及紧急联系人", source: "交警协查附件" },
+  { id: "crash", time: "2025-11-04", code: "交警事故协查回执", text: "同名主体陈峻死亡，配偶林若岚为事故伤者及紧急联系人", source: "交警协查附件" },
   { id: "employee", time: "2025-11-05", code: "EMP-CJ-0713", text: "物业后台批量创建CJ-0713账号，未关联劳动合同", source: "员工主数据" },
   { id: "ashes", time: "2025-11-05", code: "DL-1105 / 殡仪馆转出单", text: "同名逝者封存物由林若岚转出并留存于1404", source: "殡仪馆纸质回执" },
-  { id: "care", time: "2026-07-12", code: "CARE-1404-R17", text: "系统将本次上门登记为与住户首次接触", source: "物业关怀台账" },
-  { id: "voice", time: "2026-07-12 08:32", code: "CALL-C1404-R17 / 原始音轨", text: "住户先后使用046与0713称呼坐席，并说出未见于员工档案的生活细节", source: "客服原始音轨" },
-  { id: "workorder", time: "2026-07-13", code: "W-0713-1404", text: "当前投诉工单将住户陈述标记为关系错认", source: "当前客服工单" },
+  { id: "care", time: "2026-07-12", code: "CARE-1404-R17", text: "系统将本次上门登记为与住户首次关怀回访", source: "物业关怀台账" },
+  { id: "voice", time: "2026-07-12 08:32", code: "CALL-C1404-R17 / 原始音轨", text: "住户先后使用CS-046与CJ-0713称呼坐席，并说出未见于员工档案的生活细节", source: "客服原始音轨" },
+  { id: "workorder", time: "2026-07-13", code: "W-0713-1404", text: "当前投诉工单将住户陈述标记为关系错认，疑似情感创伤", source: "当前客服工单" },
 ];
 
 const rescueRouteScenes: RescueRouteScene[] = [
@@ -1425,7 +1435,7 @@ const articleVerificationCopy: Record<string, { title: string; description: stri
   },
   "on-site-device": {
     title: "封签核验 / 外部凭证",
-    description: "只检查封签编号、转出日期和标签关联，不启封住户物品，也不读取被遮蔽姓名。",
+    description: "只检查封签编号、转出日期和标签关联，不启封住户物品。",
     action: "核对封签与转出凭证",
     confirmed: "已确认CJ-0713标签与1404封存物使用同一凭证链",
   },
@@ -1465,7 +1475,8 @@ const boardMessages: BoardMessage[] = [
   { id: 6, sequence: 15, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 08:32", tone: "resident", visible: (game) => hasVisited(game, "workorder-1404"), text: "工单是我发起的。你们每次都让同一个人来，不能解决问题，请不要再让他再来了。" },
   { id: 109, sequence: 14, author: "物业合规中心", unit: "系统", badge: "自动回复", time: "今天 08:33", tone: "system", visible: (game) => hasVisited(game, "workorder-1404"), text: "警示：当前处理人与投诉所述对象存在冲突。禁止确认关系、接受住户私人物品或脱离标准关怀话术；违规将立即执行记忆一致性考核。" },
   { id: 115, sequence: 15.5, author: "物业合规中心", unit: "SYSTEM", badge: "主体冲突告警", time: "刚刚", tone: "system", visible: (game) => hasVisited(game, "workorder-1404"), text: "W-0713-1404已转交CJ-0713。系统检测到工单报事对象、固定回访人员与当前处理人重合。该冲突不得作为建立？？关系的依据。" },
-  { id: 122, sequence: 17.5, author: "林若岚", unit: "1404", badge: "未归档留言", time: "刚刚", tone: "resident", visible: (game) => hasUnlockedArticle(game, "on-site-device"), text: "你终于记起我了吗？。。。I MISS YOU." },
+  { id: 122, sequence: 17.5, author: "林若岚", unit: "1404", badge: "未归档留言", time: "刚刚", tone: "resident", visible: (game) => hasUnlockedArticle(game, "on-site-device"), text: "你终于记起我了吗？" },
+  { id: 125, sequence: 17.6, author: "林若岚", unit: "1404", badge: "未归档留言", time: "刚刚", tone: "resident", visible: (game) => hasUnlockedArticle(game, "on-site-device"), text: "I MISS YOU." },
 
   { id: 110, sequence: 16, author: "程启", unit: "物业员工", badge: "账号来源异常", time: "已删除17组数据", tone: "system", visible: (game) => game.colleagueSolved, text: "‘内部转移’没有车辆和签收记录，‘过滤’能清掉门禁、工单和本机缓存。审批人来自恒目公司。" },
   { id: 113, sequence: 16.5, author: "物业合规中心", unit: "SYSTEM", badge: "检索行为告警", time: "刚刚", tone: "system", visible: (game) => hasVisited(game, "symbol-eye-record"), text: "员工CJ-0713：当前检索已超出今日工单授权范围。请返回在办事项；继续查询“恒目”相关词条将记录为数据违规事件！！！！！！！！！！！" },
@@ -1594,6 +1605,9 @@ function rankArticle(article: ArticleMeta, rawQuery: string, game: GameState) {
   const query = normalizeText(rawQuery);
   if (!query) return 0;
   if (query === "cs046") return game.cs046Solved && article.id === "cs046-operator-archive" ? 100 : 0;
+  if (query === normalizeText(PROTAGONIST_ARCHIVE_REF)) {
+    return article.terms.map(normalizeText).includes(query) ? 100 : 0;
+  }
   const roomQuery = genericRoomQuery(rawQuery);
   if (roomQuery) {
     const entryIndex = genericRoomSearchEntries[roomQuery].indexOf(article.id);
@@ -1795,6 +1809,8 @@ export default function Home() {
   const [activeDeduction, setActiveDeduction] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const [messagePopup, setMessagePopup] = useState<{ message: BoardMessage; count: number } | null>(null);
+  const [highlightedMessageIds, setHighlightedMessageIds] = useState<number[]>([]);
+  const [collapsedMessageAuthors, setCollapsedMessageAuthors] = useState<string[]>([]);
   const messageTimer = useRef<number | null>(null);
   const firstLoginMessageTimer = useRef<number | null>(null);
   const messageAudioContext = useRef<AudioContext | null>(null);
@@ -1822,6 +1838,7 @@ export default function Home() {
   const fieldAudioStartedAt = useRef<number | null>(null);
   const [backgroundMusicEnabled, setBackgroundMusicEnabled] = useState(true);
   const [backgroundMusicStarted, setBackgroundMusicStarted] = useState(false);
+  const [completionNicknameInput, setCompletionNicknameInput] = useState("");
   const backgroundMusicElement = useRef<HTMLAudioElement | null>(null);
   const backgroundMusicFadeFrame = useRef<number | null>(null);
   const [caseStatus, setCaseStatus] = useState("");
@@ -1950,6 +1967,16 @@ export default function Home() {
           return;
         }
         setGame({ ...saved, started: true, view: "ending", activeArticle: null });
+        return;
+      }
+
+      if (route.view === "completion") {
+        if (!saved.fullArchiveUnlocked || !saved.playerNickname || !articles.every((article) => saved.visited.includes(article.id))) {
+          returnHome();
+          return;
+        }
+        setGame({ ...saved, started: true, activeAccount: "CJ-0713", view: "completion", activeArticle: null, activeCallback: null });
+        setLegacyFileId(null);
         return;
       }
 
@@ -2281,6 +2308,7 @@ export default function Home() {
   };
 
   const currentArticle = articles.find((article) => article.id === game.activeArticle) ?? null;
+  const allArchivesRead = game.fullArchiveUnlocked && articles.every((article) => game.visited.includes(article.id));
   const currentCallback = callbackRecords.find((record) => record.id === game.activeCallback) ?? null;
   const activeRescueScene = rescueRouteScenes.find((scene) => scene.place === (rescuePreviewPlace ?? game.route.at(-1) ?? rescueRouteScenes[0].place)) ?? null;
   const rescueCinematicFrame = rescueCinematicStage === "idle" ? null : rescueCinematicFrames[rescueCinematicStage];
@@ -2322,7 +2350,11 @@ export default function Home() {
     })
     .sort((a, b) => b.latest.sequence - a.latest.sequence);
   const unreadBoardMessages = visibleBoardMessages.filter((message) => !game.wifeRead.includes(message.id));
-  const readArticles = articles.filter((article) => game.visited.includes(article.id) && article.available(game));
+  const endingArchiveUnlocked = game.fullArchiveUnlocked;
+  const readArticles = (endingArchiveUnlocked
+    ? [...articles]
+    : articles.filter((article) => game.visited.includes(article.id) && article.available(game)))
+    .sort((left, right) => left.id === "hmo-admin-account" ? -1 : right.id === "hmo-admin-account" ? 1 : 0);
   const readArticleSections = new Set(readArticles.map((article) => article.section)).size;
   const fatherDeductionRequirements = ["childGuide", "fatherDeath", "fatherAware"];
   const fatherDeductionUnlocked = fatherDeductionRequirements.every((item) => game.evidence.includes(item));
@@ -2413,7 +2445,7 @@ export default function Home() {
               : !hasUnlockedArticle(game, "w04-directory")
                 ? "解开1404住户索引口令"
                 : !hasUnlockedArticle(game, "care-w04")
-                  ? "解开1404回访冷备份"
+                  ? "解开1404回访备份"
                   : !hasUnlockedArticle(game, "on-site-device")
                     ? "解开1404封存物资产库"
                     : !hasUnlockedArticle(game, "crash-cj0713")
@@ -2529,6 +2561,7 @@ export default function Home() {
   const announceMessages = useCallback((ids: number[]) => {
     const messages = ids.map((id) => boardMessages.find((item) => item.id === id)).filter((message): message is BoardMessage => Boolean(message));
     if (messages.length === 0) return;
+    setHighlightedMessageIds((current) => Array.from(new Set([...current, ...messages.map((message) => message.id)])));
     playMessageNotificationSound();
     setMessagePopup({ message: messages[0], count: messages.length });
     if (messageTimer.current !== null) window.clearTimeout(messageTimer.current);
@@ -2537,6 +2570,16 @@ export default function Home() {
       messageTimer.current = null;
     }, 9000);
   }, [playMessageNotificationSound]);
+
+  const acknowledgeHighlightedMessage = (messageId: number) => {
+    setHighlightedMessageIds((current) => current.filter((id) => id !== messageId));
+  };
+
+  const toggleMessageThread = (author: string) => {
+    setCollapsedMessageAuthors((current) => current.includes(author)
+      ? current.filter((item) => item !== author)
+      : [...current, author]);
+  };
 
   useEffect(() => {
     if (!game.started || !game.childMissingReported || game.missingChildAlertSeen) return;
@@ -2703,6 +2746,16 @@ export default function Home() {
     writeAppRoute(`/system/search/${encodeURIComponent(term)}`);
   };
 
+  const submitCompletionNickname = (event: FormEvent) => {
+    event.preventDefault();
+    if (!allArchivesRead) return;
+    const nickname = completionNicknameInput.trim().slice(0, 24);
+    if (!nickname) return;
+    setGame((current) => ({ ...current, playerNickname: nickname, view: "completion", activeArticle: null, activeCallback: null }));
+    setCompletionNicknameInput("");
+    writeAppRoute("/system/completion");
+  };
+
   const searchFor = (term: string) => {
     setQuery(term);
     setCs046SearchStage(normalizeText(term) === "cs046" ? 1 : 0);
@@ -2790,7 +2843,7 @@ export default function Home() {
       protectedArticlesUnlocked: Array.from(new Set([...current.protectedArticlesUnlocked, articleId])),
       visited: addUnique(current.visited, [articleId]),
     }));
-    if (articleId === "on-site-device" && !hasUnlockedArticle(game, "on-site-device")) announceMessages([122]);
+    if (articleId === "on-site-device" && !hasUnlockedArticle(game, "on-site-device")) announceMessages([122, 125]);
   };
 
   const confirmArticleEvidence = (articleId: string) => {
@@ -2933,8 +2986,19 @@ export default function Home() {
   };
 
   const reopenReadArticle = (article: ArticleMeta) => {
-    if (!game.visited.includes(article.id)) return;
+    if (!endingArchiveUnlocked && !game.visited.includes(article.id)) return;
     setArchiveIndexOpen(false);
+    if (endingArchiveUnlocked) {
+      setGame((current) => ({
+        ...current,
+        view: "article",
+        activeArticle: article.id,
+        activeCallback: null,
+        visited: addUnique(current.visited, [article.id]),
+      }));
+      writeAppRoute(`/system/article/${article.id}`);
+      return;
+    }
     openArticle(article);
   };
 
@@ -3388,7 +3452,7 @@ export default function Home() {
     event.preventDefault();
     const normalizedEmployeeDate = normalizeChineseDate(homeEmployee);
     if (normalizeText(homeWoman) !== "1404" || normalizedEmployeeDate !== "2025-11-05" || normalizeText(homeDevice) !== "dl1105") {
-      flash("字段核验失败：请按原始凭证填写，不要提交关系结论");
+      flash("字段核验失败：请按原始凭证填写");
       return;
     }
     setMemoryAnchors([]);
@@ -3431,6 +3495,18 @@ export default function Home() {
     writeAppRoute("/system/article/clock-out");
   };
 
+  const openPostEndingArchive = () => {
+    setGame((current) => ({ ...current, fullArchiveUnlocked: true, view: "home", activeArticle: null, activeCallback: null }));
+    setArchiveIndexOpen(true);
+    writeAppRoute("/system/home");
+  };
+
+  const returnToCompletedArchive = () => {
+    setGame((current) => ({ ...current, view: "home", activeArticle: null, activeCallback: null }));
+    setArchiveIndexOpen(true);
+    writeAppRoute("/system/home");
+  };
+
   const goHome = () => {
     setGame((current) => ({ ...current, view: "home", activeArticle: null }));
     writeAppRoute("/system/home");
@@ -3461,13 +3537,6 @@ export default function Home() {
     writeAppRoute(`/system/search/${encodeURIComponent(game.lastQuery)}`);
   };
 
-  const restartGame = () => {
-    localStorage.removeItem(SAVE_KEY);
-    setEndingStep(0);
-    setGame({ ...initialGame, started: true });
-    writeAppRoute("/system/home");
-  };
-
   const lockedReason = (article: ArticleMeta) => {
     if (article.id === "cctv-1204") return "失联儿童事件受理后才会生成录像保全任务";
     if (article.id === "audio-1304") return "需要先确认工程检测异常";
@@ -3492,9 +3561,9 @@ export default function Home() {
     const level = PROTECTED_ARTICLE_IDS.indexOf(articleId) + 1;
     const monitorCopy = [
       "授权请求仅在当前物业终端计算，不向住户端发送。",
-      "冷备份正在比对当前员工岗位字段与历史接触序列。",
+      "备份正在比对当前员工岗位字段与历史接触记录。",
       "资产库正在读取当前终端、保管地址与分类字段的关联。",
-      "跨系统协查已启用当前操作者一致性观察。请保持在摄像头可识别区域。",
+      "跨系统协查已启用当前操作者一致性观察。请保持可识别。",
     ][level - 1];
     return <section className={`protected-article-gate protected-article-gate--${level}`}>
       <header><EyeMark /><div><span>{gate.code}</span><h2>{gate.title}</h2><p>{monitorCopy}</p></div><b>0{level} / 04</b></header>
@@ -3532,7 +3601,7 @@ export default function Home() {
   </div>;
 
   const renderArticleBody = (id: string) => {
-    if (isProtectedArticle(id) && !hasUnlockedArticle(game, id)) return renderProtectedArticleGate(id);
+    if (isProtectedArticle(id) && !endingArchiveUnlocked && !hasUnlockedArticle(game, id)) return renderProtectedArticleGate(id);
     if (id === "workorder-1204") return <>
       <div className="workorder-document">
         <header className="workorder-sheet-head"><div><span>澄江物业服务中心 / 客服工单</span><strong>夜间异常噪声投诉</strong><small>系统流水号：W-0713-019 · 第3次重启</small></div><aside><i>高优先级</i><b>待复核</b></aside></header>
@@ -3804,7 +3873,7 @@ export default function Home() {
 
     if (id === "height-mark") return <>
       <div className="photo-placeholder height-photo"><span>工程影像 / IMG_1304_0819</span><div className="height-line"><i /><b>小满 五岁</b></div></div>
-      <table className="data-table"><tbody><tr><th>拍摄时间</th><td>2021-08-19 22:48，110联动后，留档</td></tr><tr><th>拍摄位置</th><td>1304浴室外侧墙面，距地0.92m—1.14m</td></tr><tr><th>原始文件</th><td>IMG_1304_0819_01—03</td></tr><tr><th>后续维修</th><td>防潮层重做、门套更换；身高刻度区域未施工</td></tr></tbody></table>
+      <table className="data-table"><tbody><tr><th>拍摄时间</th><td>2021-08-19 22:48，维修处置后留档</td></tr><tr><th>拍摄位置</th><td>1304浴室外侧墙面，距地0.92m—1.14m</td></tr><tr><th>原始文件</th><td>IMG_1304_0819_01—03</td></tr><tr><th>后续维修</th><td>防潮层重做、门套更换；身高刻度区域未施工</td></tr></tbody></table>
       <p>后续修补申请要求保留痕迹，申请人签名为<mark>梁静宜</mark>。</p>
     </>;
 
@@ -3957,7 +4026,7 @@ export default function Home() {
         <dl><div><dt>当前备案主体</dt><dd>恒目管理顾问有限公司</dd></div><div><dt>物业使用范围</dt><dd>员工证、外部终端、ZC-LH封签</dd></div><div><dt>对外释义</dt><dd>设施全时监督</dd></div><div><dt>最早扫描记录</dt><dd>2018-04-04 · 早于企业成立</dd></div><div><dt>原始权利人</dt><dd className="symbol-redacted">来源字段缺失 / 待补授权</dd></div><div><dt>历史文件名</dt><dd>OMNISIGHT_██.AI</dd></div></dl>
       </div>
       <p>工商图形库未发现更早的企业备案。物业旧服务器却保存着同图形的矢量文件，创建时间比恒目成立早两年，原始权利人和授权合同均为空。</p>
-      <div className="search-surveillance"><span>检索组合已记录</span><strong>“眼白向下” + “全知” + “恒目”</strong><p>该组合不属于当前工单的必要查询范围。账号CJ-0713已进入检索行为复核。</p></div>
+      <div className="search-surveillance"><span>检索组合已记录</span><strong>“眼白向下” + “全知” + “恒目”</strong><p>该组合不属于当前工单的必要查询范围。当前账号CJ-0713已进入检索行为复核。</p></div>
       <aside className="compliance-threat"><EyeMark /><div><span>物业合规中心 / 自动告警</span><h2>查询已超出授权范围。</h2><p>过去12个月共有17次同类检索触发强制退出；相关本机缓存、私人备忘同步和外接存储记录均由DLP策略清除。</p><strong>请返回1204投诉工单。继续搜索“恒目”“过滤”或“ZC-LH”将提交人工复核。</strong></div></aside>
     </>;
 
@@ -4001,59 +4070,59 @@ export default function Home() {
 
     if (id === "w04-directory") return <>
       <div className="protected-unlock-trace"><span>DERIVED KEY ACCEPTED / RESIDENT INDEX</span><strong>终端派生口令已接受</strong><small>住户索引已在当前会话临时解密</small></div>
-      <div className="w04-index-card"><div className="w04-index-photo"><Image src={assetPath("/residents/w-04.png")} alt="1404住户索引影像" fill sizes="260px" unoptimized/></div><section><span>住户关怀索引</span><strong><MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /></strong><dl><div><dt>房号</dt><dd>1404</dd></div><div><dt>行动状态</dt><dd>需使用轮椅</dd></div><div><dt>关怀原因</dt><dd>重大事故后长期适应支持</dd></div><div><dt>关系字段</dt><dd className="glitch-field">上级权限遮蔽</dd></div><div><dt>固定接收员工</dt><dd className="glitch-field">CJ-0713</dd></div></dl></section></div>
-      <table className="data-table"><tbody><tr><th>首次建档</th><td>2025-11-05，由恒目批量接口写入</td></tr><tr><th>服务频率</th><td>工作日每日一次，住户拒绝随机更换人员</td></tr><tr><th>旧入口提示</th><td>冷备份口令回退到固定接收员工关联的特殊档案编号</td></tr><tr><th>异常字段</th><td>每次到场均被写为首次接触，上一条服务关系在00:10后消失</td></tr><tr><th>质检处理</th><td>7次申请修复计数，均被MEM-CONSISTENCY策略退回</td></tr></tbody></table>
-      <p>住户坚持双方已经“见过很多次”，但索引没有保留任何可供前台确认私人关系的字段。可以确认的只有：同一员工编号反复到场，历史会话却没有连续性。</p>
+      <div className="w04-index-card"><div className="w04-index-photo"><Image src={assetPath("/residents/w-04.png")} alt="1404住户索引影像" fill sizes="260px" unoptimized/></div><section><span>住户关怀索引</span><strong><MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /></strong><dl><div><dt>房号</dt><dd>1404</dd></div><div><dt>行动状态</dt><dd>需使用轮椅</dd></div><div><dt>关怀原因</dt><dd>遭遇重大事故记忆创伤</dd></div><div><dt>关系字段</dt><dd className="glitch-field">无权限</dd></div><div><dt>固定接收员工</dt><dd className="glitch-field">CJ-0713</dd></div></dl></section></div>
+      <table className="data-table"><tbody><tr><th>首次建档</th><td>2025-11-05，由恒目批量接口写入</td></tr><tr><th>服务频率</th><td>工作日每日一次，“随机”更换人员</td></tr><tr><th>旧入口提示</th><td>备份口令回退到接收员工关联的特殊档案编号</td></tr><tr><th>异常字段</th><td>服务关系每日正常重置</td></tr><tr><th>质检处理</th><td>记忆错乱，被MEM-CONSISTENCY策略退回</td></tr></tbody></table>
+      <p>住户坚持双方已经“见过很多次”，但索引没有保留任何可供确认私人关系的字段。系统归档判断是创伤后应激反应。</p>
       <div className="uncanny-counter"><span>本年度首次接触次数</span><strong>223</strong><small>计数逻辑错误 / 无法修复</small></div>
-      <aside className="article-note">旧版关怀冷备份会读取固定接收员工基础索引中的特殊档案编号。搜索该编号，在公开事故报道中找到死者姓名，并转换为无声调、无空格的完整拼音。</aside>
+      <details className="article-note"><summary>下一步提示</summary><p>旧版关怀备份会读取固定接收员工基础索引中的特殊档案编号。搜索该编号，在公开事故报道中找到死者姓名。</p></details>
     </>;
 
     if (id === "care-w04") return <>
       <div className="protected-unlock-trace protected-unlock-trace--2"><span>COLD BACKUP MOUNTED / CARE ARCHIVE</span><strong>历史回访正文已挂载</strong><small>当前浏览行为未写入住户关怀台账</small></div>
-      <div className="wife-evidence"><Image src={assetPath("/residents/w-04.png")} alt="1404住户坐在轮椅上等待" fill sizes="(max-width: 900px) 100vw, 58vw" unoptimized/><div><blockquote>“你又先摸左边口袋找糖。这个习惯没人教过你，可你看我的样子还是像第一次来。”</blockquote><small>1404住户 · <MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /></small></div></div>
-      <section className="field-record field-record--dark"><header><span>CARE ARCHIVE / RECOVERED TEXT</span><strong>被前台摘要覆盖的三次回访</strong></header><div><p><time>06-17 08:46</time><b>入户协助</b><span>员工未查看门牌即将轮椅脚踏复位；住户询问“你还记得怎么调高度吗”，员工未回应。</span></p><p><time>06-24 08:44</time><b>物资代办</b><span>住户将一颗硬糖放在玄关，称值夜班的人空腹会胃痛；员工拒绝签收私人食品。</span></p><p><time>07-01 08:45</time><b>异常中断</b><span>住户要求员工查看卧室封存物，终端随即断开6分钟；重新连接后，员工重复自我介绍。</span></p></div></section>
+      <div className="wife-evidence"><Image src={assetPath("/residents/w-04.png")} alt="1404住户坐在轮椅上等待" fill sizes="(max-width: 900px) 100vw, 58vw" unoptimized/><div><blockquote>“你又先摸左边口袋找糖。这个习惯这么多年了也没忘，可你望向我的样子还是像第一次来。”</blockquote><small>1404住户 · <MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /></small></div></div>
+      <section className="field-record field-record--dark"><header><span>CARE ARCHIVE / RECOVERED TEXT</span><strong>被前台摘要覆盖的三次回访</strong></header><div><p><time>06-17 08:46</time><b>入户协助</b><span>员工查看门牌并将轮椅脚踏复位；住户询问“还记得我吗”，员工未回应。</span></p><p><time>06-24 08:44</time><b>物资代办</b><span>住户将几颗糖放在玄关，称值夜班空腹会胃痛；员工拒绝签收私人食品。</span></p><p><time>07-01 08:45</time><b>异常中断</b><span>住户要求员工查看卧室封存物，终端随即断开；<em className="memory-retraining-alert">记忆复训执行</em>，重连完成，员工再次自我介绍。</span></p></div></section>
       <div className="callout"><strong>关怀沟通预案</strong><p>只记录住户原话和可观察行为，不确认其对来访者身份的解释；住户提及房内封存物时不得擅自启封。若同一员工再次出现记忆中断，应保留原始音轨并转交质检。</p></div>
-      <aside className="article-note">冷备份没有给出人物关系结论。它只保留了前台摘要删去的生活细节、终端断线和重复自我介绍。</aside>
+      <aside className="article-note">备份没有给出任何结论。它只保留了前台摘要未删去的部分细节。</aside>
     </>;
 
-    if (id === "accident-report-cj0713") return <>
-      <article className="newspaper-archive"><header><span>澄江晚报数字归档 / 2025-11-05</span><strong>河西高架昨夜发生单车事故</strong><small>关联档案：{PROTAGONIST_ARCHIVE_REF}</small></header><div><p>11月4日22时31分，河西高架东向匝道发生一起单车碰撞事故。车辆撞击中央隔离设施后严重受损，驾驶人经现场抢救无效死亡，同车人员重伤送医。</p><p>经家属确认，死者为<strong>{PROTAGONIST_NAME}</strong>，男，34岁；伤者身份暂不公开。交警部门表示，现场未发现其他车辆直接接触痕迹，事故原因及车辆状态仍在进一步调查。</p><p>警方提醒，请勿传播未经证实的现场图片。知情者可凭事故档案编号向辖区交警提供行车记录资料。</p></div><footer><span>公开报道只能确认事故姓名与时间</span><b>不能证明该死者与当前员工账号属于同一主体</b></footer></article>
-    </>;
+    if (id === "accident-report-cj0713") return <figure className="crash-newspaper-scan">
+      <Image src={assetPath("/evidence/1404/hexi-crash-newspaper.png")} alt="河西高架单车事故报纸报道" width={1680} height={933} sizes="(max-width: 900px) 100vw, 76vw" unoptimized />
+    </figure>;
 
     if (id === "night-shift-sugar") return <>
       <div className="receipt-stack"><span>员工健康物资领取 / CJ-0713</span>{["2026-07-11 23:52", "2026-07-10 23:48", "2026-07-09 23:51", "2026-07-08 23:49"].map((time) => <p key={time}><time>{time}</time><b>葡萄糖硬糖 × 1</b><i>代签：林若岚</i></p>)}</div>
-      <p>健康档案没有低血糖诊断。备注由林若岚手写：“他胃不舒服的时候不肯吃饭，只肯含一颗糖。”</p>
-      <table className="data-table"><tbody><tr><th>物资来源</th><td>客服前台应急柜，不属于处方药品</td></tr><tr><th>领用方式</th><td>员工账号扫码失败后由住户纸质代签</td></tr><tr><th>笔迹核对</th><td>四张单据与1404服务确认单为同一签字特征</td></tr><tr><th>时间异常</th><td>最早一张纸质单早于员工健康档案创建日</td></tr></tbody></table>
-      <aside className="article-note article-note--dark">这些记录能证明住户熟悉某人的生活习惯，也能证明该习惯被重复绑定到CJ-0713；它们不能单独证明两人的法律关系。</aside>
+      <p>备注由林若岚手写：“他胃不舒服的时候不肯吃饭，含一颗糖会好得多。”</p>
+      <table className="data-table"><tbody><tr><th>物资来源</th><td>客服前台应急柜，不属于处方药品</td></tr><tr><th>领用方式</th><td>员工账号扫码失败后由住户代签</td></tr><tr><th>笔迹核对</th><td>四张单据与1404服务确认单为同一签字特征</td></tr><tr><th>时间异常</th><td>最早一张纸质单早于<span className="blurred-record-field">员工健康档案创建日</span></td></tr></tbody></table>
+      <aside className="article-note article-note--dark">这些记录能证明住户熟悉某人的生活习惯。</aside>
     </>;
 
     if (id === "device-type-index") return <>
       <div className="device-classification"><EyeMark /><span>资产分类 ZC-LH</span><strong>住户特殊保管物</strong><p>住户自有 · 物业不得启封 · 可绑定外部身份终端</p></div>
-      <table className="data-table"><tbody><tr><th>适用范围</th><td>骨灰盒、遗物箱及其他住户要求原址封存的物品</td></tr><tr><th>标签用途</th><td>记录保管责任、巡检状态与关联服务账号</td></tr><tr><th>旧库定位字段</th><td>仅接受四位原址房号，不读取分类码或员工编号</td></tr><tr><th>旧库查询键</th><td>当前关怀对象与封存物共同指向的房号</td></tr><tr><th>移出条件</th><td><span className="redacted-field">保管人书面同意 / 未结服务清零</span></td></tr><tr><th>管理要求</th><td>物业仅核对封签和外观，不登记住户隐私内容</td></tr></tbody></table>
+      <table className="data-table"><tbody><tr><th>适用范围</th><td>骨灰盒、遗物箱及其他住户要求原址封存的物品</td></tr><tr><th>标签用途</th><td>记录保管责任、巡检状态与关联服务账号</td></tr><tr><th>旧库定位字段</th><td>仅接受四位原址房号，不读取员工编号</td></tr><tr><th>旧库查询键</th><td>当前关怀对象与封存物共同指向的房号</td></tr><tr><th>移出条件</th><td><span className="redacted-field">保管人书面同意 / 未结服务清零</span></td></tr><tr><th>管理要求</th><td>物业仅核对封签和外观，不登记住户隐私内容</td></tr></tbody></table>
       <p className="corrupted-copy" data-copy="为什么一个住户自有物，会绑定员工登录终端？">为什么一个住户自有物，会绑定员工登录终端？</p>
     </>;
 
     if (id === "on-site-device") return <>
       <div className="protected-unlock-trace protected-unlock-trace--3"><span>ASSET ISOLATION OPEN / ZC-LH</span><strong>资产隔离区已临时打开</strong><small>检测到当前账号与封存物标签同名</small></div>
       <div className="device-record"><EyeMark /><span>ZC-LH 标签</span><strong>CJ-0713</strong><dl><div><dt>物品性质</dt><dd>住户自有封存物</dd></div><div><dt>附件凭证</dt><dd>东临殡仪馆寄存转出单 DL-1105</dd></div><div><dt>保管地址</dt><dd>1404</dd></div><div><dt>关联系统</dt><dd>外部打卡终端 / CJ-0713</dd></div></dl></div>
-      <section className="field-record"><header><span>SEALED ITEM / CUSTODY LOG</span><strong>封存物巡检与移交链</strong></header><div><p><time>2025-11-05</time><b>原址接收</b><span>住户提交东临殡仪馆转出凭证；物业仅拍摄外包装与封签，不接触内容物。</span></p><p><time>2025-11-06</time><b>标签写入</b><span>恒目管理员追加CJ-0713字段，未填写修改依据；物品本身无芯片、电源或网络模块。</span></p><p><time>2026-06-01</time><b>移库申请</b><span>公共寄存室提出统一保管，住户书面拒绝，要求继续留在1404原位置。</span></p><p><time>2026-07-13</time><b>例行核验</b><span>封签编号与原始照片一致，未见启封、移动或受潮痕迹。</span></p></div></section>
-      <p>转出单中的姓名字段被上级权限遮蔽。当前页面只能核对紧急联系人电话尾号、转出日期、经办网点和封签编号；任何人物关系都必须等待外部事故回执交叉验证。</p>
+      <section className="field-record"><header><span>SEALED ITEM / CUSTODY LOG</span><strong>封存物巡检与移交链</strong></header><div><p><time>2025-11-05</time><b>原址接收</b><span>住户提交东临殡仪馆转出凭证；物业仅拍摄外包装与封签，不接触内容物。</span></p><p><time>2025-11-06</time><b>标签写入</b><span>恒目管理员追加CJ-0713字段，警告，标签已经写入。</span></p><p><time>2026-06-01</time><b>移库申请</b><span>公共寄存室提出统一保管，住户书面拒绝，要求继续留在原位置。</span></p><p><time>2026-07-13</time><b>例行核验</b><span>封签编号与原始照片一致，未见启封、移动或受潮痕迹。</span></p></div></section>
+      <p>转出单中的姓名字段被上级权限遮蔽。当前页面只能核对紧急联系人电话尾号、转出日期、经办网点和封签编号；任何人物关系都必须等待外部证据交叉验证。</p>
       <aside className="article-note article-note--dark">事故协查接口的最后一层口令未写入资产库。封存物解锁后，住户端恢复了一条此前未归档的英文留言。</aside>
       {renderArticleVerification("on-site-device")}
     </>;
 
     if (id === "employee-cj0713-index") return <>
-      <div className="employee-index"><section><span>当前账号</span><strong>CJ-0713</strong><small>长期空置房管理员</small></section><dl><div><dt>账号状态</dt><dd>在岗</dd></div><div><dt>劳动合同</dt><dd className="glitch-field">未关联</dd></div><div><dt>终端指纹</dt><dd>T-04-CJ-0713</dd></div><div><dt>岗位短号</dt><dd>13</dd></div><div><dt>后台创建</dt><dd>2025-11-05 08:12</dd></div><div><dt>首次打卡</dt><dd>2025-11-05 08:41</dd></div><div><dt>特殊档案编号</dt><dd>{PROTAGONIST_ARCHIVE_REF}</dd></div><div><dt>有效打卡</dt><dd>251次</dd></div><div><dt>有效下班</dt><dd className="glitch-field">0次</dd></div><div><dt>紧急联系人</dt><dd><MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /></dd></div></dl></div>
+      <div className="employee-index"><section><span>当前账号</span><strong>CJ-0713</strong><small>物业管理员</small></section><dl><div><dt>账号状态</dt><dd>在岗</dd></div><div><dt>劳动合同</dt><dd className="glitch-field">未关联</dd></div><div><dt>终端指纹</dt><dd>T-04-CJ-0713</dd></div><div><dt>岗位短号</dt><dd>13</dd></div><div><dt>后台创建</dt><dd>2025-11-05 08:12</dd></div><div><dt>首次打卡</dt><dd>2025-11-05 08:41</dd></div><div><dt>特殊档案编号</dt><dd>{PROTAGONIST_ARCHIVE_REF}</dd></div><div><dt>有效打卡</dt><dd>251次</dd></div><div><dt>有效下班</dt><dd className="glitch-field">0次</dd></div><div><dt>紧急联系人</dt><dd><MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /></dd></div></dl></div>
       <div className="access-loop"><span>最近三次登录</span><p>08:41 打卡成功　→　00:10 连接中断</p><p>08:41 打卡成功　→　00:10 连接中断</p><p>08:41 打卡成功　→　<span>员工仍在楼内</span></p></div>
-      <aside className="article-note">特殊档案编号来自账号建立时挂接的外部历史记录。当前员工索引无权显示该记录的姓名字段，可使用完整编号继续检索公开归档。</aside>
+      <aside className="article-note">特殊档案编号来自账号建立时链接的外部历史记录。当前员工索引无权显示该记录的姓名字段。</aside>
       <p className="corrupted-copy corrupted-copy--red" data-copy="如果你从未下班，今天为什么还需要重新打卡？">如果你从未下班，今天为什么还需要重新打卡？</p>
     </>;
 
     if (id === "crash-cj0713") return <>
       <div className="protected-unlock-trace protected-unlock-trace--4"><span>EXTERNAL AUDIT LINKED / OPERATOR WATCH</span><strong>外部事故协查通道已连接</strong><small>当前操作者屏幕活动正在进行一致性记录</small></div>
-      <div className="split-record"><section><span>交警协查回执</span><strong>2025-11-04 22:31</strong><p>事故编号：DL-JJ-1104-27<br/>身份字段：哈希 7F2A-19C4<br/>紧急联系人电话：尾号1404</p></section><section><span>员工账号</span><strong>2025-11-05 08:12</strong><p>账号：CJ-0713<br/>实名字段：哈希 7F2A-19C4<br/>劳动合同：未找到</p></section></div>
-      <table className="data-table"><tbody><tr><th>事故回执</th><td>一名人员当场死亡；另一名同车人员下肢重伤并作为紧急联系人登记</td></tr><tr><th>账号导入</th><td>由HMO-ADMIN通过“驻场补录”批次创建，无面试、体检和入职审批附件</td></tr><tr><th>考勤起点</th><td>首次打卡晚于账号创建29分钟，终端位置为1404关联外部设备</td></tr><tr><th>身份校验</th><td>两套系统返回相同哈希；姓名明文仍受外部接口权限限制</td></tr></tbody></table>
-      <p>事故回执中的紧急联系人电话尾号与1404住户资料一致。当前材料可以建立“事故主体—次日员工账号—1404外部终端”的时间链，但系统不会替操作员填写人物关系。</p>
+      <div className="split-record"><section><span>交警协查回执</span><strong>2025-11-04 22:31</strong><p>事故编号：DL-JJ-1104-27<br/>身份Hash：7F2A-19C4<br/>紧急联系人电话：尾号1404</p></section><section><span>员工账号</span><strong>2025-11-05 08:12</strong><p>账号：CJ-0713<br/>实名Hash：7F2A-19C4<br/>劳动合同：未找到</p></section></div>
+      <table className="data-table"><tbody><tr><th>事故回执</th><td>一名人员当场死亡；另一名同车人员下肢重伤，并作为紧急联系人登记</td></tr><tr><th>账号导入</th><td>由HMO-ADMIN批次创建，无面试、体检和入职审批附件</td></tr><tr><th>考勤起点</th><td>首次打卡晚于账号创建29分钟，终端位置为1404关联外部设备</td></tr><tr><th>身份校验</th><td>两套系统返回相同哈希；姓名明文仍受外部权限限制</td></tr></tbody></table>
+      <p>事故回执中的紧急联系人电话尾号与1404住户资料一致。当前材料可以建立“事故主体—次日员工账号—1404外部终端”的时间链。</p>
       {renderArticleVerification("crash-cj0713")}
     </>;
 
@@ -4061,32 +4130,32 @@ export default function Home() {
       <header><div><span>MEM-CONSISTENCY / 强制任务</span><h2>正在写入员工标准记忆</h2></div><strong>00:10</strong></header>
       <div className="memory-rewrite-progress"><i /><span>覆盖写入 73%</span></div>
       <section className="rewrite-diff"><article><span>REL-1404</span><b>原始字段已隔离</b><ins>标准关系模板写入中</ins></article><article><span>EMP-CJ0713</span><b>主体校验未通过</b><ins>在岗状态模板写入中</ins></article><article><span>ASSET-ZCLH</span><b>外部附件已脱钩</b><ins>设备分类模板写入中</ins></article></section>
-      <aside><EyeMark /><div><strong>未经确认的内容将在退出前覆盖。</strong><p>物业后台记录本身已进入写入队列。选择三份仍可从物业系统之外核验的原始记录，按发生时间排列，建立不可覆盖的主体链。</p></div></aside>
+      <aside><EyeMark /><div><strong>未经确认的内容将在退出前覆盖。</strong><p>物业后台记录本身已进入写入队列。选择三份<strong className="external-evidence-emphasis">仍可从物业系统之外核验</strong>的原始记录，按发生时间排列，建立不可覆盖的主体链。</p></div></aside>
       <div className="memory-anchor-grid">{memoryAnchorRecords.map((record) => {
         const order = memoryAnchors.indexOf(record.id);
         return <button key={record.id} type="button" className={order >= 0 ? "is-selected" : ""} onClick={() => appendMemoryAnchor(record.id)}><i>{order >= 0 ? order + 1 : "+"}</i><span>{record.time} · {record.source}</span><strong>{record.code}</strong><small>{record.text}</small></button>;
       })}</div>
       <div className="memory-rewrite-actions"><button type="button" onClick={() => setMemoryAnchors([])}>清空证据链</button><button type="button" disabled={memoryAnchors.length !== 3} onClick={resistMemoryRewrite}>用原始记录阻断覆盖写入</button></div>
-    </div> : game.homeSolved ? <div className="memory-rewrite-resisted"><EyeMark /><span>MEM-CONSISTENCY / INTERRUPTED</span><h2>物业未能覆盖这段记忆。</h2><p>事故回执、殡仪馆转出单与1404原始回访音轨形成了系统外证据链。CJ-0713不是一个正常入职的物业员工编号，而是事故次日重新分配给同一主体的工作身份。</p><strong>当前中台权限：只读 / 00:10强制退出</strong></div> : <>
-      <aside className="identity-audit-intro"><span>人工核验要求</span><p>不要判断人物关系。只从三份原始凭证中抄录可交叉核验的字段；系统将自行计算主体关联。</p></aside>
+    </div> : game.homeSolved ? <div className="memory-rewrite-resisted"><EyeMark /><span>MEM-CONSISTENCY / INTERRUPTED</span><h2>物业未能覆盖这段记忆。</h2><p>事故回执、殡仪馆转出单与1404原始回访音轨形成了系统外证据链。CJ-0713不是一个正常入职的物业员工编号，而是事故次日重新分配给同一主体存在的工作身份，也许，你做到了。</p><strong>当前中台权限：只读 / 00:10强制退出</strong></div> : <>
+      <aside className="identity-audit-intro"><span>人工核验要求</span><p>从三份原始凭证中抄录可交叉核验的字段；系统将自行计算关联性。</p></aside>
       <form className="archive-form archive-form--wide identity-source-form" onSubmit={submitIdentity}>
         <label>事故协查回执中的紧急联系人房号<input value={homeWoman} onChange={(event) => setHomeWoman(event.target.value)} placeholder="四位房号" inputMode="numeric" /></label>
         <label>CJ-0713账号的后台创建日期<input value={homeEmployee} onChange={(event) => setHomeEmployee(event.target.value)} placeholder="例：yyyymmdd" inputMode="numeric" /></label>
-        <label>1404封存物附件凭证编号<input value={homeDevice} onChange={(event) => setHomeDevice(event.target.value)} placeholder="例：XX-0000" autoCapitalize="characters" spellCheck={false} /></label>
+        <label>封存物附件凭证编号<input value={homeDevice} onChange={(event) => setHomeDevice(event.target.value)} placeholder="例：XX-0000" autoCapitalize="characters" spellCheck={false} /></label>
         <button className="primary-button">提交原始字段核验</button>
       </form>
     </>;
 
     if (id === "clock-out") return <>
-      <div className="final-question"><h2>她仍然看得见你。</h2><blockquote>“这一次，你是回来下班，还是回来和我告别？”</blockquote></div>
-      <div className="ending-options"><button disabled={!game.colleagueSolved || !game.cs046Solved} onClick={() => chooseEnding("expose")}><span>完整证据链</span><strong>向警方和业委会提交全部材料</strong><small>{game.colleagueSolved && game.cs046Solved ? "提交封存物、1104空腔、回访归档缺口与资金审批链" : !game.colleagueSolved ? "缺少1104工程与人事交叉证据；可继续搜索周明川" : "回访质检仍有未归档段落；可从客户回访目录补齐"}</small></button><button onClick={() => chooseEnding("loop")}><span>仅完成当前工单</span><strong>修正住户档案并重新打卡</strong><small>关闭本次异常账号，不继续追查恒目及历史内部转移</small></button></div>
+      <div className="final-question"><h2>她仍然看得见你。</h2><blockquote>“这一次，你依然是来回访，还是回来和我告别？”</blockquote></div>
+      <div className="ending-options"><button disabled={!game.colleagueSolved || !game.cs046Solved} onClick={() => chooseEnding("expose")}><span>完整证据链</span><strong>向警方和业委会提交全部材料</strong><small>{game.colleagueSolved && game.cs046Solved ? "提交封存物、周明川惨案、1104归档证据与资金审批链" : !game.colleagueSolved ? "缺少1104工程与人事交叉证据；可继续搜索周明川" : "回访质检仍有未归档段落；可从客户回访目录补齐"}</small></button><button onClick={() => chooseEnding("loop")}><span>仅完成当前工单</span><strong>修正住户档案并重新打卡</strong><small>关闭本次异常账号，不继续追查恒目及历史内部转移</small></button></div>
     </>;
 
     if (id === "noise-elevator") return <div className="workorder-document service-order-document">
       <header className="workorder-sheet-head"><div><span>澄江物业服务中心 / 设施设备服务单</span><strong>2号电梯楼层显示异常</strong><small>服务单号：DT-0710-024 · 自动转派维保单位</small></div><aside><i>电梯维保</i><b>已完成</b></aside></header>
       <dl className="workorder-meta-grid"><div><dt>报事位置</dt><dd>2号电梯轿厢</dd></div><div><dt>报事时间</dt><dd>2026-07-10 00:06</dd></div><div><dt>报事渠道</dt><dd>夜班巡逻上报</dd></div><div><dt>到场时间</dt><dd>2026-07-10 08:35</dd></div><div><dt>服务类别</dt><dd>显示屏 / 固件维护</dd></div><div><dt>维保单位</dt><dd>澄江迅达电梯服务</dd></div><div><dt>停梯时长</dt><dd>0分钟</dd></div><div><dt>回访结果</dt><dd>运行正常</dd></div></dl>
       <section className="workorder-section"><header><b>01</b><div><h3>报事内容</h3><span>夜班秩序员原始记录</span></div></header><p className="workorder-description">巡逻员搭乘2号电梯时发现楼层显示短暂熄灭，约十余秒后自行恢复。电梯升降、开关门及警铃均可正常使用，轿厢内无困人。</p></section>
-      <section className="workorder-section"><header><b>02</b><div><h3>处理记录</h3><span>维保人员现场填写</span></div></header><div className="workorder-history"><article><time>07-10 00:04</time><i className="is-done"/><div><strong>设备平台</strong><p>显示控制板执行例行固件重启，后台收到一次离线后恢复心跳。</p></div></article><article><time>07-10 08:35</time><i className="is-done"/><div><strong>维保员 / 罗师傅</strong><p>检查显示控制板接线并连续试运行12次，未复现黑屏；主控、门机和安全回路日志正常。</p></div></article><article><time>07-10 09:02</time><i className="is-done"/><div><strong>客服中心</strong><p>电话回访夜班巡逻员，确认早班巡查期间显示正常，同意结单。</p></div></article></div></section>
+      <section className="workorder-section"><header><b>02</b><div><h3>处理记录</h3><span>维保人员现场填写</span></div></header><div className="workorder-history"><article><time>07-10 00:04</time><i className="is-done"/><div><strong>设备平台</strong><p>显示控制板执行例行固件重启，后台恢复设备运行。</p></div></article><article><time>07-10 08:35</time><i className="is-done"/><div><strong>维保员 / 罗师傅</strong><p>检查显示控制板接线并连续试运行12次，未复现黑屏；主控、门机和安全回路日志正常。</p></div></article><article><time>07-10 09:02</time><i className="is-done"/><div><strong>客服中心</strong><p>电话回访夜班巡逻员，确认早班巡查期间显示正常，同意结单。</p></div></article></div></section>
       <footer className="workorder-signoff"><span>结单人：工程主管 / 吴正</span><span>结单时间：2026-07-10 09:08</span><span>费用：月度维保范围内</span></footer>
     </div>;
     if (id === "noise-pipe") return <div className="workorder-document service-order-document">
@@ -4323,7 +4392,7 @@ export default function Home() {
             <p>系统承认了死亡的存在，他不能再用那些工号封存灵魂，也许过些阵子，这栋楼也会迎来送往、恢复平静。</p>
             <p>而你的灵魂沿着雨停后的街道继续向前，阳光出来了，照的人很暖和。</p>
             <blockquote>“你这次醒来，是为了好好告别。”</blockquote>
-            <div className="ending-epilogue-actions"><a href={`${BASE_PATH}/truth/`}>查看全案真相</a><button className="ending-choice-return" type="button" onClick={reconsiderEnding}>重新选择结局</button><button type="button" onClick={restartGame}>从新的检索记录开始</button></div>
+            <div className="ending-epilogue-actions"><button type="button" onClick={openPostEndingArchive}>阅读全部档案</button><a href={`${BASE_PATH}/truth/`}>查看全案真相</a><button className="ending-choice-return" type="button" onClick={reconsiderEnding}>重新选择结局</button></div>
           </article>}
         </section>}
       </main>;
@@ -4354,9 +4423,24 @@ export default function Home() {
           <h1>她终于不再等。</h1>
           <p>系统把这次回访登记为第224次“首次接触”。从这一天起，1404没有再提交任何看起来像是在找茬的投诉单，只因为她不再相信下一次会有所不同。</p>
           <blockquote>系统困住了很多人，也许这一次，她选择解救自己。</blockquote>
-          <div className="ending-epilogue-actions"><a href={`${BASE_PATH}/truth/`}>查看全案真相</a><button className="ending-choice-return" type="button" onClick={reconsiderEnding}>重新选择结局</button><button type="button" onClick={restartGame}>从新的检索记录开始</button></div>
+          <div className="ending-epilogue-actions"><a href={`${BASE_PATH}/truth/`}>查看全案真相</a><button className="ending-choice-return" type="button" onClick={reconsiderEnding}>重新选择结局</button></div>
         </article>}
       </section>}
+    </main>;
+  }
+
+  if (game.view === "completion" && game.playerNickname) {
+    return <main className="completion-page">
+      {backgroundMusicAudio}
+      {renderBackgroundMusicControl()}
+      <section className="completion-menu" aria-labelledby="completion-menu-title">
+        <header><EyeMark/><span>INVESTIGATION COMPLETE / 100%</span></header>
+        <p className="completion-menu__name">调查员 · {game.playerNickname}</p>
+        <h1 id="completion-menu-title">恭喜通关<br/><strong>《不存在的房间》</strong></h1>
+        <p>你找到了所有被系统隐藏、过滤与遗忘的档案，也替那些无法离开的人留下了可以被记住的名字。</p>
+        <dl><div><dt>完成结局</dt><dd>雨过天晴</dd></div><div><dt>档案阅读</dt><dd>{articles.length} / {articles.length}</dd></div><div><dt>调查账号</dt><dd>CJ-0713 / 陈峻</dd></div></dl>
+        <div><button type="button" onClick={returnToCompletedArchive}>继续阅读档案</button><a href={`${BASE_PATH}/truth/`}>查看全案真相</a></div>
+      </section>
     </main>;
   }
 
@@ -4409,6 +4493,7 @@ export default function Home() {
           <div className="dashboard-haunt" aria-hidden="true">{Array.from({ length: 8 }).map((_, index) => <EyeMark key={index} small />)}</div>
 
           <div className="dashboard-head"><div><span>{memoryRewriteActive ? "MEM-CONSISTENCY / EMPLOYEE SESSION" : finalChapterStarted ? "重点关怀 / 主体冲突复核" : "工作台 / 2026-07-13"}</span><h1>{memoryRewriteActive ? "员工记忆一致性校正" : "物业管理系统"}</h1><p>{memoryRewriteActive ? "当前中台已由员工一致性服务接管。系统正在以标准业务口径覆盖与1404及事故资料有关的本地记录。" : finalChapterStarted ? "W-0713-1404涉及当前处理人自指冲突。仅可按标准关怀话术处置，不得确认私人关系。" : "负责长期空置房巡检、住户回访及异常工单复核。业务记录可通过顶部全文检索关联查询。"}</p>{!finalChapterStarted && <span className="dashboard-secret-hint" tabIndex={0}>从一张工单开始。下一步由你搜索。</span>}</div><aside><span>{memoryRewriteActive ? "强制任务" : "当前班次"}</span><strong>{memoryRewriteActive ? "覆盖写入 73%" : "08:30—17:30"}</strong><small className="shift-status"><i /> CJ-0713 在线<b>{memoryRewriteActive ? "退出功能已锁定" : "未检测到下班打卡记录"}</b></small></aside></div>
+          {allArchivesRead && <form className="completion-nickname-search" onSubmit={submitCompletionNickname}><span><b>档案阅读完成</b><small>生成你的专属通关页面</small></span><label><i>⌕</i><input aria-label="输入通关昵称" value={completionNicknameInput} onChange={(event) => setCompletionNicknameInput(event.target.value)} placeholder="请输入你的昵称" maxLength={24}/><button>生成</button></label></form>}
 
           {finalChapterStarted ? <div className="dashboard-metrics dashboard-metrics--memory"><article className="dashboard-metric--alert"><span>待校正记忆</span><strong>{game.homeSolved ? "0" : "3"}</strong><small>{game.homeSolved ? "写入已阻断" : "强制任务"}</small></article><article><span>终端一致率</span><strong>{memoryRewriteActive ? "73%" : game.homeSolved ? "冲突" : "41%"}</strong><small>T-04 / 当前会话</small></article><article><span>关联住户</span><strong>1404</strong><small>私人关系禁止确认</small></article><article><span>合规事件</span><strong>{game.memoryRewriteStage === "resisted" ? "2" : "1"}</strong><small>已上报恒目</small></article></div> : <div className="dashboard-metrics"><article className="dashboard-metric--alert"><span>待处理工单</span><strong>1</strong><small>较昨日 -2</small></article><article><span>今日巡检</span><strong>6 / 12</strong><small>完成率 50%</small></article><article className="dashboard-metric--vacant"><span>长期空置房</span><strong className="metric-haunted" data-ghost="18">17</strong><small>本月新增 1</small></article><article><span>未读用户留言</span><strong>{unreadBoardMessages.length}</strong><small>关联当前值班</small></article></div>}
 
@@ -4468,12 +4553,12 @@ export default function Home() {
 
         {game.view === "callback-review" && <div className={`callback-review-page ${game.cs046TraceSolved ? "is-confirming" : ""} ${game.cs046Solved ? "is-solved" : ""}`}>
           <div className="callback-review-ghosts" aria-hidden="true"><span>CS-046 / T-04 / RESULT NULL</span><span>CJ-0713 / T-04 / RESULT NULL</span><span>AUTO ATTRIBUTION WITHDRAWN</span></div>
-          <header className="callback-review-head"><div><span>PROPERTY QUALITY CONTROL / LOCAL TRACE</span><h1>坐席重复字段人工复核</h1><p>该任务由回访质检系统直接下发。任务编号未写入全文索引、在办工单或档案阅读目录。</p></div><aside><span>索引状态</span><strong>未登记</strong><small>ENTRY / NOTICE-123</small></aside></header>
-          <div className="callback-review-system-line"><span>QC-T04</span><p>自动归因程序已被上级策略撤回。请根据已经取得的事故、住户与员工记录填写三项人工判断。</p><b>{game.cs046Solved ? "ARCHIVED" : "MANUAL REVIEW"}</b></div>
+          <header className="callback-review-head"><div><span>PROPERTY QUALITY CONTROL / LOCAL TRACE</span><h1>坐席重复字段人工复核</h1><p>该任务由回访质检系统直接下发。CS-046搜索已经解禁。</p></div><aside><span>索引状态</span><strong>未登记</strong><small>ENTRY / NOTICE-123</small></aside></header>
+          <div className="callback-review-system-line"><span>QC-T04</span><p>自动归因程序已被上级策略撤回。请根据已经取得的证据填写三项人工判断。</p><b>{game.cs046Solved ? "ARCHIVED" : "MANUAL REVIEW"}</b></div>
           <section className={`operator-correlation ${game.cs046Solved ? "is-solved" : ""}`}>
             <header><div><span>QUALITY TRACE / MANUAL NOTE</span><h2>回访归档缺口复核</h2></div><b>{game.cs046Solved ? "身份判断已确认" : "待填写 · 3项"}</b></header>
             <div className="operator-match-grid"><section><span>历史目录字段</span><strong>CS-046</strong><small>客服中心 / 回访质检</small></section><i>?</i><section><span>本轮终端字段</span><strong>CJ-0713</strong><small>空置房管理 / 当前会话</small></section></div>
-            {game.cs046Solved ? <div className="operator-truth"><EyeMark /><div><span>MANUAL CONCLUSION / CJ-0713</span><strong>人工复核：CS-046为陈峻，1404住户与CJ-0713为夫妻，CJ-0713已死亡。</strong><p>结论由当前处理人根据事故报道、住户记录与主体状态填写。系统自动归因仍处于撤回状态，被删除的录音没有恢复。</p></div></div> : <form onSubmit={submitCallbackReview}>
+            {game.cs046Solved ? <div className="operator-truth"><EyeMark /><div><span>MANUAL CONCLUSION / CJ-0713</span><strong>人工复核：CS-046为陈峻，1404住户与CJ-0713为夫妻，CJ-0713已死亡。</strong><p>结论由当前处理人根据事故报道、住户记录与主体状态填写。</p></div></div> : <form onSubmit={submitCallbackReview}>
               <label><span><i>01</i>CS-046是谁？</span><input value={callbackOperatorName} onChange={(event) => setCallbackOperatorName(event.target.value)} placeholder="填写姓名" autoComplete="off" /></label>
               <label><span><i>02</i>1404房主和CJ-0713的关系？</span><input value={callbackResidentRelation} onChange={(event) => setCallbackResidentRelation(event.target.value)} placeholder="填写人物关系" autoComplete="off" /></label>
               <label><span><i>03</i>CJ-0713状态？</span><select value={callbackEmployeeStatus} onChange={(event) => setCallbackEmployeeStatus(event.target.value)}><option value="">选择主体状态</option><option value="active">在岗</option><option value="missing">失联</option><option value="已死亡">已死亡</option></select></label>
@@ -4484,10 +4569,10 @@ export default function Home() {
         </div>}
 
         {game.view === "article" && currentArticle && <article className={`record-article record-article--${currentArticle.kind ?? "record"} ${uncannyArticleIds.has(currentArticle.id) ? "record-article--uncanny" : ""}`}>
-          <button className="back-link" onClick={game.lastQuery ? goSearchResults : goHome}>← 返回{game.lastQuery ? "检索结果" : "调查首页"}</button>
+          <button className="back-link" onClick={endingArchiveUnlocked ? openPostEndingArchive : game.lastQuery ? goSearchResults : goHome}>← 返回{endingArchiveUnlocked ? "完整档案目录" : game.lastQuery ? "检索结果" : "调查首页"}</button>
           <header><div><span>{currentArticle.section}</span><small>{currentArticle.date} · 内部索引 {currentArticleIndex}</small></div><h1>{currentArticle.title}</h1>{currentArticle.snippet && <p>{currentArticle.snippet}</p>}</header>
           <div className="article-body">{renderArticleBody(currentArticle.id)}</div>
-          {!(isProtectedArticle(currentArticle.id) && !hasUnlockedArticle(game, currentArticle.id)) && <footer><span>阅读完毕不代表调查完成</span><p>从正文中选择一个值得怀疑的词，回到顶部手动检索。不要只搜索标题。</p></footer>}
+          {!(isProtectedArticle(currentArticle.id) && !endingArchiveUnlocked && !hasUnlockedArticle(game, currentArticle.id)) && <footer><span>{endingArchiveUnlocked ? "结局后档案补读" : "阅读完毕不代表调查完成"}</span><p>{endingArchiveUnlocked ? "这份档案仅供补充阅读，不会改变已经完成的调查与结局。" : "从正文中选择一个值得怀疑的词，回到顶部手动检索。不要只搜索标题。"}</p></footer>}
         </article>}
       </section>
 
@@ -4508,10 +4593,14 @@ export default function Home() {
     <aside className={`side-drawer message-board ${boardOpen ? "is-open" : ""}`} aria-label="用户留言板">
       <header><div><span>PUBLIC MESSAGE BOARD</span><strong>用户留言板</strong></div><button aria-label="关闭用户留言板" onClick={() => setBoardOpen(false)}>×</button></header>
       <div className="board-notice"><div><strong>{visibleBoardMessages.length}</strong><span>条关联留言</span></div><p>内容由住户、访客及物业账号自行发布，未经核验。杂谈、误报与案件线索会同时出现。</p></div>
-      <div className="message-list">{boardMessageThreads.map((thread) => <section key={thread.author} className={`message-thread-group message-thread-group--${thread.latest.tone ?? "resident"}`}>
-        <header className="message-thread-group__header"><i aria-hidden="true">{thread.author === WIFE_NAME && !wifeNameRevealed ? "14" : thread.author.slice(0, 2)}</i><div><strong>{thread.author === WIFE_NAME ? <MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /> : thread.author}</strong><span>{thread.latest.unit} · {thread.messages.length} 条留言</span></div><time>{thread.latest.time}</time></header>
-        <div className="message-thread-group__messages">{thread.messages.map((message) => <article key={message.id} className={`message-entry message-entry--${message.tone ?? "resident"} ${message.urgent ? "message-entry--urgent" : ""} ${message.id === 107 && !game.fatherClosure ? "message-entry--active" : ""}`}>
-          <header className="message-entry__time"><span>{message.badge}</span><time>{message.time}</time></header>
+      <div className="message-list">{boardMessageThreads.map((thread) => {
+        const threadCollapsed = collapsedMessageAuthors.includes(thread.author);
+        return <section key={thread.author} className={`message-thread-group message-thread-group--${thread.latest.tone ?? "resident"} ${threadCollapsed ? "is-collapsed" : ""}`}>
+        <header className="message-thread-group__header"><button type="button" className="message-thread-group__avatar" aria-expanded={!threadCollapsed} aria-label={`${threadCollapsed ? "展开" : "收起"}${thread.author}的留言`} onClick={() => toggleMessageThread(thread.author)}><i aria-hidden="true">{thread.author === WIFE_NAME && !wifeNameRevealed ? "14" : thread.author.slice(0, 2)}</i><b aria-hidden="true">{threadCollapsed ? "+" : "−"}</b></button><div><strong>{thread.author === WIFE_NAME ? <MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /> : thread.author}</strong><span>{thread.latest.unit} · {thread.messages.length} 条留言</span></div><time>{thread.latest.time}</time></header>
+        {!threadCollapsed && <div className="message-thread-group__messages">{thread.messages.map((message) => {
+          const isNewMessage = highlightedMessageIds.includes(message.id);
+          return <article key={message.id} className={`message-entry message-entry--${message.tone ?? "resident"} ${message.urgent ? "message-entry--urgent" : ""} ${message.id === 107 && !game.fatherClosure ? "message-entry--active" : ""} ${isNewMessage ? "message-entry--new" : ""}`} onClick={() => acknowledgeHighlightedMessage(message.id)}>
+          <header className="message-entry__time"><span>{message.badge}{isNewMessage && <b className="message-entry__new-badge">新消息</b>}</span><time>{message.time}</time></header>
           <p>{message.text}</p>
           {message.action === "callback-review" && <div className="message-actions message-actions--dark"><button onClick={openCallbackIdentityReview}>{game.cs046Solved ? "重新打开身份复核归档页" : "打开未登记复核任务"}</button></div>}
           {message.id === 1 && <>
@@ -4529,18 +4618,18 @@ export default function Home() {
           {message.id === 112 && game.missingChildReply.includes("last_seen") && <blockquote>“刚才她还在1204次卧，说门外有个衣服全湿的小姑娘。零点后入户门响了一次，再看时人已经不在了。”</blockquote>}
           {message.id === 112 && game.missingChildReply.includes("police_ref") && <blockquote>“接警回执是DL-0713-0041。民警正在赶来，让物业先封闭消防通道、保留原始录像，不要自行进入其他住处。”</blockquote>}
           {message.id === 107 && !game.fatherReply && <div className="message-actions message-actions--dark"><button onClick={() => replyToFather("death")}>引用公安协查回函</button><button onClick={() => replyToFather("evidence")}>引用门禁与会话审计</button></div>}
-          {message.id === 107 && game.fatherReply && <div className="dialogue-thread"><p className="dialogue-player">{game.fatherReply === "death" ? "公安协查回函字段：死亡；时间2023-02-08 00:36；死因急性酒精中毒。" : "审计字段：本人门禁已停用；当前写入对象为MSG-1304留言令牌。"}</p><p className="dialogue-resident">{game.fatherReply === "death" ? "那为什么这个账号还能说话？" : "所以你看到的不是我，我已经不在了，是吗？只是系统还在替我这个该死的鬼开门。"}</p></div>}
+          {message.id === 107 && game.fatherReply && <div className="dialogue-thread"><p className="dialogue-player">{game.fatherReply === "death" ? "公安协查回函字段：死亡；时间2023-02-08 00:36；死因急性酒精中毒。" : "审计字段：本人门禁已停用；当前写入对象为MSG-1304留言令牌。"}</p><p className="dialogue-resident">{game.fatherReply === "death" ? "那为什么这个账号还能说话？" : "所以这房子早就不是我的了。现在我还能通过这个跟你说话，是什么原因？"}</p></div>}
           {message.id === 107 && game.fatherReply && !game.fatherClosure && <div className="message-actions message-actions--dark"><button onClick={() => setGame((current) => ({ ...current, fatherReply: "" }))}>重新选择回复</button><button onClick={closeFatherChat}>附加事故回执，保全会话并停用令牌</button></div>}
           {message.id === 107 && game.fatherClosure && <div className="dialogue-thread dialogue-thread--closure"><p className="dialogue-player">已附加A-1304-0821联动回执。当前会话停止写入，原始内容转入审计保全。</p><p className="dialogue-resident">这不是第一次有人找到全部的回执。你们一直都知道，对不对？</p><small>会话已转内部合规队列 · 留言令牌失效</small></div>}
-        </article>)}</div>
-      </section>)}</div>
+        </article>})}</div>}
+      </section>})}</div>
     </aside>
     <aside className={`side-drawer ${ledgerOpen ? "is-open" : ""}`} aria-label="调查台账"><header><div><span>CASE CHAPTER ARCHIVE</span><strong>调查台账</strong></div><button aria-label="关闭调查台账" onClick={() => setLedgerOpen(false)}>×</button></header><div className="drawer-evidence">{renderLedgerChapters(true)}</div></aside>
     <aside className={`side-drawer archive-index-drawer ${archiveIndexOpen ? "is-open" : ""}`} aria-label="档案阅读目录">
       <header><div><span>ARCHIVE READING INDEX</span><strong>档案阅读</strong></div><button aria-label="关闭档案阅读" onClick={() => setArchiveIndexOpen(false)}>×</button></header>
-      <div className="archive-index-summary archive-index-summary--read"><div><strong>{readArticles.length}</strong><span>已阅读档案</span></div><div><strong>{readArticleSections}</strong><span>涉及分类</span></div></div>
-      <div className="archive-index-note">这里只保留当前账号已经打开过的档案。首次阅读仍需通过关键词检索进入。</div>
-      <div className="archive-index-list">{readArticles.length ? readArticles.map((article, index) => <button key={article.id} className={`is-read ${article.kind === "noise" ? "is-noise" : ""}`} onClick={() => reopenReadArticle(article)}><span>{String(index + 1).padStart(2, "0")}</span><div><small>{article.section} · {article.date}</small><strong>{article.title}</strong></div><b>重新打开</b></button>) : <div className="archive-index-empty"><strong>暂无阅读记录</strong><p>从工单或检索结果打开档案后，它会出现在这里。</p></div>}</div>
+      <div className="archive-index-summary archive-index-summary--read"><div><strong>{readArticles.length}</strong><span>{endingArchiveUnlocked ? "开放档案" : "已阅读档案"}</span></div><div><strong>{readArticleSections}</strong><span>涉及分类</span></div></div>
+      <div className="archive-index-note">{endingArchiveUnlocked ? "结局已归档，系统内全部档案现已开放。补读不会补发证据，也不会改变已经选择的结局。" : "这里只保留当前账号已经打开过的档案。首次阅读仍需通过关键词检索进入。"}</div>
+      <div className="archive-index-list">{readArticles.length ? readArticles.map((article, index) => { const hasRead = game.visited.includes(article.id); const hiddenArchive = article.id === "hmo-admin-account"; return <button key={article.id} className={`${hasRead ? "is-read" : "is-post-ending"} ${article.kind === "noise" ? "is-noise" : ""} ${hiddenArchive ? "is-hidden-archive" : ""}`} onClick={() => reopenReadArticle(article)}><span>{String(index + 1).padStart(2, "0")}</span><div><small>{hiddenArchive ? "隐藏档案 · " : ""}{article.section} · {article.date}</small><strong>{article.title}</strong></div><b>{hasRead ? "重新打开" : "结局后开放"}</b></button>; }) : <div className="archive-index-empty"><strong>暂无阅读记录</strong><p>从工单或检索结果打开档案后，它会出现在这里。</p></div>}</div>
     </aside>
     <aside className={`side-drawer deduction-drawer ${deductionOpen ? "is-open" : ""}`} aria-label="真相推导">
       <header><div><span>INFERENCE DESK</span><strong>真相推导</strong></div><button aria-label="关闭真相推导" onClick={() => setDeductionOpen(false)}>×</button></header>
@@ -4555,7 +4644,7 @@ export default function Home() {
         {activeDeduction === "1204" && <section className="case-chapter-performance">
           <header data-chapter="01"><span>CHAPTER 01 / EMERGENCY TRACE</span><small>搜救结束 · 原始材料转入事件档案</small><h2>{evidenceChapters[0].title}</h2></header>
           <ol className="case-chapter-facts">
-            <li><time>2026-07-01</time><p>1204服务已终止，但门禁启用记录与巡检图仍显示近期生活痕迹。</p></li>
+            <li><time>2026-03-31—04-03</time><p>1204定时服务终止三日后，原服务关联卡再次进入1号楼；后续巡检持续发现生活痕迹。</p></li>
             <li><time>00:03—00:04</time><p>监护人最后确认许芷遥位于1204次卧；一分钟后入户门磁触发，公共区域没有匹配到门禁通行。</p></li>
             <li><time>00:07—00:13</time><p>消防楼梯影像与网关记录形成连续路径。民警和安保在1304门外消防前室找到许芷遥，存在第二个矮小轮廓未通过目标实体识别。</p></li>
           </ol>

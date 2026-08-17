@@ -334,6 +334,7 @@ export default function TruthPage() {
               <span>完整证据链 / 办理退房</span><h3>好结局：雨过天晴</h3>
               <p>事故回执、骨灰转出单、1104破拆、回访冷备份与资金链被提交给警方和业委会。外部证据使MEM-CONSISTENCY无法继续覆盖主体关系，主角也不再依赖CJ-0713维持存在。</p>
               <p>他以灵魂状态越过物业边界，系统第一次无法重新调用他的名字。林若岚看着丈夫真正离开；失去从来不是轻松的事情，但总好过相见不相识的陌生，好过生死循环的折磨，总有回忆会替两人记得。</p>
+              <aside className={styles.endingEasterEggHint}>提示：完成好结局后，阅读所有档案（包括隐藏档案），会有彩蛋。</aside>
             </article>
             <article className={styles.badEnding}>
               <figure><Image src={assetPath("/endings/04-loop-sugar-box.png")} alt="林若岚独自收起为丈夫准备的糖盒" fill sizes="50vw" unoptimized /></figure>
