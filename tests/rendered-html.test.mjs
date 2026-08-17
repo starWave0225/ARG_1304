@@ -342,8 +342,8 @@ test("grounds operational clues in auditable property records", async () => {
 
   assert.match(page, /临时接触式拾振器/);
   assert.match(page, /\/evidence\/1204-ceiling-inspection\.png/);
-  assert.match(page, /照片仅记录可见表面与现场测点，不代表已完成1304室内管线检查/);
-  assert.match(page, /confirmed: "已确认非水管破损，怀疑人为因素"/);
+  assert.match(page, /照片仅记录可见表面与现场测点，未完成1304室内管线检查/);
+  assert.match(page, /confirmed: "已确认非水管破损、渗漏，怀疑人为因素"/);
   assert.doesNotMatch(page, /已确认零用水与固定声响并存/);
   assert.ok(ceilingInspectionPhoto.length > 1_000_000);
   assert.match(page, /公安协查回函/);
@@ -352,7 +352,7 @@ test("grounds operational clues in auditable property records", async () => {
   assert.match(page, /title: "恒目管理顾问供应商备案"[\s\S]*terms: \["恒目", "澄江物业"/);
   assert.match(page, /data-copy="保留该保留的，遗忘该遗忘的。"/);
   assert.doesNotMatch(page, /异常不是错误。异常只是尚未完成校准的记录。/);
-  assert.match(page, /以上身份仅为报事人自述，不作为房屋关系结论/);
+  assert.match(page, /以上身份仅为报事人自述/);
   assert.doesNotMatch(workorderBody, /<p className="is-anomalous"><time>01:29<\/time>/);
   assert.doesNotMatch(page, /楼上的人是不是已经死了/);
   assert.doesNotMatch(page, /设备不是设备。驻场不是在岗/);
@@ -444,12 +444,14 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.match(cctvMeta, /available: \(game\) => game\.childMissingReported/);
   assert.match(cctvMeta, /接到失联儿童协查后/);
   assert.doesNotMatch(workorderBody, /openRelatedArticle\("cctv-1204"\)|12层公共区域事件录像/);
-  assert.match(page, /本任务由失联儿童接警回执DL-0713-0041触发，不属于W-0713-019滴水投诉的原始附件/);
+  assert.match(page, /if \(!game\.childRegistered\) return <>[\s\S]*?权限不足[\s\S]*?协查对象身份核查尚未完成/);
+  assert.match(page, /article\.id !== "cctv-1204" \|\| game\.childRegistered/);
+  assert.match(page, /本任务由失联儿童接警回执DL-0713-0041触发。调阅范围仅限儿童最后确认时间之后的公共区域事件切片/);
   assert.match(page, /className="cctv-video-play" onClick=\{playCctvReview\}/);
   assert.match(page, /ref=\{cctvVideoRef\}/);
   assert.match(css, /\.cctv-video-shell > \.camera-overlay \{ pointer-events: none; \}/);
   assert.match(page, /事件片段串联回放/);
-  assert.match(page, /片段间不代表连续录像/);
+  assert.match(page, /播放器把系统保留的五段事件切片按时间排序。请将画面与下方日志交叉核对/);
   assert.match(page, /const \[cctvAnomalyTimes, setCctvAnomalyTimes\] = useState<string\[\]>\(\[\]\)/);
   assert.match(page, /const expected = \["00:04", "00:07", "00:10", "00:12"\]/);
   assert.match(page, /expected\.every\(\(time\) => cctvAnomalyTimes\.includes\(time\)\)/);
@@ -457,12 +459,13 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.match(page, /选择所有出现画面、通道或录像数据异常的时间节点/);
   assert.doesNotMatch(page, /用于比较人员与地面的基准切片/);
   assert.doesNotMatch(page, /time === "00:04" \? "地面变化"/);
-  assert.match(page, /未成年人失联不受住户登记状态限制/);
+  assert.match(page, /此表仅用于报警协查、公共区域录像调阅和现场辨认/);
   assert.match(page, /姓名许芷遥/);
   assert.match(page, /normalizeText\("许芷遥"\) \|\| name === "xuzhiyao"/);
   assert.match(page, /\/evidence\/xu-zhiyao-health-photo\.png/);
   assert.doesNotMatch(page, /何芷遥|hezhiyao|he-zhiyao/);
   assert.match(page, /DL-0713-0041/);
+  assert.doesNotMatch(page, /按家属留言填写/);
   assert.match(page, /最后确认日期（年月日）<input value=\{childLastDate\}/);
   assert.match(page, /normalizeChineseDate\(childLastDate\) !== "2026-07-13"/);
   assert.doesNotMatch(page, /最后确认时间<input type="datetime-local"/);
@@ -471,6 +474,7 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.match(page, /id: "register-child"[\s\S]*?available: \(game\) => game\.childMissingReported && game\.evidence\.includes\("vacancyMismatch"\)/);
   assert.doesNotMatch(page, /available: \(game\) => game\.childMissingReported && hasVisited\(game, "clinic-child"\)/);
   assert.match(page, /id: "clinic-child"[\s\S]*?title: "1204 童鞋内拾获儿童健康信息卡"[\s\S]*?available: \(game\) => game\.inspectedArticles\.includes\("vacancy-1204"\) \|\| hasVisited\(game, "clinic-child"\)/);
+  assert.match(page, /id: "clinic-child"[\s\S]*?terms: \["FP-0713-26"/);
   assert.match(page, /<dt>监护人<\/dt><dd>许\*\*、赵\*\*<\/dd>/);
   assert.match(page, /<dt>出生日期<\/dt><dd>2020年4月12日<\/dd>/);
   assert.match(page, /function normalizeChineseDate\(value: string\)/);
@@ -603,10 +607,12 @@ test("hides the 1204 service contacts inside a mixed building schedule", async (
 
   assert.match(page, /id: "scheduled-service-1204"/);
   assert.match(page, /title: "1号楼第二季度定时入户服务排班"/);
+  assert.match(page, /className="service-trace-toggle"[\s\S]*?aria-expanded=\{serviceTraceOpen\}[\s\S]*?>03-31终止<\/button>/);
+  assert.match(page, /serviceTraceOpen && <section id="service-trace-1204"/);
   assert.match(page, /available: \(game\) => hasVisited\(game, "vacancy-1204"\)/);
   assert.match(page, /绿植养护[\s\S]*?净水滤芯更换[\s\S]*?室内保洁[\s\S]*?信件代收转交[\s\S]*?独居住户物资代办/);
   assert.match(page, /许建国 \/ 赵秀兰/);
-  assert.match(page, /产权登记人陈大国此前要求暂停续费，系统关闭后续保洁计划/);
+  assert.match(page, /产权登记人陈大国失联，自动暂停续费，系统关闭后续保洁计划/);
   assert.doesNotMatch(page, /预约联系人许建国未续费/);
   assert.match(page, /"scheduled-service-1204": \["vacancyMismatch"\]/);
   assert.doesNotMatch(vacancyBody, /许建国|赵秀兰|每月两次保洁/);
@@ -624,7 +630,7 @@ test("gives the 1204 owner a searchable public-news trail", async () => {
   assert.match(page, /available: \(game\) => hasVisited\(game, "vacancy-1204"\)/);
   assert.match(page, /和裕供应链财务负责人被列为在逃人员/);
   assert.match(page, /证件号码末四位为<mark>4417<\/mark>[\s\S]*?澄江公寓1号楼1204/);
-  assert.match(page, /“畏罪潜逃”来自媒体转载标题，不是司法结论/);
+  assert.match(page, /协查通报仅用于查找犯罪嫌疑人及涉案线索，不代表法院已作出生效判决/);
   assert.doesNotMatch(vacancyBody, /产权人涉嫌经济犯罪，长期境外失联/);
 });
 
@@ -745,8 +751,8 @@ test("renders the night acoustic puzzle with licensed real-world recordings", as
   assert.match(page, /game\.audioSolved \? track\.resolved : track\.label/);
   assert.match(page, /src: "\/audio\/field-pipe\.mp3"[\s\S]*?label: "低沉的金属嗡鸣"[\s\S]*?note: "持续水流低鸣，偶尔带有金属腔体回响"/);
   assert.match(page, /src: "\/audio\/field-tv\.mp3"[\s\S]*?label: "远处电视播报声"[\s\S]*?note: "隔墙人声模糊，无法辨清具体语句"/);
-  assert.match(page, /src: "\/audio\/field-bath\.mp3"[\s\S]*?label: "空腔里的规律滴水声"[\s\S]*?note: "水滴落入浴缸排水口，带有瓷砖空间反射"/);
-  assert.match(page, /src: "\/audio\/field-child\.mp3\?v=girl-hum-2"[\s\S]*?label: "女孩轻声哼唱儿歌"[\s\S]*?note: "没有歌词，旋律断续，近处换气与浴室短反射清楚"/);
+  assert.match(page, /src: "\/audio\/field-bath\.mp3"[\s\S]*?label: "空腔里的规律滴水声"[\s\S]*?note: "水滴落入浴缸排水口，带有空间反射"/);
+  assert.match(page, /src: "\/audio\/field-child\.mp3\?v=girl-hum-2"[\s\S]*?label: "女孩轻声哼唱"[\s\S]*?note: "没有歌词，旋律断续"/);
   assert.match(page, /"儿童哼唱", "童谣残句", "近场换气"/);
   assert.doesNotMatch(page, /label: "结构传导"|label: "公共环境"|label: "近场瞬态"|label: "近场窄带"/);
   assert.doesNotMatch(generator, /createChildVoiceTrack|littleWhiteBoatMotif|createTrack\(track\)|field-child-voice-source/);
@@ -853,7 +859,7 @@ test("lets the 1304 callback break CS-046's standard service voice", async () =>
   const callback = page.slice(page.indexOf('id: "1304-status-return"'), page.indexOf('id: "1104-employee-return"'));
 
   assert.match(callback, /你跟我一样，都是这样的存在。只是苦了我的小满。/);
-  assert.match(callback, /你让这个账号一直留在房间，只会让她的记录继续被困在这里/);
+  assert.match(callback, /你一直留在房间，只会让她也继续被困在这里/);
   assert.match(callback, /你也有自己的痛苦要遗忘吧/);
   assert.doesNotMatch(callback, /请不要提及未登记的家庭成员/);
 });

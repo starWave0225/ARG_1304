@@ -517,7 +517,7 @@ const articles: ArticleMeta[] = [
     title: "1204 长期空置房巡检记录",
     section: "房屋台账",
     date: "2026-07-09",
-    snippet: "产权登记人无法联系，定时入户服务已停费；近期门禁与生活用电却持续出现。",
+    snippet: "产权登记人无法联系，定时入户服务已停费；近期门禁与生活用电持续出现。",
     terms: ["1204", "空置房", "产权人", "陈大国", "4417", "保洁", "定时服务", "门禁", "续费停止", "停了续费", "2026-04-03", "儿童床品", "童鞋"],
     available: always,
   },
@@ -525,8 +525,8 @@ const articles: ArticleMeta[] = [
     id: "scheduled-service-1204",
     title: "1号楼第二季度定时入户服务排班",
     section: "客户服务",
-    date: "2026-04-06",
-    snippet: "季度排班汇总包含保洁、代收、绿植养护等定时入户服务；已终止项目与实际门禁需要另行核对。",
+    date: "2026-06-30",
+    snippet: "",
     terms: ["1204", "定时服务", "定时入户服务", "服务排班", "履约排班", "保洁", "服务授权", "每月两次", "许建国", "赵秀兰", "2026-03-31", "2026-04-03"],
     available: (game) => hasVisited(game, "vacancy-1204"),
   },
@@ -553,7 +553,7 @@ const articles: ArticleMeta[] = [
     title: "12层公共区域事件回放复核",
     section: "安防中心",
     date: "2026-07-13",
-    snippet: "接到失联儿童协查后，安防中心将五段公共区域事件录像保全并串联为回放，需与门禁、消防门磁及校验日志交叉复核。",
+    snippet: "接到失联儿童协查后，系统保存了五段公共区域事件录像，需人工复核画面异常。",
     terms: ["DL-0713-0041", "失联儿童", "录像保全", "00:04", "00:07", "00:10", "00:12", "监控", "事件回放", "湿脚印", "地面", "消防楼梯", "cam-12f-02", "门禁匹配", "门磁", "丢帧", "序列号"],
     kind: "media",
     available: (game) => game.childMissingReported,
@@ -563,7 +563,7 @@ const articles: ArticleMeta[] = [
     title: "1304 夜间声纹分轨报告",
     section: "安防中心",
     date: "2026-07-13",
-    snippet: "四条同步声轨分别包含金属嗡鸣、远处电视播报、规律滴水与女孩哼唱，需要排除背景串音后定位近场声源。",
+    snippet: "四条同步声轨分别包含金属嗡鸣、远处电视播报、间断滴水声与女孩哼唱，需要排除背景串音后定位嫌疑声源。",
     terms: ["1304", "声纹", "声学", "滴水", "浴缸", "浴缸滴水", "儿童哼唱", "童谣残句", "近场换气", "管道共振", "邻户电视", "六分钟"],
     kind: "media",
     available: (game) => hasVisited(game, "meter-1304"),
@@ -574,7 +574,7 @@ const articles: ArticleMeta[] = [
     section: "失物招领",
     date: "2026-07-06",
     snippet: "1204门外童鞋内发现儿童健康卡，姓名许芷遥，系统内无对应住户。",
-    terms: ["童鞋", "鞋垫", "卡片边角", "儿童健康", "儿童健康卡", "健康信息卡", "未登记儿童", "许芷遥", "2020-04-12", "2026-04-03", "1204", "失物招领"],
+    terms: ["FP-0713-26", "童鞋", "鞋垫", "卡片边角", "儿童健康", "儿童健康卡", "健康信息卡", "未登记儿童", "许芷遥", "2020-04-12", "2026-04-03", "1204", "失物招领"],
     available: (game) => game.inspectedArticles.includes("vacancy-1204") || hasVisited(game, "clinic-child"),
   },
   {
@@ -582,7 +582,7 @@ const articles: ArticleMeta[] = [
     title: "未成年人紧急协查登记",
     section: "应急协查",
     date: "2026-07-13",
-    snippet: "接警后按回执编号建立临时协查对象，用于公共区域录像调阅、现场辨认和移交；该记录不改变住户身份。",
+    snippet: "接警后按回执编号建立临时协查对象，用于公共区域录像调阅、现场辨认和移交。",
     terms: ["DL-0713-0041", "接警回执", "报警回执", "未登记儿童", "许芷遥", "协查", "最后确认日期", "1204"],
     kind: "record",
     available: (game) => game.childMissingReported && game.evidence.includes("vacancyMismatch"),
@@ -1102,13 +1102,13 @@ const callbackRecords: CallbackRecord[] = [
     duration: "02:41",
     available: (game) => game.visited.includes("workorder-1204"),
     lines: [
-      { at: "00:08", speaker: "客服 CS-046", text: "许先生，我只记录现在能够核对的部分。请先说声音开始和停止的时间。" },
-      { at: "00:19", speaker: "许先生", text: "00:04开始，00:10结束。你们昨天已经问过一遍。" },
-      { at: "00:31", speaker: "客服 CS-046", text: "系统里没有昨天的回访。我会重新登记，不沿用上一次结论。" },
-      { at: "01:54", speaker: "许先生", text: "你连说话顺序都和昨天一样。到底是不是同一个人？", flagged: true },
-      { at: "02:10", speaker: "客服 CS-046", text: "请只回答本次工单涉及的问题。" },
+      { at: "00:08", speaker: "客服 CS-046", text: "许先生，我只记录现在能够核对的部分。请先说声音开始和停止的大致时间。" },
+      { at: "00:19", speaker: "许先生", text: "大概00:04开始，00:10结束。你们昨天已经问过一遍了。" },
+      { at: "00:31", speaker: "客服 CS-046", text: "系统里没有昨天的回访。我会重新登记。" },
+      { at: "01:54", speaker: "许先生", text: "你连说话都和昨天一样。到底是不是你们用AI在糊弄我？", flagged: true },
+      { at: "02:10", speaker: "客服 CS-046", text: "只回答本次工单涉及的问题。" },
     ],
-    note: "坐席在挂断前手动取消了“身份已核验”。前一日回访文件为空，但质检序号连续。",
+    note: "前一日回访文件为空，但质检序号连续。",
   },
   {
     id: "1304-status-return",
@@ -1120,9 +1120,9 @@ const callbackRecords: CallbackRecord[] = [
     available: (game) => game.fatherConfirmedDead,
     lines: [
       { at: "00:04", speaker: "顾长河", text: "你又打来了。" },
-      { at: "00:09", speaker: "客服 CS-046", text: "这是本系统第一次给您通话。请确认您目前是否仍居住在1304。" },
+      { at: "00:09", speaker: "客服 CS-046", text: "这是本系统第一次给您通话。请确认您目前是否仍居住在1304房间。" },
       { at: "00:21", speaker: "顾长河", text: "你跟我一样，都是这样的存在。只是苦了我的小满。" },
-      { at: "01:03", speaker: "客服 CS-046", text: "小满已经不在了。你让这个账号一直留在房间，只会让她的记录继续被困在这里。请不要再执迷不悟了。" },
+      { at: "01:03", speaker: "客服 CS-046", text: "经核实， 小满已经不在，节哀顺变。你一直留在房间，只会让她也继续被困在这里。请不要再执迷不悟了。" },
       { at: "01:12", speaker: "顾长河", text: "你还是不懂我的痛苦。或者，你也有自己的痛苦要遗忘吧。", flagged: true },
     ],
     note: "该号码名下存在4次连续质检编号，坐席均为CS-046；除本次外，其余录音正文已被过滤。",
@@ -1136,13 +1136,14 @@ const callbackRecords: CallbackRecord[] = [
     duration: "01:47",
     available: (game) => game.colleagueAccess,
     lines: [
-      { at: "00:03", speaker: "周明川", text: "CS-046，别再走系统工单。你那边会被清掉。" },
+      { at: "00:03", speaker: "周明川", text: "CS-046，别再走系统工单。你也会被清掉的。" },
       { at: "00:11", speaker: "客服 CS-046", text: "请说明需要复核的房号和材料编号。" },
-      { at: "00:18", speaker: "周明川", text: "1104。联合复核还沿用我的人事主档日期。是你让我别把日期直接写在留言里的。" },
+      { at: "00:18", speaker: "周明川", text: "我把东西都存在我的账号里，1104是我的房间，我可能没机会，你一定有办法做到。" },
       { at: "00:37", speaker: "客服 CS-046", text: "我没有发送过这项要求。" },
-      { at: "00:43", speaker: "周明川", text: "你当然不记得。明天他们会给你换一个编号。", flagged: true },
+      { at: "00:43", speaker: "周明川", text: "生死不过是一个轮回，明天他们也许会给你换一个编号，我一定会想办法帮你走出去。没时间了, 我", flagged: true },
+      { at: "00:54", speaker: "客服 CS-046", text: "您好，请问还在线吗？" },
     ],
-    note: "文件创建后6分钟，CS-046被标记为“数据一致性复训”；周明川的员工状态开始反复改写。",
+    note: "00:59，CS-046被标记为“数据一致性复训”对象；周明川员工状态改写。",
   },
   {
     id: "1404-care-return",
@@ -1153,13 +1154,13 @@ const callbackRecords: CallbackRecord[] = [
     duration: "04:04",
     available: (game) => hasUnlockedArticle(game, "care-w04"),
     lines: [
-      { at: "00:05", speaker: "林若岚", text: "今天是046，还是0713？" },
-      { at: "00:12", speaker: "客服 CS-046", text: "女士，请不要使用非本次来电显示的员工编号。" },
-      { at: "00:24", speaker: "林若岚", text: "编号每次都不一样。你问话的顺序、停顿，还有说谎时先吸一口气，都没有变。" },
+      { at: "00:05", speaker: "林若岚", text: "今天，会有不同吗？" },
+      { at: "00:12", speaker: "客服 CS-046", text: "女士，这里是物业客服，有什么可以帮到您的？" },
+      { at: "00:24", speaker: "林若岚", text: "你还是不记得，可是你的声音、语气、停顿，我都太熟悉。" },
       { at: "01:16", speaker: "客服 CS-046", text: "我们以前见过？" },
-      { at: "01:22", speaker: "林若岚", text: "你以前胃不好，值夜班总带着糖。你是我丈夫。", flagged: true },
+      { at: "01:22", speaker: "林若岚", text: "你以前胃不好，值夜班总带着糖。\n\n你是我**啊！", flagged: true },
     ],
-    note: "合规系统将末句标记为“住户哀伤妄想”，但当前终端把这段录音列入了员工身份复核。",
+    note: "部分内容被合规系统拦截，住户疑似陷入“哀伤妄想”，当前终端会对客服员工进行员工身份复核。",
   },
 ];
 
@@ -1378,15 +1379,15 @@ const missingChildEvidence = ["vacancyMismatch"];
 const articleVerificationCopy: Record<string, { title: string; description: string; action: string; confirmed: string }> = {
   "scheduled-service-1204": {
     title: "跨表核验 / 服务授权与门禁",
-    description: "将1204排班终止日期、最后履约记录和4月3日后的门禁事件交叉核对，区分历史授权与实际占用。",
+    description: "将1204排班终止日期、最后履约记录和4月3日后的门禁事件交叉核对。",
     action: "核对排班与门禁并写入台账",
-    confirmed: "已确认空置登记与实际占用冲突",
+    confirmed: "已确认空置登记与实际占用人冲突",
   },
   "meter-1304": {
     title: "附件核验 / 用水曲线",
-    description: "将远传水表十五分钟曲线与报事时段、顶面检查照片逐项对齐，排除持续渗漏。",
+    description: "将远传水表读数变化曲线与报事时段、顶面检查照片逐项对齐，排除持续渗漏可能。",
     action: "比对检测附件并写入台账",
-    confirmed: "已确认非水管破损，怀疑人为因素",
+    confirmed: "已确认非水管破损、渗漏，怀疑人为因素",
   },
   "alibi-liang": {
     title: "外部凭证核验 / 行程",
@@ -1428,8 +1429,8 @@ const boardMessages: BoardMessage[] = [
   { id: 120, sequence: 7.6, author: "安保值班", unit: "1号楼", badge: "通道封控请求", time: "刚刚", tone: "warning", urgent: true, visible: (game) => game.childMissingReported, text: "安保正在封闭一层出口并逐层核对消防门。12层电梯没有呼梯记录，楼梯间门磁有触发；请提供孩子最后出现位置和报警回执编号。" },
   { id: 121, sequence: 8.5, author: "辖区民警", unit: "DL-0713-0041", badge: "现场协查指令", time: "刚刚", tone: "system", visible: (game) => game.surveillanceSolved && game.childRegistered, text: "临时协查对象与录像复核摘要已收到。请物业以儿童最后确认位置为起点，结合现场线索，建立《失联儿童现场搜索路线》，逐点附现场图像后回传。居民室内未经授权不得进入。" },
 
-  { id: 3, sequence: 8, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 00:04", tone: "resident", visible: (game) => game.childMissingReported && hasVisited(game, "cctv-1204"), text: "也许可以留意画面上的异常存在，今天工作辛苦，记得休息眼睛。" },
-  { id: 105, sequence: 7, author: "孙阿姨", unit: "1303", badge: "普通住户", time: "今天 00:02", tone: "resident", visible: (game) => game.childMissingReported && hasVisited(game, "cctv-1204"), text: "消防门外的流浪猫我准备接回去领养了，很可爱，就是偶尔会出去乱跑。" },
+  { id: 3, sequence: 8, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 00:04", tone: "resident", visible: (game) => game.childRegistered && hasVisited(game, "cctv-1204"), text: "也许可以留意画面上的异常存在，今天工作辛苦，记得休息眼睛。" },
+  { id: 105, sequence: 7, author: "孙阿姨", unit: "1303", badge: "普通住户", time: "今天 00:02", tone: "resident", visible: (game) => game.childRegistered && hasVisited(game, "cctv-1204"), text: "消防门外的流浪猫我准备接回去领养了，很可爱，就是偶尔会出去乱跑。" },
 
   { id: 4, sequence: 10, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 00:11", tone: "resident", visible: (game) => game.fatherResolved, text: "小满只是想念父母，但思念不等于原谅，两份档案无法合并。" },
   { id: 106, sequence: 9, author: "1204报警人", unit: "1204", badge: "协查对象已找到", time: "今天 00:13", tone: "warning", visible: (game) => game.childSaved, text: "民警和安保在1304门外的消防前室找到芷遥，已经送回住处。她一直重复说是一个衣服全湿的小姑娘带她走的，还问‘有没有看到我的爸爸妈妈’。" },
@@ -1594,10 +1595,10 @@ function rankArticle(article: ArticleMeta, rawQuery: string, game: GameState) {
 const FIELD_AUDIO_DURATION = 18;
 const FIRST_LOGIN_MESSAGE_DELAY_MS = 3200;
 const FIELD_AUDIO_TRACKS: Array<{ key: AudioTrackKey; code: string; src: string; label: string; note: string; resolved: string; level: number }> = [
-  { key: "pipe", code: "A-01", src: "/audio/field-pipe.mp3", label: "低沉的金属嗡鸣", note: "持续水流低鸣，偶尔带有金属腔体回响", resolved: "公共管道共振声", level: 0.62 },
+  { key: "pipe", code: "A-01", src: "/audio/field-pipe.mp3", label: "低沉的金属嗡鸣", note: "持续水流低鸣，偶尔带有金属腔体回响", resolved: "公共管道共振", level: 0.62 },
   { key: "tv", code: "A-02", src: "/audio/field-tv.mp3", label: "远处电视播报声", note: "隔墙人声模糊，无法辨清具体语句", resolved: "邻户电视串音", level: 0.46 },
-  { key: "bath", code: "A-03", src: "/audio/field-bath.mp3", label: "空腔里的规律滴水声", note: "水滴落入浴缸排水口，带有瓷砖空间反射", resolved: "浴缸内滴水声", level: 0.72 },
-  { key: "child", code: "A-04", src: "/audio/field-child.mp3?v=girl-hum-2", label: "女孩轻声哼唱儿歌", note: "没有歌词，旋律断续，近处换气与浴室短反射清楚", resolved: "近距离女孩哼唱", level: 0.68 },
+  { key: "bath", code: "A-03", src: "/audio/field-bath.mp3", label: "空腔里的规律滴水声", note: "水滴落入浴缸排水口，带有空间反射", resolved: "浴缸内滴水声", level: 0.72 },
+  { key: "child", code: "A-04", src: "/audio/field-child.mp3?v=girl-hum-2", label: "女孩轻声哼唱", note: "没有歌词，旋律断续", resolved: "女童哼唱", level: 0.68 },
 ];
 
 
@@ -1732,6 +1733,7 @@ export default function Home() {
   const [ledgerOpen, setLedgerOpen] = useState(false);
   const [archiveIndexOpen, setArchiveIndexOpen] = useState(false);
   const [deductionOpen, setDeductionOpen] = useState(false);
+  const [serviceTraceOpen, setServiceTraceOpen] = useState(false);
   const [activeDeduction, setActiveDeduction] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const [messagePopup, setMessagePopup] = useState<{ message: BoardMessage; count: number } | null>(null);
@@ -2682,7 +2684,9 @@ export default function Home() {
         : current.memoryRewriteStage,
     }));
     writeAppRoute(`/system/article/${article.id}`);
-    if (firstVisit && messagesByArticle[article.id]) announceMessages(messagesByArticle[article.id]);
+    if (firstVisit && messagesByArticle[article.id] && (article.id !== "cctv-1204" || game.childRegistered)) {
+      announceMessages(messagesByArticle[article.id]);
+    }
   };
 
   const openRelatedArticle = (articleId: string) => {
@@ -2992,7 +2996,7 @@ export default function Home() {
     const correctFather = normalizeText(childFather) === normalizeText("许建国");
     const correctMother = normalizeText(childMother) === normalizeText("赵秀兰");
     if (!correctName || !correctFather || !correctMother || normalizeChineseDate(childBirthday) !== "2020-04-12" || childRelation !== "child" || normalizeChineseDate(childLastDate) !== "2026-07-13" || normalizeText(childPoliceRef) !== normalizeText("DL-0713-0041")) {
-      flash("协查登记被退回：身份、监护关系、最后确认日期或报警回执无法互相印证");
+      flash("协查登记被退回：身份、监护关系、最后确认日期或报警回执存在异常");
       return;
     }
     notifyEvidenceWrite(["childIdentity"]);
@@ -3410,7 +3414,7 @@ export default function Home() {
     if (!copy) return null;
     const confirmed = game.inspectedArticles.includes(articleId);
     return <section className={`article-verification ${confirmed ? "is-confirmed" : ""}`}>
-      <div><span>{copy.title}</span><strong>{confirmed ? copy.confirmed : "正文仅代表发现，尚未形成关键证据"}</strong><p>{copy.description}</p></div>
+      <div><span>{copy.title}</span><strong>{confirmed ? copy.confirmed : articleId === "scheduled-service-1204" ? "尚未形成关键证据" : "正文仅代表发现，尚未形成关键证据"}</strong><p>{copy.description}</p></div>
       <button type="button" disabled={confirmed} onClick={() => confirmArticleEvidence(articleId)}>{confirmed ? "已写入证据台账" : copy.action}</button>
     </section>;
   };
@@ -3424,7 +3428,7 @@ export default function Home() {
     <header><div><span>东临妇幼保健中心</span><strong>儿童健康信息卡</strong></div><b>{inline ? "鞋内折叠卡片" : "拾获物证复印件"}</b></header>
     <div className="child-health-body">
       <div className="child-health-photo"><Image src={assetPath("/evidence/xu-zhiyao-health-photo.png")} alt="许芷遥健康档案照片" fill sizes="185px" unoptimized /><span>拍摄：2025-10-12</span></div>
-      <section><strong>许芷遥</strong><small>档案号：DL-2020-0412-██</small><dl><div><dt>性别</dt><dd>女</dd></div><div><dt>出生日期</dt><dd>2020年4月12日</dd></div><div><dt>监护人</dt><dd>许**、赵**</dd></div><div><dt>监护关系</dt><dd>婚生子女</dd></div><div><dt>最后登记住址</dt><dd>外区集体宿舍</dd></div><div><dt>本楼住户登记</dt><dd className="danger-text">无记录</dd></div></dl></section>
+      <section><strong>许芷遥</strong><small>档案号：DL-2020-0412</small><dl><div><dt>性别</dt><dd>女</dd></div><div><dt>出生日期</dt><dd>2020年4月12日</dd></div><div><dt>监护人</dt><dd>许**、赵**</dd></div><div><dt>监护关系</dt><dd>婚生子女</dd></div><div><dt>最后登记住址</dt><dd>外区集体宿舍</dd></div><div><dt>本楼住户登记</dt><dd className="danger-text">无记录</dd></div></dl></section>
     </div>
     <footer><span>拾获物：FP-0713-26</span><span>位置：1204门外左侧童鞋内</span><span>卡片状态：轻微受潮</span></footer>
   </div>;
@@ -3433,40 +3437,40 @@ export default function Home() {
     if (isProtectedArticle(id) && !hasUnlockedArticle(game, id)) return renderProtectedArticleGate(id);
     if (id === "workorder-1204") return <>
       <div className="workorder-document">
-        <header className="workorder-sheet-head"><div><span>澄江物业服务中心 / 客服工单</span><strong>夜间异常噪声投诉</strong><small>系统流水号：W-0713-019 · 第3次重新开启</small></div><aside><i>高优先级</i><b>待复核</b></aside></header>
+        <header className="workorder-sheet-head"><div><span>澄江物业服务中心 / 客服工单</span><strong>夜间异常噪声投诉</strong><small>系统流水号：W-0713-019 · 第3次重启</small></div><aside><i>高优先级</i><b>待复核</b></aside></header>
 
-        <dl className="workorder-meta-grid"><div><dt>受理渠道</dt><dd>住户端小程序</dd></div><div><dt>首次报事</dt><dd>2026-07-09 00:12</dd></div><div><dt>本次重开</dt><dd>2026-07-13 00:12</dd></div><div><dt>响应时限</dt><dd>4小时</dd></div><div><dt>服务区域</dt><dd>澄江公寓1号楼1204</dd></div><div><dt>疑似来源</dt><dd>澄江公寓1号楼1304</dd></div><div><dt>工单类型</dt><dd>噪声扰民 / 疑似漏水</dd></div><div><dt>责任班组</dt><dd>工程维修组 · 待复核</dd></div></dl>
+        <dl className="workorder-meta-grid"><div><dt>受理渠道</dt><dd>住户端小程序</dd></div><div><dt>首次报事</dt><dd>2026-07-09 02:10</dd></div><div><dt>本次重开</dt><dd>2026-07-13 00:12</dd></div><div><dt>响应时限</dt><dd>4小时</dd></div><div><dt>服务区域</dt><dd>澄江公寓1号楼1204</dd></div><div><dt>疑似来源</dt><dd>澄江公寓1号楼1304</dd></div><div><dt>工单类型</dt><dd>噪声扰民 / 疑似漏水</dd></div><div><dt>责任班组</dt><dd>工程维修组 · 待复核</dd></div></dl>
 
-        <section className="workorder-section"><header><b>01</b><div><h3>报事信息</h3><span>客服原始录入，房屋关系待复核</span></div></header><div className="complainant-card"><dl><div><dt>报事人</dt><dd>许先生</dd></div><div><dt>联系电话</dt><dd>138 **** 2041</dd></div><div><dt>自述身份</dt><dd>1204住户</dd></div></dl><button type="button" className="complainant-review-link" onClick={() => openRelatedArticle("vacancy-1204")} aria-label="打开1204产权与空置状态复核档案"><span>资料状态</span><strong>待复核</strong><p>本工单未附产权证明、租赁备案或家庭成员材料。以上身份仅为报事人自述，不作为房屋关系结论。</p><b>查看1204产权复核材料 →</b></button></div></section>
+        <section className="workorder-section"><header><b>01</b><div><h3>报事信息</h3><span>客服原始录入，房屋关系待复核</span></div></header><div className="complainant-card"><dl><div><dt>报事人</dt><dd>许先生</dd></div><div><dt>联系电话</dt><dd>138 **** 2041</dd></div><div><dt>自述身份</dt><dd>1204住户</dd></div></dl><button type="button" className="complainant-review-link" onClick={() => openRelatedArticle("vacancy-1204")} aria-label="打开1204产权与空置状态复核档案"><span>资料状态</span><strong>待复核</strong><p>本工单未附产权证明、租赁备案或家庭成员材料。以上身份仅为报事人自述。</p><b>查看1204产权复核材料 →</b></button></div></section>
 
-        <section className="workorder-section"><header><b>02</b><div><h3>投诉内容</h3><span>客服原始录入，不代表现场结论</span></div></header><p className="workorder-description">报事人称，自7月9日起，1204北侧卧室顶面每日夜间出现连续滴水声。声音约在<mark>00:04</mark>开始，于<mark>00:10</mark>停止，持续约六分钟，期间频率稳定。顶面肉眼未见水渍，触摸无潮湿。报事人曾自行前往1304敲门，连续三晚无人应答，要求物业核查楼上用水及实际居住情况。</p><div className="workorder-tags"><span>重复发生</span><span>固定时段</span><span>无可见水迹</span><span>楼上无人应答</span></div></section>
+        <section className="workorder-section"><header><b>02</b><div><h3>投诉内容</h3><span>客服原始录入，不代表现场结论</span></div></header><p className="workorder-description">报事人称，自7月9日起，1204北侧卧室顶面每日夜间出现连续滴水声。声音约在零点左右开始，于数分钟后停止，持续约六分钟，期间频率稳定。顶面未见水渍，触摸无潮湿。报事人曾自行前往1304敲门，无人应答，要求物业核查楼上用水及实际情况。</p><div className="workorder-tags"><span>重复发生</span><span>固定时段</span><span>无可见水迹</span><span>无人应答</span></div></section>
 
-        <section className="workorder-section"><header><b>03</b><div><h3>受理通话节选</h3><span>CALL-W0713-019-03 · 录音时长 02:16</span></div></header><div className="call-transcript"><p><time>00:34</time><b>客服 CS-046</b><span>请问您能确认声音来自楼上1304，而不是室内管道吗？</span></p><p><time>00:41</time><b>报事人</b><span>能。它就在卧室顶上，一滴一滴的，每天都是同一个时间。</span></p><p><time>01:08</time><b>客服 CS-046</b><span>白天复查没有发现漏水，工程人员会继续联系楼上住户。</span></p><p><time>01:17</time><b>报事人</b><span>那不是水管。水管不会每天只响六分钟。</span></p><p><time>01:29</time><b>报事人</b><span>1304到底还有没有人住？你们每次都说联系不上，总得核实实际居住情况吧。</span></p></div><small className="transcript-note">质检备注：报事人要求升级为空置房占用核查；客服未承诺入户，仅记录门禁与用水复核需求。</small><button type="button" className="callback-inline-link" onClick={openCallbackCenter}>打开本次回访质检目录 →</button></section>
+        <section className="workorder-section"><header><b>03</b><div><h3>受理通话节选</h3><span>CALL-W0713-019-03 · 录音时长 02:16</span></div></header><div className="call-transcript"><p><time>00:34</time><b className="call-speaker-anomaly">客服 CS-046</b><span>请问您能确认声音来自楼上，而不是室内管道吗？</span></p><p><time>00:41</time><b>报事人</b><span>能。它就在卧室顶上，一滴一滴的，每天都是睡觉的时间响。</span></p><p><time>01:08</time><b className="call-speaker-anomaly">客服 CS-046</b><span>白天复查没有发现漏水，工程人员会继续联系楼上住户。</span></p><p><time>01:17</time><b>报事人</b><span>那不是水管。水管不会每天只响那一会。</span></p><p><time>01:29</time><b>报事人</b><span>楼上到底还有没有人住？你们每次都说联系不上，总得核实下居住情况吧。</span></p></div><small className="transcript-note">质检备注：报事人要求升级为空置房占用核查；客服未承诺入户，仅记录当前需求。</small><button type="button" className="callback-inline-link" onClick={openCallbackCenter}>打开本次回访质检目录 →</button></section>
 
-        <section className="workorder-section"><header><b>04</b><div><h3>历次处理记录</h3><span>按系统写入时间排序</span></div></header><div className="workorder-history"><article><time>07-09 08:40</time><i className="is-done"/><div><strong>工程维修组 / 陈工</strong><p>入户检查1204卧室顶面，未见水迹、起皮或返碱；手持式检测仪多点复测未见异常。1304无人应答，未入户检查。</p></div></article><article><time>07-09 09:05</time><i className="is-done"/><div><strong>客服中心 / CS-046</strong><p>电话联系1304登记号码，无人接听；上门按铃两次，无人应答。</p></div></article><article><time>07-12 15:26</time><i className="is-done"/><div><strong>工程维修组 / 陈工</strong><p>后台核对1304远传水表，近24小时读数无变化。投诉人拒绝撤单，要求在异常发生时段继续复核。</p></div></article><article className="is-current"><time>07-13 08:41</time><i/><div><strong>系统派单 / CJ-0713</strong><p>因相同时段连续三次报事，工单自动重新开启，并转长期空置房管理岗复核。</p></div></article></div></section>
+        <section className="workorder-section"><header><b>04</b><div><h3>历次处理记录</h3><span>按系统写入时间排序</span></div></header><div className="workorder-history"><article><time>07-09 08:40</time><i className="is-done"/><div><strong>工程维修组 / 陈工</strong><p>入户检查1204卧室顶面，未见水迹、起皮或返碱；手持式检测仪多点复测未见异常。1304无人应答，未入户检查。</p></div></article><article><time>07-09 09:05</time><i className="is-done"/><div><strong>客服中心 / CS-046</strong><p>电话联系1304登记号码，无人接听；上门按铃数次，无人应答。</p></div></article><article><time>07-12 15:26</time><i className="is-done"/><div><strong>工程维修组 / 陈工</strong><p>后台核对1304远传水表，近24小时读数无变化。投诉人拒绝撤单，要求继续复核。</p></div></article><article className="is-current"><time>07-13 08:41</time><i/><div><strong>系统派单 / CJ-0713</strong><p>因相同时段连续三次报事，工单自动重新开启，并转长期空置房管理岗复核。</p></div></article></div></section>
 
         <section className="workorder-section"><header><b>05</b><div><h3>附件与关联材料</h3><span>点击关联材料可直接进入对应档案</span></div></header><div className="workorder-attachments"><div><i>WAV</i><p><strong>受理通话原始录音</strong><span>CALL-W0713-019-03 · 2.8 MB</span></p><b>已在本页转写</b></div><div><i>JPG</i><p><strong>1204卧室顶面现场照片</strong><span>3张 · 07-12 15:28上传</span></p><b>本工单附件</b></div><button type="button" className="is-related" onClick={() => openRelatedArticle("meter-1304")}><i>ENG</i><p><strong>1204卧室顶面渗漏排查记录</strong><span>关联工程记录 · ENG-1304-0712</span></p><b>打开档案 →</b></button></div></section>
 
-        <aside className="workorder-audit"><div><span>系统审计提示 / IDENTITY REVIEW REQUIRED</span><strong>报事人的房屋关系尚未核验</strong><p>紧急报事已先行受理。结单前需另行核对房屋台账、历史服务授权及实际占用情况；本工单不提供核验结论。</p></div><b>待调查</b></aside>
+        <aside className="workorder-audit"><div><span>系统审计提示 / IDENTITY REVIEW REQUIRED</span><strong>报事人的房屋关系尚未核验</strong><p>紧急报事已先行受理。结单前需另行核对房屋台账、历史服务授权及实际占用情况。</p></div><b>待调查</b></aside>
         <footer className="workorder-signoff"><span>当前处理人：CJ-0713</span><span>生成时间：2026-07-13 08:43</span><span>数据来源：客服、工程、门禁联合工单</span></footer>
       </div>
     </>;
 
     if (id === "vacancy-1204") return <>
-      <table className="data-table"><tbody><tr><th>产权登记</th><td><mark>陈大国</mark> · 不动产权证尾号 4417</td></tr><tr><th>产权状态</th><td>限制处分 / 登记电话连续三个月无法接通</td></tr><tr><th>历史服务</th><td>存在已终止的定时入户服务，联系人字段存于客户服务排班</td></tr><tr><th>服务终止</th><td>2026-03-31（续费停止）</td></tr><tr><th>异常门禁</th><td>2026-04-03起每日出现</td></tr><tr><th>登记儿童</th><td className="danger-text">0人</td></tr></tbody></table>
-      <section className="field-record"><header><span>VACANCY INSPECTION / Q-018</span><strong>7月9日现场巡检摘录</strong></header><div><p><time>08:37</time><b>入户</b><span>机械钥匙封条完整，授权保洁钥匙未在前台借出；入户门内侧有新装防撞垫。</span></p><p><time>08:41</time><b>厨房</b><span>冷藏室温度4.8℃，有当周生产的鲜奶和拆封蔬菜；燃气阀关闭，电磁炉表面尚有清洁水痕。</span></p><p><time>08:43</time><b>次卧</b><span>单人床铺设儿童尺寸床品，书桌下发现28码运动鞋包装盒；清点单未列入上述物品。</span></p><p><time>08:48</time><b>离场</b><span>未接触住户私人物品，重新粘贴钥匙封条并上传四张原始照片。</span></p></div></section>
+      <table className="data-table"><tbody><tr><th>产权登记</th><td><mark>陈大国</mark> · 不动产权证尾号 4417</td></tr><tr><th>产权状态</th><td>限制处分 / 登记电话连续三个月无法接通</td></tr><tr><th>历史服务</th><td>存在已终止的定时入户服务</td></tr><tr><th>服务终止</th><td>2026-03-31（续费停止）</td></tr><tr><th>异常门禁</th><td>2026-04-03起每日出现</td></tr></tbody></table>
+      <section className="field-record"><header><span>VACANCY INSPECTION / Q-018</span><strong>7月9日现场巡检摘录</strong></header><div><p><time>08:37</time><b>入户</b><span>机械钥匙封条完整，入户门内侧有新装防撞垫。</span></p><p><time>08:41</time><b>厨房</b><span>冷藏室温度4℃，有当周生产的鲜奶和拆封蔬菜；燃气阀关闭，电磁炉表面尚有清洁水痕。</span></p><p><time>08:43</time><b>次卧</b><span>单人床铺设儿童尺寸床品，书桌下发现28码运动鞋包装盒；清点单未列入上述物品。</span></p><p><time>08:48</time><b>离场</b><span>未接触住户私人物品，重新粘贴钥匙封条并上传四张原始照片。</span></p></div></section>
       <section className="vacancy-photo-archive">
         <header><div><span>ATTACHMENT SET / IMG-1204-0709</span><strong>现场巡检原始影像</strong></div><small>4 FILES · Q-018</small></header>
         <div className="vacancy-photo-grid">
-          <figure><div className="vacancy-photo-frame"><Image src={assetPath("/evidence/1204-vacancy/01-covered-living-room.png")} alt="1204客厅内由防尘罩覆盖的高价值家具" fill sizes="(max-width: 760px) 100vw, 25vw" unoptimized /></div><figcaption><span>IMG-01 · 客厅 · 08:39</span><strong>家具防尘覆盖</strong><p>胡桃木陈列柜、石材茶几及成套皮质座椅留置室内，多数使用透明防尘罩覆盖；本次巡检未作价值认定。</p></figcaption></figure>
-          <figure><div className="vacancy-photo-frame"><Image src={assetPath("/evidence/1204-vacancy/02-covered-air-conditioner.png")} alt="1204客厅角落内被防尘罩包裹的立式空调" fill sizes="(max-width: 760px) 100vw, 25vw" unoptimized /></div><figcaption><span>IMG-02 · 客厅东侧 · 08:40</span><strong>立式空调封存状态</strong><p>设备外罩完整，电源插头盘放于墙边；罩面与附近地面未见近期拆动形成的明显积尘差异。</p></figcaption></figure>
-          <figure><div className="vacancy-photo-frame"><Image src={assetPath("/evidence/1204-vacancy/03-kitchen-recent-use.png")} alt="1204厨房内的蔬菜、湿布和擦拭痕迹" fill sizes="(max-width: 760px) 100vw, 25vw" unoptimized /></div><figcaption><span>IMG-03 · 厨房 · 08:41</span><strong>台面近期使用痕迹</strong><p>水槽边抹布潮湿，台面留有未收纳蔬菜；电磁炉表面存在连续擦拭水痕，与长期无人使用状态不一致。</p></figcaption></figure>
-          <figure className="vacancy-photo-shoes"><div className="vacancy-photo-frame"><Image src={assetPath("/evidence/1204-child-shoes.png")} alt="1204门外发现的儿童童鞋、鞋内纸条与潮湿脚印" fill sizes="(max-width: 760px) 100vw, 25vw" unoptimized /><button type="button" className={`shoe-note-hotspot ${game.inspectedArticles.includes("vacancy-1204") ? "is-open" : ""}`} onClick={inspectChildShoes} disabled={game.inspectedArticles.includes("vacancy-1204")} aria-label={game.inspectedArticles.includes("vacancy-1204") ? "鞋内纸条已展开" : "检查左脚童鞋内露出的纸条"} aria-controls="vacancy-child-health-card" aria-expanded={game.inspectedArticles.includes("vacancy-1204")}><span aria-hidden="true">纸条</span></button></div><figcaption><span>IMG-04 · 入户门外 · 08:43</span><strong>未清点儿童鞋履</strong><p>28码魔术贴运动鞋未列入空置房清点单；左脚鞋口露出受潮纸片边角，门侧留有潮湿脚印。</p></figcaption></figure>
+          <figure><div className="vacancy-photo-frame"><Image src={assetPath("/evidence/1204-vacancy/01-covered-living-room.png")} alt="1204客厅内由防尘罩覆盖的高价值家具" fill sizes="(max-width: 760px) 100vw, 25vw" unoptimized /></div><figcaption><span>IMG-01 · 客厅 · 08:39</span><strong>家具防尘覆盖</strong><p>胡桃木陈列柜、石材茶几及成套皮质座椅留置室内，多数使用透明防尘罩覆盖。</p></figcaption></figure>
+          <figure><div className="vacancy-photo-frame"><Image src={assetPath("/evidence/1204-vacancy/02-covered-air-conditioner.png")} alt="1204客厅角落内被防尘罩包裹的立式空调" fill sizes="(max-width: 760px) 100vw, 25vw" unoptimized /></div><figcaption><span>IMG-02 · 客厅东侧 · 08:40</span><strong>立式空调封存状态</strong><p>设备外罩完整，电源插头盘放于墙边；罩面与附近地面未见近期移动形成的明显灰尘差异。</p></figcaption></figure>
+          <figure><div className="vacancy-photo-frame"><Image src={assetPath("/evidence/1204-vacancy/03-kitchen-recent-use.png")} alt="1204厨房内的蔬菜、湿布和擦拭痕迹" fill sizes="(max-width: 760px) 100vw, 25vw" unoptimized /></div><figcaption><span>IMG-03 · 厨房 · 08:41</span><strong>台面近期使用痕迹</strong><p>水槽边抹布潮湿，台面留有未收纳蔬菜；电磁炉表面存在连续擦拭水痕。</p></figcaption></figure>
+          <figure className="vacancy-photo-shoes"><div className="vacancy-photo-frame"><Image src={assetPath("/evidence/1204-child-shoes.png")} alt="1204门外发现的儿童童鞋、鞋内纸条与潮湿脚印" fill sizes="(max-width: 760px) 100vw, 25vw" unoptimized /><button type="button" className={`shoe-note-hotspot ${game.inspectedArticles.includes("vacancy-1204") ? "is-open" : ""}`} onClick={inspectChildShoes} disabled={game.inspectedArticles.includes("vacancy-1204")} aria-label={game.inspectedArticles.includes("vacancy-1204") ? "鞋内纸条已展开" : "检查左脚童鞋内遗留的纸条"} aria-controls="vacancy-child-health-card" aria-expanded={game.inspectedArticles.includes("vacancy-1204")}><span aria-hidden="true">纸条</span></button></div><figcaption><span>IMG-04 · 入户门外 · 08:43</span><strong>未清点儿童鞋履</strong><p>28码魔术贴运动鞋未列入空置房物品清点单，门侧留有潮湿脚印。</p></figcaption></figure>
         </div>
       </section>
       {game.inspectedArticles.includes("vacancy-1204") && renderChildHealthCard(true)}
       <p>巡检照片显示高价值家具和封存设备仍留置室内，厨房却存在新鲜食材与近期清洁痕迹，次卧另有儿童床品。门外<mark>童鞋</mark>约28码，未列入空置房清点单。</p>
-      <aside className="article-note"><strong>待交叉核验</strong><p>产权登记不能说明当前实际居住人。历史服务联系人不在本档案中，可从客户服务档案检索<mark>定时服务</mark>或<mark>履约排班</mark>。</p></aside>
+      <aside className="article-note"><strong>待交叉核验</strong><p>产权登记不能说明当前实际居住人。历史服务联系人不在本档案中，或可从客户服务档案入手，检索<mark>定时服务</mark>或<mark>履约排班</mark>。</p></aside>
       <div className="document-stamp">空置状态未撤销</div>
     </>;
 
@@ -3475,12 +3479,12 @@ export default function Home() {
       <div className="service-roster-scroll"><table className="data-table service-roster-table"><thead><tr><th>房号</th><th>服务项目</th><th>预约/签收</th><th>计划</th><th>当前状态</th></tr></thead><tbody>
         <tr><td>0708</td><td>绿植养护</td><td>吴彩芬 / 本人</td><td>每周三</td><td>正常履约</td></tr>
         <tr><td>0906</td><td>净水滤芯更换</td><td>罗致远 / 前台代收</td><td>季度一次</td><td>等待配件</td></tr>
-        <tr className="is-anomalous"><td>1204</td><td>室内保洁</td><td>许建国 / 赵秀兰</td><td>每月两次</td><td>03-31终止</td></tr>
+        <tr className="is-anomalous"><td>1204</td><td>室内保洁</td><td>许建国 / 赵秀兰</td><td>每月两次</td><td><button type="button" className="service-trace-toggle" aria-expanded={serviceTraceOpen} aria-controls="service-trace-1204" onClick={() => setServiceTraceOpen((current) => !current)}>03-31终止</button></td></tr>
         <tr><td>1401</td><td>信件代收转交</td><td>顾慧 / 本人</td><td>每周五</td><td>暂停一次</td></tr>
         <tr><td>1602</td><td>独居住户物资代办</td><td>潘月华 / 护工签收</td><td>每周一</td><td>正常履约</td></tr>
         <tr><td>1803</td><td>空调滤网清洗</td><td>宋明礼 / 租户签收</td><td>双月一次</td><td>已改期</td></tr>
       </tbody></table></div>
-      <section className="field-record"><header><span>SERVICE TRACE / 1204</span><strong>1204服务终止前后记录</strong></header><div><p><time>03-18 09:12</time><b>最后履约</b><span>赵秀兰现场签字，保洁人员归还一次性门禁授权。</span></p><p><time>03-31 18:00</time><b>停止派单</b><span>产权登记人陈大国此前要求暂停续费，系统关闭后续保洁计划。</span></p><p><time>04-03 07:46</time><b>门禁事件</b><span>原服务关联卡再次进入1号楼；当日没有保洁工单、人员排班或前台钥匙借用。</span></p><p><time>04-04起</time><b>持续出现</b><span>同一关联卡几乎每日通行，客户服务系统没有生成新的履约记录。</span></p></div></section>
+      {serviceTraceOpen && <section id="service-trace-1204" className="field-record service-trace-detail"><header><span>SERVICE TRACE / 1204</span><strong>1204服务终止前后记录</strong></header><div><p><time>03-18 09:12</time><b>最后履约</b><span>赵秀兰现场签字，保洁人员归还一次性门禁授权。</span></p><p><time>03-31 18:00</time><b>停止派单</b><span>产权登记人陈大国失联，自动暂停续费，系统关闭后续保洁计划。</span></p><p><time>04-03 07:46</time><b>门禁事件</b><span>原服务关联卡再次进入1号楼。</span></p><p><time>04-04起</time><b>持续出现</b><span>同一关联卡后续每日通行，客户服务系统没有检索到新的履约记录。</span></p></div></section>}
       <aside className="article-note">排班表只能证明两人曾以服务联系人身份进入1204，不能自动证明产权、租赁或家庭关系。服务终止后的持续门禁需要与空置巡检原图另行核对。</aside>
       {renderArticleVerification("scheduled-service-1204")}
     </>;
@@ -3493,49 +3497,52 @@ export default function Home() {
         <div className="news-byline"><span>本报记者 周启明</span><span>来源：东临市公安局经侦支队协查通报</span></div>
         <div className="news-columns">
           <p>本报讯　东临市公安局经侦支队昨日发布协查通报：和裕供应链管理有限公司原财务负责人陈某国，涉嫌在多个物业改造项目结算期间转移代管款项。公司于2024年10月启动专项审计后，该人员未再到岗，登记电话持续关机。</p>
-          <p>通报显示，陈某国于10月29日离开东临，11月2日从南部口岸出境，此后未按通知到案说明。警方已将其列为在逃人员，并向相关单位征集资金往来及实际居住线索。通报公布的证件号码末四位为<mark>4417</mark>，户籍以外的最后登记住址为<mark>澄江公寓1号楼1204</mark>。</p>
+          <p>通报显示，陈某国于10月29日离开东临，11月2日从南部口岸出境，此后未按通知到案说明。警方已将其列为在逃人员，并向相关单位征集资金往来及实际居住线索。通报公布的证件号码末四位为<mark>4417</mark>，户籍的最后登记住址为<mark>澄江公寓1号楼1204</mark>。</p>
           <p>部分转载标题将其描述为“畏罪潜逃”。经侦部门在答复记者时表示，该案仍处侦查阶段，协查通报仅用于查找犯罪嫌疑人及涉案线索，不代表法院已作出生效判决。</p>
-          <p>和裕供应链一名工作人员称，涉案人员离境前曾要求暂停其名下住宅的长期家政续费，但未办理房屋转让或委托管理手续。该说法尚未得到办案机关确认。</p>
+          <p>和裕供应链一名工作人员称，涉案人员离境前曾要求暂停其名下住宅的一切续费，但其房产仍未办理房屋转让或委托管理手续。该说法尚未得到办案机关确认。</p>
         </div>
         <footer>馆藏编号：DLRB-20241118-B06 · 数字化日期：2025-01-07 · 本系统仅收录公开报道</footer>
       </article>
-      <table className="data-table identity-crosscheck"><tbody><tr><th>物业产权档案</th><td>陈大国 · 不动产权证尾号 4417</td></tr><tr><th>公开协查通报</th><td>陈某国 · 证件号码末四位 4417</td></tr><tr><th>地址字段</th><td>双方均指向澄江公寓1号楼1204</td></tr><tr><th>系统判断</th><td>三项字段一致；需由调查人自行决定是否视为同一人</td></tr></tbody></table>
-      <aside className="article-note"><strong>收录说明</strong><p>“畏罪潜逃”来自媒体转载标题，不是司法结论。物业系统没有办案权限，也没有收到产权人授权；这条公开信息只能解释房主为何失联，不能证明目前居住在1204的人是谁。</p></aside>
+      <table className="data-table identity-crosscheck"><tbody><tr><th>公开协查通报</th><td>陈某国 · 证件号码末四位 4417</td></tr><tr><th>地址字段</th><td>澄江公寓1号楼1204</td></tr></tbody></table>
     </>;
 
     if (id === "meter-1304") return <>
       <div className="metric-strip"><div><span>1204顶面检查</span><strong>无水迹</strong><small>未见起皮、返碱</small></div><div><span>1304远传水表</span><strong>读数无变化</strong><small>近24小时后台数据</small></div><div><span>异常声响</span><strong>6 min</strong><small>报事人称每日重复</small></div></div>
       <figure className="inspection-evidence-photo">
         <div className="inspection-evidence-photo__image"><Image src={assetPath("/evidence/1204-ceiling-inspection.png")} alt="工程人员使用含水率仪检查1204卧室干燥顶面" fill sizes="(max-width: 900px) 100vw, 62vw" unoptimized /></div>
-        <figcaption><div><span>ENG-1304-0712 / IMG-02</span><strong>1204卧室顶面 P3—P5 测点</strong></div><p>07-12 15:28 · 巡检员Q-018拍摄<br />照片仅记录可见表面与现场测点，不代表已完成1304室内管线检查。</p></figcaption>
+        <figcaption><div><span>ENG-1304-0712 / IMG-02</span><strong>1204卧室顶面 P3—P5 测点</strong></div><p>07-12 15:28 · 巡检员Q-018拍摄<br />照片仅记录可见表面与现场测点，未完成1304室内管线检查。</p></figcaption>
       </figure>
-      <table className="data-table"><tbody><tr><th>检测人员</th><td>工程维修组 陈工 / 物业陪同 Q-018</td></tr><tr><th>顶面测点</th><td>P1—P6，含水率6.1%—7.0%，与同层基准差小于0.4%</td></tr><tr><th>水表设备</th><td>WM-1304-02，最近心跳 07-13 08:15，通讯状态正常</td></tr><tr><th>曲线区间</th><td>07-12 23:45—07-13 00:20，最小分辨率0.001m³，累计量无变化</td></tr><tr><th>入户边界</th><td>1304无人应答，本记录不包含室内管线和洁具检查</td></tr></tbody></table>
-      <p>本次仅进入1204检查，1304因无人应答未入户。现场迹象及远传水表数据暂不支持持续渗漏结论。经报事人同意，工程人员在1204卧室顶面布置临时接触式拾振器，次日取回的数据在固定时段记录到稳定冲击信号，建议调取<mark>声纹分轨</mark>。</p>
-      <aside className="article-note">工程边界：零用水只能排除通过1304计量表的持续供水，不能单独证明声音性质，也不能证明1304室内是否有人。</aside>
+      <table className="data-table"><tbody><tr><th>检测人员</th><td>工程维修组 陈工 / 物业陪同 Q-018</td></tr><tr><th>顶面测点</th><td>P1—P6，含水率6.1%—7.0%，与同层基准差小于0.4%</td></tr><tr><th>水表设备</th><td>WM-1304-02，最近设备运转 07-13 08:15，通讯状态正常</td></tr><tr><th>曲线区间</th><td>07-12 23:45—07-13 00:20，最小分辨率0.001m³，累计量无变化</td></tr><tr><th>入户边界</th><td>1304无人应答</td></tr></tbody></table>
+      <p>本次仅进入1204检查，1304因无人应答未入户。现场迹象及远传水表数据暂不支持持续渗漏结论。经报事人同意，工程人员在1204卧室顶面布置临时接触式拾振器，次日取回的数据在固定时段记录到相关信号，建议调取<mark>声纹分轨</mark>进行排查。</p>
+      <aside className="article-note">工程边界：零用水可以确认1304计量水表无读数变化，声音来源不明，1304室内可能有某种「存在」。</aside>
       {renderArticleVerification("meter-1304")}
     </>;
 
     if (id === "cctv-1204") {
+      if (!game.childRegistered) return <>
+        <aside className="article-note"><strong>VIDEO REVIEW / ACCESS DENIED</strong><p>权限不足</p></aside>
+        <div className="callout"><strong>协查对象身份核查尚未完成</strong><p>请先完成《未成年人紧急协查登记》，方可调阅公共区域录像。</p></div>
+      </>;
       const frame = game.nightFrames.at(-1)?.replace(":", "") || "2358";
       const reviewPoints = [
         ["23:58", "SEQ 88410", "走廊事件"],
         ["00:04", "SEQ 88862", "走廊事件"],
-        ["00:07", "SEQ 89114", "消防前室"],
-        ["00:10", "SEQ --", "丢帧 18s"],
+        ["00:07", "SEQ 89114", "？"],
+        ["00:10", "SEQ --", "丢帧"],
         ["00:12", "SEQ 88410", "走廊事件"],
       ];
       const timeOptions = ["23:58", "00:04", "00:07", "00:10", "00:12"];
       return <>
-        <aside className="article-note"><strong>紧急协查生成记录</strong><p>本任务由失联儿童接警回执DL-0713-0041触发，不属于W-0713-019滴水投诉的原始附件。调阅范围仅限儿童最后确认时间之后的公共区域事件切片。</p></aside>
+        <aside className="article-note"><strong>紧急协查生成记录</strong><p>本任务由失联儿童接警回执DL-0713-0041触发。调阅范围仅限儿童最后确认时间之后的公共区域事件切片。</p></aside>
         <section className="cctv-event-review">
           <header><div><span>CAM-12F-02 / EVENT REVIEW</span><strong>事件片段串联回放</strong></div><b>5段 · 13.7秒</b></header>
           <div className="cctv-video-shell"><video ref={cctvVideoRef} controls playsInline preload="metadata" poster={assetPath("/cctv/cam-2358.png")} aria-label="12层公共区域五段事件录像串联回放" onPlay={() => { setCctvVideoPlaying(true); syncCctvAmbience(true); }} onPause={() => { setCctvVideoPlaying(false); pauseCctvAmbience(); }} onEnded={() => { setCctvVideoPlaying(false); pauseCctvAmbience(); }} onSeeking={() => syncCctvAmbience()} onTimeUpdate={() => syncCctvAmbience()} onRateChange={() => syncCctvAmbience()} onVolumeChange={() => syncCctvAmbience()}><source src={assetPath("/cctv/cam-12f-event-review.mp4")} type="video/mp4" />当前浏览器无法播放监控回放，请使用下方逐帧复核。</video><audio ref={cctvAmbienceRef} preload="auto" aria-hidden="true"><source src={assetPath("/cctv/cam-12f-elevator-ambience.mp3")} type="audio/mpeg" /></audio><div className="camera-overlay"><span>智能检索回放</span><span>原始片段未改写</span><span>REC</span></div>{!cctvVideoPlaying && <button type="button" className="cctv-video-play" onClick={playCctvReview} aria-label="播放事件回放" title="播放事件回放"><span aria-hidden="true">▶</span></button>}</div>
-          <footer><span>录像类型：事件触发切片</span><span>拾音轨：公共区域设备环境声</span><span>时间范围：07-12 23:58—07-13 00:12</span><span>片段间不代表连续录像</span></footer>
+          <footer><span>录像类型：事件触发切片</span><span>拾音轨：公共区域设备环境声</span><span>时间范围：07-12 23:58—07-13 00:12</span></footer>
         </section>
-        <div className="article-note"><strong>复核说明</strong><p>播放器只把系统保留的五段事件切片按时间排序，不能用片段之间的跳切推断人员移动。请将画面与下方序列号、门禁和消防门磁日志交叉核对。</p></div>
+        <div className="article-note"><strong>复核说明</strong><p>播放器把系统保留的五段事件切片按时间排序。请将画面与下方日志交叉核对。</p></div>
         <div className="frame-picker">{reviewPoints.map(([time, sequence, note]) => <button type="button" key={time} className={game.nightFrames.includes(time) ? "is-selected" : ""} onClick={() => reviewFrame(time)}><i />{time}<small>{sequence} · {note}</small></button>)}</div>
         <div className="camera-feed search-camera"><Image src={assetPath(`/cctv/cam-${frame}.png`)} alt={`12层公共区域监控复核帧 ${game.nightFrames.at(-1) || "23:58"}`} fill sizes="(max-width: 900px) 100vw, 62vw" unoptimized/><div className="camera-overlay"><span>CAM-12F-02</span><span>逐帧复核</span><span>{game.nightFrames.at(-1) || "23:58"}</span></div></div>
-        <table className="data-table cctv-audit-log"><tbody><tr><th>23:58:46</th><td>画面序列88410；1204门磁保持关闭；公共区域无告警。</td></tr><tr><th>00:04:02</th><td>画面序列88862；前后30秒无门禁、门磁或电梯呼梯记录。</td></tr><tr><th>00:07:11</th><td>画面序列89114；12层消防门磁于00:07:37记录开启，设备时钟慢26秒。</td></tr><tr><th>00:10:00</th><td>网络抖动导致18秒丢帧；本段只可判定录像异常，不能确认人员去向。</td></tr><tr><th>00:12:14</th><td>服务器返回序列88410；文件校验值与23:58:46切片完全一致。</td></tr></tbody></table>
+        <table className="data-table cctv-audit-log"><tbody><tr><th>23:58:46</th><td>画面序列88410；1204门磁保持关闭；公共区域无告警。</td></tr><tr><th>00:04:02</th><td>画面序列88862；前后30秒无门禁、门磁或电梯记录。</td></tr><tr><th>00:07:11</th><td>画面序列89114；12层消防门磁短暂开启，监控设备存在延迟。</td></tr><tr><th>00:10:00</th><td>疑似网络抖动导致丢帧。</td></tr><tr><th>00:12:14</th><td>画面疑似回跳，存在无法解释重复帧。</td></tr></tbody></table>
         <form className="cctv-analysis" onSubmit={submitCctvReview}>
           <header><span>人工复核单 / CAM-12F-02</span><strong>选择所有出现画面、通道或录像数据异常的时间节点</strong></header>
           <div className="cctv-anomaly-options">{timeOptions.map((time) => {
@@ -3548,7 +3555,7 @@ export default function Home() {
     }
 
     if (id === "audio-1304") return <>
-      <p>数据来自工程临时拾振器及公共区域环境麦克风，仅用于漏水定位。系统已按听感拆成四条同步声轨；播放样本，静音你认为与投诉无关的背景声，保留需要继续调查的声音。</p>
+      <p>数据来自工程临时拾振器及公共区域环境麦克风，用于定位漏水成因。系统已拆成四条同步声轨；播放样本，静音你认为无关的背景声，保留需要继续调查的声音。</p>
       <section className={`field-audio-monitor ${fieldAudioPlaying ? "is-playing" : ""}`}>
         <div className="field-audio-media" aria-hidden="true">{FIELD_AUDIO_TRACKS.map((track) => <audio key={track.key} ref={(element) => { if (element) fieldAudioElements.current[track.key] = element; else delete fieldAudioElements.current[track.key]; }} src={assetPath(track.src)} preload="auto" loop />)}</div>
         <header><div><span>FIELD RECORDER / FR-0713-0004</span><strong>00:04:12—00:04:30 同步拾振样本</strong></div><button type="button" className="field-audio-toggle" onClick={() => void toggleFieldAudio()} title={fieldAudioPlaying ? "停止播放" : "播放拾振样本"}><i aria-hidden="true"/><span>{fieldAudioPlaying ? "停止播放" : "播放拾振样本"}</span></button></header>
@@ -3563,12 +3570,12 @@ export default function Home() {
 
     if (id === "clinic-child") return <>
       {renderChildHealthCard()}
-      <section className="field-record"><header><span>FOUND PROPERTY / CHAIN OF CUSTODY</span><strong>拾获物交接记录</strong></header><div><p><time>07-09 08:44</time><b>发现</b><span>巡检员在左脚童鞋鞋垫下发现卡片，未从住户室内取物。</span></p><p><time>07-09 08:52</time><b>封装</b><span>前台使用失物袋 FP-0713-26 封装，双人签名；卡片右下角受潮，正面信息可辨认。</span></p><p><time>07-13 08:46</time><b>调阅</b><span>因未成年人协查申请复印件，原件继续封存并等待民警接收。</span></p></div></section>
-      <p>鞋盒购买小票日期为2026-04-03，与1204首次异常门禁同日。该时间关联只能说明物品进入房屋的大致区间；住户系统中仍没有许芷遥的入住记录。</p>
+      <section className="field-record"><header><span>FOUND PROPERTY / CHAIN OF CUSTODY</span><strong>拾获物交接记录</strong></header><div><p><time>07-09 08:44</time><b>发现</b><span>巡检员在左脚童鞋鞋垫下发现卡片，未从住户室内取物。</span></p><p><time>07-09 08:52</time><b>封装</b><span>前台使用失物袋FP-0713-26封装，双人签名；卡片右下角受潮，正面信息可辨认。</span></p><p><time>07-13 08:46</time><b>调阅</b><span>因未成年人协查申请复印件，原件继续封存并等待民警接收。</span></p></div></section>
+      <p>鞋盒购买小票日期为2026-04-03，该时间关联说明物品进入房屋的大致区间；住户系统中仍没有许芷遥的入住记录。</p>
     </>;
 
     if (id === "register-child") return <>
-      <div className="callout"><strong>紧急协查对象登记</strong><p>未成年人失联不受住户登记状态限制。此表仅用于报警协查、公共区域录像调阅和现场辨认，不补录产权、租赁或常住关系。</p></div>
+      <div className="callout"><strong>紧急协查对象登记</strong><p>此表仅用于报警协查、公共区域录像调阅和现场辨认，不补录产权、租赁或常住关系。</p></div>
       <form className="archive-form" onSubmit={submitChild} autoComplete="off">
         <label>儿童姓名<input value={childName} onChange={(event) => setChildName(event.target.value)} placeholder="输入中文姓名" /></label>
         <label>出生日期（年月日）<input value={childBirthday} onChange={(event) => setChildBirthday(event.target.value)} placeholder="例：x年x月x日" /></label>
@@ -3576,7 +3583,7 @@ export default function Home() {
         <label>母亲姓名<input value={childMother} onChange={(event) => setChildMother(event.target.value)} placeholder="按监护材料填写" /></label>
         <label>与报警人关系<select value={childRelation} onChange={(event) => setChildRelation(event.target.value)}><option value="">选择</option><option value="child">报警人监护子女</option><option value="relative">其他同行未成年人</option><option value="unknown">关系待核</option></select></label>
         <label>最后确认日期（年月日）<input value={childLastDate} onChange={(event) => setChildLastDate(event.target.value)} placeholder="x年x月x日" /></label>
-        <label>报警回执编号<input value={childPoliceRef} onChange={(event) => setChildPoliceRef(event.target.value)} placeholder="按家属留言填写" autoCapitalize="characters" spellCheck={false} /></label>
+        <label>报警回执编号<input value={childPoliceRef} onChange={(event) => setChildPoliceRef(event.target.value)} autoCapitalize="characters" spellCheck={false} /></label>
         <button className="primary-button">{game.childRegistered ? "协查对象已登记" : "提交协查登记"}</button>
       </form>
     </>;
@@ -4335,7 +4342,7 @@ export default function Home() {
 
         {game.view === "article" && currentArticle && <article className={`record-article record-article--${currentArticle.kind ?? "record"} ${uncannyArticleIds.has(currentArticle.id) ? "record-article--uncanny" : ""}`}>
           <button className="back-link" onClick={game.lastQuery ? goSearchResults : goHome}>← 返回{game.lastQuery ? "检索结果" : "调查首页"}</button>
-          <header><div><span>{currentArticle.section}</span><small>{currentArticle.date} · 内部索引 {currentArticleIndex}</small></div><h1>{currentArticle.title}</h1><p>{currentArticle.snippet}</p></header>
+          <header><div><span>{currentArticle.section}</span><small>{currentArticle.date} · 内部索引 {currentArticleIndex}</small></div><h1>{currentArticle.title}</h1>{currentArticle.snippet && <p>{currentArticle.snippet}</p>}</header>
           <div className="article-body">{renderArticleBody(currentArticle.id)}</div>
           {!(isProtectedArticle(currentArticle.id) && !hasUnlockedArticle(game, currentArticle.id)) && <footer><span>阅读完毕不代表调查完成</span><p>从正文中选择一个值得怀疑的词，回到顶部手动检索。不要只搜索标题。</p></footer>}
         </article>}
