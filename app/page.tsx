@@ -14,6 +14,17 @@ type AudioTrackKey = "pipe" | "tv" | "bath" | "child";
 type LegacyBreachStage = "none" | "camera" | "question" | "found" | "eyes";
 type LegacyCameraState = "idle" | "requesting" | "active" | "error" | "fallback";
 type MemoryRewriteStage = "none" | "queued" | "running" | "resisted";
+type CompletionGameStatus = "ready" | "running" | "crashed" | "won";
+type CompletionRunnerObstacle = { x: number; y: number; w: number; h: number; index: number; type: "hazard" | "finish"; scored: boolean };
+type CompletionRunnerPhysics = {
+  dino: { x: number; y: number; w: number; h: number; vy: number; onGround: boolean };
+  obstacles: CompletionRunnerObstacle[];
+  spawnIn: number;
+  speed: number;
+  nextObstacle: number;
+  passed: number;
+  finishSpawned: boolean;
+};
 type ProtectedArticleId = "w04-directory" | "care-w04" | "on-site-device" | "crash-cj0713";
 type AppRoute =
   | { kind: "entry"; stage: EntryStage }
@@ -161,6 +172,85 @@ const BACKGROUND_MUSIC_DUCKED_VOLUME = 0.018;
 const CCTV_AMBIENCE_VOLUME = 0.24;
 const WIFE_NAME = "林若岚";
 const PROTAGONIST_NAME = "陈峻";
+const COMPLETION_OBSTACLE_COUNT = 14;
+const COMPLETION_OBSTACLE_INTERVALS = [930, 1280, 1010, 1510, 960, 1370, 1080, 1620, 990, 1190, 1460, 940, 1320, 1040] as const;
+const COMPLETION_RUNNER_WIDTH = 620;
+const COMPLETION_RUNNER_HEIGHT = 230;
+const COMPLETION_RUNNER_GROUND = 190;
+
+const createCompletionRunnerPhysics = (): CompletionRunnerPhysics => ({
+  dino: { x: 58, y: COMPLETION_RUNNER_GROUND - 42, w: 42, h: 42, vy: 0, onGround: true },
+  obstacles: [],
+  spawnIn: 680,
+  speed: 255,
+  nextObstacle: 0,
+  passed: 0,
+  finishSpawned: false,
+});
+
+const drawCompletionRunner = (context: CanvasRenderingContext2D, physics: CompletionRunnerPhysics, running: boolean) => {
+  const pixelRect = (x: number, y: number, width: number, height: number) => context.fillRect(Math.round(x / 3) * 3, Math.round(y / 3) * 3, width, height);
+  context.clearRect(0, 0, COMPLETION_RUNNER_WIDTH, COMPLETION_RUNNER_HEIGHT);
+  context.fillStyle = "#111";
+  context.fillRect(0, 0, COMPLETION_RUNNER_WIDTH, COMPLETION_RUNNER_HEIGHT);
+  context.strokeStyle = "#aaa";
+  context.lineWidth = 2;
+  context.setLineDash([9, 6]);
+  context.beginPath();
+  context.moveTo(0, COMPLETION_RUNNER_GROUND + 0.5);
+  context.lineTo(COMPLETION_RUNNER_WIDTH, COMPLETION_RUNNER_GROUND + 0.5);
+  context.stroke();
+  context.setLineDash([]);
+
+  const dino = physics.dino;
+  const stride = running && dino.onGround ? Math.floor(performance.now() / 110) % 2 : 0;
+  context.fillStyle = "#eee";
+  pixelRect(dino.x + 8, dino.y + 14, 27, 21);
+  pixelRect(dino.x + 27, dino.y + 2, 18, 20);
+  pixelRect(dino.x + 34, dino.y + 18, 13, 7);
+  pixelRect(dino.x + 2, dino.y + 19, 14, 7);
+  pixelRect(dino.x - 3, dino.y + 16, 8, 5);
+  context.fillStyle = "#111";
+  pixelRect(dino.x + 38, dino.y + 7, 3, 3);
+  pixelRect(dino.x + 31, dino.y + 20, 8, 4);
+  context.fillStyle = "#eee";
+  if (!dino.onGround) {
+    pixelRect(dino.x + 12, dino.y + 34, 6, 8);
+    pixelRect(dino.x + 29, dino.y + 34, 6, 8);
+  } else if (stride) {
+    pixelRect(dino.x + 9, dino.y + 33, 7, 9);
+    pixelRect(dino.x + 29, dino.y + 35, 9, 6);
+  } else {
+    pixelRect(dino.x + 13, dino.y + 35, 8, 6);
+    pixelRect(dino.x + 30, dino.y + 32, 7, 10);
+  }
+
+  physics.obstacles.forEach((obstacle) => {
+    if (obstacle.type === "finish") {
+      context.fillStyle = "#eee";
+      pixelRect(obstacle.x + 18, obstacle.y, 5, 52);
+      pixelRect(obstacle.x + 23, obstacle.y + 2, 28, 18);
+      context.fillStyle = "#111";
+      context.font = "bold 9px Courier New";
+      context.fillText("EXIT", obstacle.x + 26, obstacle.y + 15);
+      return;
+    }
+    context.fillStyle = "#eee";
+    const stemWidth = Math.max(9, Math.round(obstacle.w * 0.38));
+    const stemX = obstacle.x + (obstacle.w - stemWidth) / 2;
+    pixelRect(stemX, obstacle.y, stemWidth, obstacle.h);
+    pixelRect(stemX - 8, obstacle.y + obstacle.h * .38, 9, 7);
+    pixelRect(stemX - 10, obstacle.y + obstacle.h * .24, 6, obstacle.h * .22);
+    pixelRect(stemX + stemWidth - 1, obstacle.y + obstacle.h * .52, 9, 7);
+    pixelRect(stemX + stemWidth + 5, obstacle.y + obstacle.h * .38, 6, obstacle.h * .22);
+    pixelRect(stemX - 3, obstacle.y + obstacle.h - 5, stemWidth + 6, 5);
+  });
+
+  context.fillStyle = "#eee";
+  context.font = "bold 12px Courier New";
+  context.fillText(`ESCAPE ${String(physics.passed).padStart(2, "0")} / ${COMPLETION_OBSTACLE_COUNT}`, COMPLETION_RUNNER_WIDTH - 125, 24);
+  context.fillText("天亮以后 →", COMPLETION_RUNNER_WIDTH - 100, COMPLETION_RUNNER_GROUND + 28);
+};
 const PROTAGONIST_ARCHIVE_REF = "DL-JJ-1104-27";
 const BASE_PATH = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
 const assetPath = (path: string) => `${BASE_PATH}${path.startsWith("/") ? path : `/${path}`}`;
@@ -1839,6 +1929,10 @@ export default function Home() {
   const [backgroundMusicEnabled, setBackgroundMusicEnabled] = useState(true);
   const [backgroundMusicStarted, setBackgroundMusicStarted] = useState(false);
   const [completionNicknameInput, setCompletionNicknameInput] = useState("");
+  const [completionGameStatus, setCompletionGameStatus] = useState<CompletionGameStatus>("ready");
+  const [completionObstaclesCleared, setCompletionObstaclesCleared] = useState(0);
+  const completionCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const completionPhysics = useRef<CompletionRunnerPhysics>(createCompletionRunnerPhysics());
   const backgroundMusicElement = useRef<HTMLAudioElement | null>(null);
   const backgroundMusicFadeFrame = useRef<number | null>(null);
   const [caseStatus, setCaseStatus] = useState("");
@@ -1867,6 +1961,104 @@ export default function Home() {
   const legacyCameraStream = useRef<MediaStream | null>(null);
   const legacyCameraVideo = useRef<HTMLVideoElement | null>(null);
   const legacyCameraRequestToken = useRef(0);
+  const jumpCompletionDino = useCallback(() => {
+    if (completionGameStatus === "won") return;
+    if (completionGameStatus === "ready" || completionGameStatus === "crashed") {
+      completionPhysics.current = createCompletionRunnerPhysics();
+      completionPhysics.current.dino.vy = -570;
+      completionPhysics.current.dino.onGround = false;
+      setCompletionObstaclesCleared(0);
+      setCompletionGameStatus("running");
+      return;
+    }
+    if (completionPhysics.current.dino.onGround) {
+      completionPhysics.current.dino.vy = -570;
+      completionPhysics.current.dino.onGround = false;
+    }
+  }, [completionGameStatus]);
+
+  useEffect(() => {
+    const canvas = completionCanvasRef.current;
+    const context = canvas?.getContext("2d");
+    if (game.view !== "completion" || completionGameStatus !== "running" || !context) return;
+    let animationFrame = 0;
+    let previousTime = performance.now();
+    const advance = (currentTime: number) => {
+      const elapsed = Math.min((currentTime - previousTime) / 1000, 0.032);
+      previousTime = currentTime;
+      const physics = completionPhysics.current;
+      const dino = physics.dino;
+      dino.vy += 1450 * elapsed;
+      dino.y += dino.vy * elapsed;
+      if (dino.y >= COMPLETION_RUNNER_GROUND - dino.h) {
+        dino.y = COMPLETION_RUNNER_GROUND - dino.h;
+        dino.vy = 0;
+        dino.onGround = true;
+      }
+
+      physics.spawnIn -= elapsed * 1000;
+      if (physics.spawnIn <= 0 && physics.nextObstacle < COMPLETION_OBSTACLE_COUNT) {
+        const obstacleIndex = physics.nextObstacle;
+        const height = 39 + ((obstacleIndex * 11) % 20);
+        const width = 27 + ((obstacleIndex * 7) % 10);
+        physics.obstacles.push({ x: COMPLETION_RUNNER_WIDTH + 12, y: COMPLETION_RUNNER_GROUND - height, w: width, h: height, index: obstacleIndex, type: "hazard", scored: false });
+        physics.nextObstacle += 1;
+        physics.spawnIn = COMPLETION_OBSTACLE_INTERVALS[obstacleIndex] ?? 1000;
+        physics.speed += 5;
+      }
+      if (physics.passed >= COMPLETION_OBSTACLE_COUNT && !physics.finishSpawned) {
+        physics.finishSpawned = true;
+        physics.obstacles.push({ x: COMPLETION_RUNNER_WIDTH + 45, y: COMPLETION_RUNNER_GROUND - 52, w: 52, h: 52, index: 0, type: "finish", scored: true });
+      }
+
+      physics.obstacles.forEach((obstacle) => { obstacle.x -= physics.speed * elapsed; });
+      for (const obstacle of physics.obstacles) {
+        if (obstacle.type === "hazard" && !obstacle.scored && obstacle.x + obstacle.w < dino.x) {
+          obstacle.scored = true;
+          physics.passed += 1;
+          setCompletionObstaclesCleared(physics.passed);
+        }
+        const collides = dino.x + 8 < obstacle.x + obstacle.w
+          && dino.x + dino.w - 7 > obstacle.x
+          && dino.y + 4 < obstacle.y + obstacle.h
+          && dino.y + dino.h > obstacle.y;
+        if (obstacle.type === "finish" && (collides || obstacle.x + obstacle.w < dino.x)) {
+          drawCompletionRunner(context, physics, false);
+          setCompletionGameStatus("won");
+          return;
+        }
+        if (obstacle.type === "hazard" && collides) {
+          drawCompletionRunner(context, physics, false);
+          setCompletionGameStatus("crashed");
+          return;
+        }
+      }
+      physics.obstacles = physics.obstacles.filter((obstacle) => obstacle.x > -70);
+      drawCompletionRunner(context, physics, true);
+      animationFrame = window.requestAnimationFrame(advance);
+    };
+    drawCompletionRunner(context, completionPhysics.current, true);
+    animationFrame = window.requestAnimationFrame(advance);
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [completionGameStatus, game.view]);
+
+  useEffect(() => {
+    if (game.view !== "completion" || completionGameStatus === "running") return;
+    const context = completionCanvasRef.current?.getContext("2d");
+    if (context) drawCompletionRunner(context, completionPhysics.current, false);
+  }, [completionGameStatus, game.view]);
+
+  useEffect(() => {
+    if (game.view !== "completion") return;
+    const handleCompletionJump = (event: KeyboardEvent) => {
+      if (event.code !== "Space" && event.code !== "ArrowUp") return;
+      event.preventDefault();
+      jumpCompletionDino();
+    };
+    window.addEventListener("keydown", handleCompletionJump);
+    return () => window.removeEventListener("keydown", handleCompletionJump);
+  }, [game.view, jumpCompletionDino]);
+
   const zhouLoginMusicActive = !game.started
     && entryStage === "login"
     && (selectedAccount === MINGCHUAN_ACCOUNT || employeeIdInput.trim().toUpperCase() === MINGCHUAN_ACCOUNT);
@@ -4436,9 +4628,45 @@ export default function Home() {
       <section className="completion-menu" aria-labelledby="completion-menu-title">
         <header><EyeMark/><span>INVESTIGATION COMPLETE / 100%</span></header>
         <p className="completion-menu__name">调查员 · {game.playerNickname}</p>
-        <h1 id="completion-menu-title">恭喜通关<br/><strong>《不存在的房间》</strong></h1>
-        <p>你找到了所有被系统隐藏、过滤与遗忘的档案，也替那些无法离开的人留下了可以被记住的名字。</p>
-        <dl><div><dt>完成结局</dt><dd>雨过天晴</dd></div><div><dt>档案阅读</dt><dd>{articles.length} / {articles.length}</dd></div><div><dt>调查账号</dt><dd>CJ-0713 / 陈峻</dd></div></dl>
+        <h1 id="completion-menu-title">恭喜「{game.playerNickname}」通关<br/><strong>《不存在的房间》</strong></h1>
+        <p>你找到了所有被系统隐藏、过滤与遗忘的档案，也让那些无法离开的人终于得到了解脱。</p>
+        <dl><div><dt>完成结局</dt><dd>雨过天晴</dd></div><div><dt>档案阅读</dt><dd>已全部阅读</dd></div><div><dt>扮演角色</dt><dd>CJ-0713 / 陈峻</dd></div></dl>
+        <section className={`completion-dino-game is-${completionGameStatus}`} aria-labelledby="completion-dino-title">
+          <header><div><span>BONUS / ESCAPE RUN</span><h2 id="completion-dino-title">越过那些不幸</h2></div><b>{completionObstaclesCleared} / {COMPLETION_OBSTACLE_COUNT}</b></header>
+          <button className="completion-dino-track" type="button" onClick={jumpCompletionDino} aria-label={completionGameStatus === "won" ? "已经抵达彩蛋终点" : "让小恐龙跳跃"}>
+            <canvas ref={completionCanvasRef} className="completion-dino-canvas" width={COMPLETION_RUNNER_WIDTH} height={COMPLETION_RUNNER_HEIGHT} aria-hidden="true" />
+            {completionGameStatus !== "running" && <span className="completion-dino-cover"><strong>{completionGameStatus === "ready" ? "DINO.EXE" : completionGameStatus === "crashed" ? "TRY AGAIN" : "★ DAYBREAK ★"}</strong><small>{completionGameStatus === "won" ? "天亮以后" : "SPACE / TAP TO JUMP"}</small></span>}
+          </button>
+          <p aria-live="polite">{completionGameStatus === "ready"
+            ? "点击跑道，或按空格 / ↑ 开始并跳跃。"
+            : completionGameStatus === "crashed"
+              ? "撞上仙人掌了。点击重新出发。"
+              : completionGameStatus === "won"
+                ? "你越过了14次不幸。小恐龙抵达了阳光下。"
+                : `已越过 ${completionObstaclesCleared} 个障碍。`}</p>
+        </section>
+        {completionGameStatus === "won" && <section className="completion-afterword" aria-labelledby="completion-afterword-title">
+          <header><span>UNLOCKED / ORIGINAL NOTES</span><h2 id="completion-afterword-title">天亮以后留下的文字</h2></header>
+          <article>
+            <span>最初的故事原稿</span>
+            <h3>《不存在的房间》· 故事初稿</h3>
+            <p>玩家扮演一名物业管理员，负责空置房巡检、住户回访，以及那些迟迟无法结案的棘手工单。每一天对他来说都是崭新的——至少，他一直这样以为。</p>
+            <p>这栋楼里，有被生活逼入角落的一家人，有寻找朋友的孩子，有困在悔恨里的父亲，有留下记录后突然消失的员工，也有一位日复一日等待丈夫认出自己的妻子。四个房间，四段看似无关的故事，最终都会指向同一个答案。</p>
+            <p>所谓“不存在的房间”，并不是某个无法找到的房号，而是那些被系统删除、被人刻意遗忘，却仍有人等待其归来的存在。房间只是承载故事的容器。到最后，玩家会发现自己也是其中之一：死亡会困住离开的人，而失去，有时也会困住留下的人。</p>
+            <p>不论今天过得怎样，都应当感恩我们拥有的。</p>
+            <p>珍惜当下，好好告别。</p>
+          </article>
+          <article>
+            <span>创作者说</span>
+            <h3>你好，我是海一朵浪。</h3>
+            <p>这是我第一次尝试制作游戏，也是第一次为了真正喜欢的事情，认真地把一个想法做成作品。非常、非常感谢你愿意体验《不存在的房间》，也特别感谢每一位认真指出问题的玩家。</p>
+            <p>游戏中的图片、大量文本与 UI 均由 AI 辅助生成，因此制作过程中难免出现剧情衔接冲突、语言生硬或画面怪异等问题。幸好有许多耐心又敏锐的玩家，替我发现了那些容易被忽略的细节，让我得以不断修正逻辑、提示与叙事。</p>
+            <p>能够被你看见，是我的幸运，也使得我满怀喜悦。希望你能从游戏的细节里，感受到我认真完成它的诚意。</p>
+            <p>希望现在的结局演出与全案真相档案，能够更完整、更清晰地传达这个故事最初的设定与情感。如果体验中仍有不连贯、不合理，或让你觉得不够尽兴的地方，欢迎随时告诉我。</p>
+            <p>再次感谢读到这里的你，感谢每一位愿意体验、反馈，并陪伴这个故事走到天亮的玩家；也由衷感谢所有为它制作实况、攻略与视频的创作者。</p>
+            <footer>最后留下我的联系方式，欢迎来找我玩。XHS：珠珠霸霸</footer>
+          </article>
+        </section>}
         <div><button type="button" onClick={returnToCompletedArchive}>继续阅读档案</button><a href={`${BASE_PATH}/truth/`}>查看全案真相</a></div>
       </section>
     </main>;

@@ -904,9 +904,9 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .completion-nickname-search label i { color: #8a7650; text-align: center; font-style: normal; }
 .completion-nickname-search input { min-width: 0; height: 40px; border: 0; outline: 0; color: #263b40; background: transparent; font-size: 12px; }
 .completion-nickname-search button { align-self: stretch; border: 0; padding: 0 18px; color: #fff; background: #725d2d; cursor: pointer; }
-.completion-page { position: relative; min-height: 100vh; display: grid; place-items: center; overflow: hidden; padding: 24px; background: radial-gradient(circle at 50% 28%,rgba(90,112,112,.2),transparent 38%),linear-gradient(145deg,#071014,#101d21 58%,#070d10); }
+.completion-page { position: relative; min-height: 100vh; display: grid; place-items: center; overflow-x: hidden; overflow-y: auto; padding: 24px; background: radial-gradient(circle at 50% 28%,rgba(90,112,112,.2),transparent 38%),linear-gradient(145deg,#071014,#101d21 58%,#070d10); }
 .completion-page::before { content: ""; position: absolute; inset: 0; opacity: .18; pointer-events: none; background-image: linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px); background-size: 42px 42px; }
-.completion-menu { position: relative; z-index: 1; width: min(100%,620px); padding: clamp(28px,5vw,54px); color: #23363b; background: #f4f1e8; border: 1px solid #b8aa88; box-shadow: 0 28px 90px rgba(0,0,0,.48),inset 0 0 0 8px rgba(255,255,255,.34); }
+.completion-menu { position: relative; z-index: 1; width: min(100%,760px); padding: clamp(28px,5vw,54px); color: #23363b; background: #f4f1e8; border: 1px solid #b8aa88; box-shadow: 0 28px 90px rgba(0,0,0,.48),inset 0 0 0 8px rgba(255,255,255,.34); }
 .completion-menu > header { display: flex; align-items: center; gap: 12px; color: #80672f; font: 700 10px/1.4 var(--mono); letter-spacing: .15em; }
 .completion-menu > header svg { width: 22px; height: 22px; }
 .completion-menu__name { margin: 34px 0 8px; color: #6d7778; font: 10px/1.5 var(--mono); letter-spacing: .12em; }
@@ -921,6 +921,34 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .completion-menu > div { display: flex; gap: 10px; flex-wrap: wrap; }
 .completion-menu > div button,.completion-menu > div a { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; padding: 0 18px; border: 1px solid #31484e; color: #f4f1e8; background: #31484e; font: 600 11px/1 var(--sans); text-decoration: none; cursor: pointer; }
 .completion-menu > div a { color: #31484e; background: transparent; }
+.completion-dino-game { margin: 26px 0; padding: 14px; border: 1px solid #b9b19d; background: #e8e5da; }
+.completion-dino-game > header { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 10px; }
+.completion-dino-game > header div { display: grid; gap: 2px; }
+.completion-dino-game > header span { color: #7a6b47; font: 700 8px/1.4 var(--mono); letter-spacing: .14em; }
+.completion-dino-game > header h2 { margin: 0; font: 600 18px/1.3 var(--serif); }
+.completion-dino-game > header b { color: #7b1820; font: 700 11px/1 var(--mono); }
+.completion-dino-track { position: relative; width: 100%; height: auto; display: block; overflow: hidden; padding: 0; border: 3px solid #34464a; color: inherit; background: #111; box-shadow: 6px 6px 0 #8d846f; cursor: pointer; touch-action: manipulation; }
+.completion-dino-track:focus-visible { outline: 3px solid #7b1820; outline-offset: 2px; }
+.completion-dino-canvas { display: block; width: 100%; height: auto; background: #111; image-rendering: pixelated; }
+.completion-dino-cover { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #f1eee5; background: rgba(5,5,5,.76); font-family: "Courier New",var(--mono),monospace; letter-spacing: .12em; text-shadow: 3px 3px 0 #000; }
+.completion-dino-cover strong { font-size: clamp(18px,4vw,30px); }
+.completion-dino-cover small { color: #d2ccbd; font-size: clamp(8px,2vw,11px); animation: completion-pixel-blink 1.1s steps(2,end) infinite; }
+.completion-dino-game > p { min-height: 20px; margin: 9px 2px 0; color: #637071; font: 10px/1.6 var(--mono); }
+.completion-dino-game.is-crashed .completion-dino-track { animation: completion-track-shake .25s linear; }
+.completion-dino-game.is-won { border-color: #a58943; background: #f1ead5; box-shadow: inset 0 0 25px rgba(199,158,56,.14); }
+.completion-afterword { margin: 30px 0; border-top: 1px solid #bcb39d; animation: completion-afterword-reveal .8s ease both; }
+.completion-afterword > header { padding: 24px 2px 16px; }
+.completion-afterword > header span,.completion-afterword article > span { color: #8b7035; font: 700 10px/1.4 var(--mono); letter-spacing: .14em; }
+.completion-afterword > header h2 { margin: 7px 0 0; font: 500 24px/1.35 var(--serif); }
+.completion-afterword article { position: relative; padding: 24px clamp(18px,4vw,32px); border: 1px solid #c6beaa; background: rgba(255,255,255,.48); }
+.completion-afterword article + article { margin-top: 14px; }
+.completion-afterword article h3 { margin: 10px 0 20px; color: #2a3c40; font: 600 clamp(22px,3vw,26px)/1.4 var(--serif); }
+.completion-afterword article p { margin: 0 0 17px; color: #526266; font-size: clamp(15px,1.8vw,17px); line-height: 2; }
+.completion-afterword article p:last-of-type { margin-bottom: 0; }
+.completion-afterword article footer { margin-top: 26px; padding-top: 16px; border-top: 1px dashed #c1b79e; color: #745f31; font: 700 12px/1.65 var(--mono); text-align: right; }
+@keyframes completion-track-shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+@keyframes completion-pixel-blink { 50% { opacity: .38; } }
+@keyframes completion-afterword-reveal { from { opacity: 0; transform: translateY(18px); } }
 @media (max-width: 600px) { .completion-nickname-search { align-items: stretch; flex-direction: column; } .completion-nickname-search label { min-width: 0; } .completion-menu dl { grid-template-columns: 1fr; } .completion-menu dl div { border-right: 0; border-bottom: 1px solid #cbc4b1; } .completion-menu dl div:last-child { border-bottom: 0; } }
 .mosaic-text { display: inline-block; min-width: 2.45em; vertical-align: -.08em; }
 .mosaic-text__placeholder { display: inline-grid; grid-auto-flow: column; gap: 2px; }
