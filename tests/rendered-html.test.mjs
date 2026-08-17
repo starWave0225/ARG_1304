@@ -43,7 +43,7 @@ test("server-renders the Room 1304 ARG opening performance", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /<title>不存在的住户<\/title>/i);
+  assert.match(html, /<title>不存在的房间<\/title>/i);
   assert.match(html, /class="opening-dream opening-dream--0"/);
   assert.match(html, /人总以为，明天会照常到来/);
   assert.match(html, /跳过梦境/);
@@ -172,7 +172,7 @@ test("keeps GitHub Pages publishing static and subpath-safe", async () => {
   assert.match(page, /assetPath\(/);
   assert.match(page, /员工身份认证/);
   assert.match(page, /物业管理员/);
-  assert.match(page, /不要按顺序读。按你怀疑的内容去找。/);
+  assert.match(page, /不要相信。保持质疑。/);
   assert.match(page, /生命是一场轮回/);
   assert.match(page, /生命转瞬即逝/);
   assert.match(page, /不论如何，我需要醒来了/);
@@ -240,13 +240,13 @@ test("turns the first 1404 message into a restrained multi-round dialogue", asyn
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
 
-  assert.match(page, /text: "今天还是你来处理吗？"/);
-  assert.match(page, /text: "仔细点，慢慢来，不着急的。"/);
+  assert.match(page, /text: "今天还是你来吗？"/);
+  assert.match(page, /text: "仔细点，慢慢核验，不着急的。"/);
   assert.doesNotMatch(page, /如果找不到入口，先查工单里最具体的时间/);
   assert.doesNotMatch(page, /1204登记里没有儿童，但巡检照片拍到了童鞋/);
   assert.match(page, /const WIFE_DIALOGUE_TURNS: Record<string, WifeDialogueTurn>/);
-  assert.match(page, /recognition: \{ player: "我们以前见过吗？", resident: "你每次都这么问。系统大概还是说没有吧。" \}/);
-  assert.match(page, /assignment: \{ player: "上一位来处理的是谁？", resident: "就是你。至少工牌上的编号，和你现在戴的一样。" \}/);
+  assert.match(page, /recognition: \{ player: "我们以前见过吗？", resident: "你每次都这么问。大概还是没有变化吧。" \}/);
+  assert.match(page, /assignment: \{ player: "上一位来回访的是谁？", resident: "就是你。" \}/);
   assert.match(page, /when: \{ player: "你说的上次是哪天？"/);
   assert.match(page, /dispatch: \{ player: "那次有派单记录吗？"/);
   assert.match(page, /audit: \{ player: "我去查一下以前的回访记录。"/);
@@ -501,7 +501,7 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.match(page, /id: "rescue-route"[\s\S]*?available: \(game\) => game\.surveillanceSolved && game\.childRegistered/);
   assert.match(policeRouteMessage, /author: "辖区民警"[\s\S]*?badge: "现场协查指令"/);
   assert.match(policeRouteMessage, /建立《失联儿童现场搜索路线》/);
-  assert.match(policeRouteMessage, /1304室内未经授权不得进入/);
+  assert.match(policeRouteMessage, /居民室内未经授权不得进入/);
   assert.doesNotMatch(policeRouteMessage, /1204儿童房[\s\S]*?1204门外[\s\S]*?消防楼梯[\s\S]*?13层前室[\s\S]*?1304门外/);
   assert.match(page, /routeInstructionSeen: restored\.routeInstructionSeen \?\? Boolean\(restored\.visited\?\.includes\("rescue-route"\) \|\| restored\.childSaved\)/);
   assert.match(page, /!game\.surveillanceSolved \|\| !game\.childRegistered \|\| game\.routeInstructionSeen \|\| game\.childSaved/);
@@ -551,10 +551,10 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.doesNotMatch(css, /\.route-final-mask/);
   await Promise.all(["01-1204-child-room.jpg", "02-1204-corridor.jpg", "03-fire-stair.jpg", "04-13f-vestibule.jpg", "05-1304-door.jpg", "06-12f-elevator-lobby.png", "07-1304-archive-interior.png", "08-b2-parking.png"].map((name) => readFile(new URL(`../public/rescue-route/${name}`, import.meta.url))));
   assert.match(page, /已经报警/);
-  assert.match(page, /孩子不见了。芷遥，五岁/);
+  assert.match(page, /孩子不见了。刚才还在次卧/);
   assert.match(page, /家里都找遍了，卧室、卫生间、阳台都没有/);
-  assert.match(page, /能不能先帮忙看看楼梯间？求你们了/);
-  assert.match(page, /房子是我们占住的，是真没办法了，大城市房租太贵/);
+  assert.match(page, /能不能先帮忙看看监控？求你们了/);
+  assert.match(page, /房子是我们占的，是真没办法了/);
   assert.doesNotMatch(page, /1204卧室、卫生间、阳台和同层走廊已经找过/);
   assert.match(page, /110报警已受理，接警回执已经生成/);
   assert.match(page, /安保正在封闭一层出口并逐层核对消防门/);
@@ -787,7 +787,7 @@ test("makes the 1304 deduction reconstruct records before revealing the chapter"
   assert.match(page, /CJ-0713，不得动用私情/);
   assert.match(page, /系统不能证明门外的呼唤是思念，也不能把它登记成宽恕/);
   assert.match(page, /附加事故回执，保全会话并停用令牌/);
-  assert.match(page, /visible: \(game\) => game\.fatherResolved, text: "小满只是想念父亲。思念不等于原谅/);
+  assert.match(page, /visible: \(game\) => game\.fatherResolved, text: "小满只是想念父母，但思念不等于原谅/);
   assert.match(page, /if \(!game\.fatherResolved\) announceMessages\(\[4\]\)/);
   assert.doesNotMatch(page, /<label>顾小满死亡责任/);
   assert.doesNotMatch(page, /<label>每日呼唤的含义/);
@@ -1070,7 +1070,7 @@ test("locks the four 1404 records behind personal-memory passwords", async () =>
   assert.match(page, /后台创建<\/dt><dd>2025-11-05 08:12/);
   assert.match(page, /搜索特殊档案编号，在公开事故报道中找到死者姓名/);
   assert.match(page, /旧库定位字段<\/th><td>仅接受四位原址房号/);
-  assert.match(page, /id: 122[\s\S]*?visible: \(game\) => hasUnlockedArticle\(game, "on-site-device"\)[\s\S]*?text: "I MISS YOU\."/);
+  assert.match(page, /id: 122[\s\S]*?visible: \(game\) => hasUnlockedArticle\(game, "on-site-device"\)[\s\S]*?text: "你终于记起我了吗？。。。I MISS YOU\."/);
   assert.match(page, /articleId === "on-site-device"[\s\S]*?announceMessages\(\[122\]\)/);
   assert.match(page, /protectedArticlesUnlocked: Array\.from\(new Set/);
   assert.match(page, /surveillanceEyes: current\.surveillanceEyes \+ 1/);

@@ -220,7 +220,7 @@ const memoryScenes = [
     src: "/memories/weekend-laundry.png",
     alt: "一对夫妻在家中一起整理衣物",
     title: "可我为什么还记得这些？",
-    copy: "那是我的手，还是某个已经死去的人借给我的记忆？",
+    copy: "那是我的记忆，还是某个从未发生的瞬间？",
   },
 ] as const;
 
@@ -508,7 +508,7 @@ const articles: ArticleMeta[] = [
     title: "1204 夜间滴水投诉复核",
     section: "客服工单",
     date: "2026-07-13",
-    snippet: "投诉人称楼上每晚出现六分钟滴水声，但1304近24小时用水量为零。",
+    snippet: "投诉人称楼上每晚频繁出现短暂滴水声，但1304近24小时用水量为零。",
     terms: ["1204", "1304", "滴水", "投诉", "六分钟", "00:04", "00:10", "w-0713-019", "许先生", "报事人", "身份核验", "楼上到底有没有人住", "实际居住"],
     available: always,
   },
@@ -1415,37 +1415,37 @@ const articleVerificationCopy: Record<string, { title: string; description: stri
 };
 
 const boardMessages: BoardMessage[] = [
-  { id: 1, sequence: 4, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 08:43", tone: "resident", visible: () => true, text: "今天还是你来处理吗？" },
-  { id: 101, sequence: 3, author: "许先生", unit: "1204", badge: "身份待核", time: "今天 08:36", tone: "warning", visible: () => true, text: "报修三次了。那不是水管，水管不会每天只响六分钟。楼上不开门，你们就把工单关了？" },
-  { id: 102, sequence: 2, author: "陈阿姨", unit: "0702", badge: "普通住户", time: "今天 07:58", tone: "resident", visible: () => true, text: "昨晚00:04电梯楼层又全灭了，维修师傅说是自动重启。你们查滴水的时候顺便看看，别什么都说正常。" },
-  { id: 103, sequence: 1, author: "张志强", unit: "1302", badge: "普通住户", time: "昨天 23:41", tone: "resident", visible: () => true, text: "昨晚摔酒瓶的是我家，和1304没关系。谁再说听见男人骂孩子，先把房号看清楚。" },
+  { id: 1, sequence: 4, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 08:43", tone: "resident", visible: () => true, text: "今天还是你来吗？" },
+  { id: 101, sequence: 3, author: "许先生", unit: "1204", badge: "身份待核", time: "今天 08:36", tone: "warning", visible: () => true, text: "报修几次了。那不是水管问题，水管不会每天只响一小会。楼上不开门，你们就把工单关了？" },
+  { id: 102, sequence: 2, author: "陈阿姨", unit: "0702", badge: "普通住户", time: "今天 07:58", tone: "resident", visible: () => true, text: "昨晚零点以后电梯楼层又全灭了，维修师傅说是自动重启。你们巡查的时候顺便看看，别总说正常。" },
+  { id: 103, sequence: 1, author: "张志强", unit: "1302", badge: "普通住户", time: "昨天 23:41", tone: "resident", visible: () => true, text: "昨晚摔酒瓶的是我家，我老婆发神经哦，管我管得要死。" },
 
-  { id: 2, sequence: 6, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 09:02", tone: "resident", visible: (game) => hasVisited(game, "vacancy-1204"), text: "仔细点，慢慢来，不着急的。" },
-  { id: 104, sequence: 5, author: "1204服务联系人", unit: "1204", badge: "身份待核", time: "今天 08:57", tone: "warning", visible: (game) => hasVisited(game, "vacancy-1204"), text: "我们原本只是来打扫。房主停了续费，房子空着也是空着，孩子暂住几个月怎么了？别拿产权人的事吓唬我们。" },
-  { id: 112, sequence: 7.9, author: "1204报警人", unit: "1204", badge: "儿童失联 · 紧急", time: "刚刚", tone: "warning", urgent: true, visible: (game) => game.childMissingReported, text: "孩子不见了。芷遥，五岁，刚才还在1204次卧；入户门响了一次，再看时人已经不在房里。她没穿鞋，门口那双童鞋还在。我已经报警，请物业马上协助找人。" },
-  { id: 118, sequence: 7.8, author: "1204住户端", unit: "1204", badge: "紧急补充", time: "刚刚", tone: "warning", urgent: true, visible: (game) => game.childMissingReported, text: "家里都找遍了，卧室、卫生间、阳台都没有，走廊和电梯口也没人。她的衣服还在，什么都没带。能不能先帮忙看看楼梯间？求你们了，房子是我们占住的，是真没办法了，大城市房租太贵。" },
-  { id: 119, sequence: 7.7, author: "物业客服中心", unit: "系统", badge: "失联人员事件升级", time: "刚刚", tone: "system", urgent: true, visible: (game) => game.childMissingReported, text: "110报警已受理，接警回执已经生成。原1204滴水投诉暂停结单，当前事件升级为失联儿童协查；请保全00:04之后的公共区域录像，等待民警到场。" },
-  { id: 120, sequence: 7.6, author: "安保值班", unit: "1号楼", badge: "通道封控请求", time: "刚刚", tone: "warning", urgent: true, visible: (game) => game.childMissingReported, text: "安保正在封闭一层出口并逐层核对消防门。12层电梯没有呼梯记录，楼梯间门磁在异常时段有触发；请提供孩子最后出现位置和报警回执编号。" },
-  { id: 121, sequence: 8.5, author: "辖区民警", unit: "DL-0713-0041", badge: "现场协查指令", time: "刚刚", tone: "system", visible: (game) => game.surveillanceSolved && game.childRegistered, text: "临时协查对象与录像复核摘要已收到。请物业以儿童最后确认位置为起点，结合门磁、消防楼梯和楼层网关记录，建立《失联儿童现场搜索路线》，逐点附现场图像后回传。1304室内未经授权不得进入。" },
+  { id: 2, sequence: 6, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 09:02", tone: "resident", visible: (game) => hasVisited(game, "vacancy-1204"), text: "仔细点，慢慢核验，不着急的。" },
+  { id: 104, sequence: 5, author: "1204服务联系人", unit: "1204", badge: "身份待核", time: "今天 08:57", tone: "warning", visible: (game) => hasVisited(game, "vacancy-1204"), text: "我们原本只是来打扫。房主停了续费，房子空着也是空着，暂住几个月怎么了？" },
+  { id: 112, sequence: 7.9, author: "1204报警人", unit: "1204", badge: "儿童失联 · 紧急", time: "刚刚", tone: "warning", urgent: true, visible: (game) => game.childMissingReported, text: "孩子不见了。刚才还在次卧；门铃响了一次，再看时人就不见了。我已经报警，你们马上协助找人！！！" },
+  { id: 118, sequence: 7.8, author: "1204住户端", unit: "1204", badge: "紧急补充", time: "刚刚", tone: "warning", urgent: true, visible: (game) => game.childMissingReported, text: "家里都找遍了，卧室、卫生间、阳台都没有，走廊和电梯口也没人。她的衣服还在，什么都没带。能不能先帮忙看看监控？求你们了，房子是我们占的，是真没办法了，不然也不会这么做，我只求孩子能平安回来。" },
+  { id: 119, sequence: 7.7, author: "物业客服中心", unit: "系统", badge: "失联人员事件升级", time: "刚刚", tone: "system", urgent: true, visible: (game) => game.childMissingReported, text: "110报警已受理，接警回执已经生成。原滴水投诉暂停结单，当前事件升级为失联儿童协查；请保存今日零点之后的公共区域录像，等待民警到场。" },
+  { id: 120, sequence: 7.6, author: "安保值班", unit: "1号楼", badge: "通道封控请求", time: "刚刚", tone: "warning", urgent: true, visible: (game) => game.childMissingReported, text: "安保正在封闭一层出口并逐层核对消防门。12层电梯没有呼梯记录，楼梯间门磁有触发；请提供孩子最后出现位置和报警回执编号。" },
+  { id: 121, sequence: 8.5, author: "辖区民警", unit: "DL-0713-0041", badge: "现场协查指令", time: "刚刚", tone: "system", visible: (game) => game.surveillanceSolved && game.childRegistered, text: "临时协查对象与录像复核摘要已收到。请物业以儿童最后确认位置为起点，结合现场线索，建立《失联儿童现场搜索路线》，逐点附现场图像后回传。居民室内未经授权不得进入。" },
 
-  { id: 3, sequence: 8, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 00:04", tone: "resident", visible: (game) => game.childMissingReported && hasVisited(game, "cctv-1204"), text: "别只看门口。看地面，再看消防楼梯。" },
-  { id: 105, sequence: 7, author: "孙阿姨", unit: "1303", badge: "普通住户", time: "今天 00:02", tone: "resident", visible: (game) => game.childMissingReported && hasVisited(game, "cctv-1204"), text: "消防门外的猫脚印我认得，但监控里那串不是猫留下的。猫爪不会一前一后，也不会一路滴着水。" },
+  { id: 3, sequence: 8, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 00:04", tone: "resident", visible: (game) => game.childMissingReported && hasVisited(game, "cctv-1204"), text: "也许可以留意画面上的异常存在，今天工作辛苦，记得休息眼睛。" },
+  { id: 105, sequence: 7, author: "孙阿姨", unit: "1303", badge: "普通住户", time: "今天 00:02", tone: "resident", visible: (game) => game.childMissingReported && hasVisited(game, "cctv-1204"), text: "消防门外的流浪猫我准备接回去领养了，很可爱，就是偶尔会出去乱跑。" },
 
-  { id: 4, sequence: 10, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 00:11", tone: "resident", visible: (game) => game.fatherResolved, text: "小满只是想念父亲。思念不等于原谅，这两份档案不该合在一起。" },
-  { id: 106, sequence: 9, author: "1204报警人", unit: "1204", badge: "协查对象已找到", time: "今天 00:13", tone: "warning", visible: (game) => game.childSaved, text: "民警和安保在1304门外的消防前室找到芷遥，已经送回1204。她一直说是一个衣服全湿的小姑娘带她走楼梯，还问‘爸爸是不是也在等我’。" },
+  { id: 4, sequence: 10, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 00:11", tone: "resident", visible: (game) => game.fatherResolved, text: "小满只是想念父母，但思念不等于原谅，两份档案无法合并。" },
+  { id: 106, sequence: 9, author: "1204报警人", unit: "1204", badge: "协查对象已找到", time: "今天 00:13", tone: "warning", visible: (game) => game.childSaved, text: "民警和安保在1304门外的消防前室找到芷遥，已经送回住处。她一直重复说是一个衣服全湿的小姑娘带她走的，还问‘有没有看到我的爸爸妈妈’。" },
 
-  { id: 5, sequence: 13, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 08:17", tone: "resident", visible: (game) => Boolean(game.fatherClosure), text: "周明川那份记录，先查名字。房号只能找到房间，找不到他留给你的口令。" },
-  { id: 107, sequence: 12, author: "顾长河", unit: "1304", badge: "账号已注销 · 会话未关闭", time: "刚刚", tone: "system", visible: (game) => game.fatherConfirmedDead, text: "为什么我的住户身份被注销了？回访记录还在，门却一直打不开。你查过那份协查回函，就告诉我到底发生了什么。" },
+  { id: 5, sequence: 13, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 08:17", tone: "resident", visible: (game) => Boolean(game.fatherClosure), text: "之前有一份记录，那份记录可能能解开很多疑问，现在是时候交给你。" },
+  { id: 107, sequence: 12, author: "顾长河", unit: "1304", badge: "账号已注销 · 会话未关闭", time: "刚刚", tone: "system", visible: (game) => game.fatherConfirmedDead, text: "为什么我的住户身份被注销了？门一直打不开。你如果知道真相，就告诉我到底发生了什么。" },
   { id: 108, sequence: 11, author: "周明川", unit: "物业员工", badge: "离职账号留存", time: "2026-06-02 22:18", tone: "system", visible: (game) => hasVisited(game, "employee-sync"), text: "一切都放在1104，救救我，我被困住了！" },
 
-  { id: 6, sequence: 15, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 08:32", tone: "resident", visible: (game) => hasVisited(game, "workorder-1404"), text: "工单是我发起的。你们每次都让同一个人来，再让他忘记为什么来。请不要再让他明天重新来一次。" },
-  { id: 109, sequence: 14, author: "物业合规中心", unit: "系统", badge: "自动回复", time: "今天 08:33", tone: "system", visible: (game) => hasVisited(game, "workorder-1404"), text: "警示：当前处理人与投诉所述对象存在自指冲突。禁止确认亲属关系、接受住户私人物品或脱离标准关怀话术；违规将立即执行记忆一致性复训。" },
-  { id: 115, sequence: 15.5, author: "物业合规中心", unit: "SYSTEM", badge: "主体冲突告警", time: "刚刚", tone: "system", visible: (game) => hasVisited(game, "workorder-1404"), text: "W-0713-1404已转交CJ-0713。系统检测到工单报事对象、固定回访人员与当前处理人重合。该冲突不得作为建立私人关系的依据。" },
-  { id: 122, sequence: 17.5, author: "林若岚", unit: "1404", badge: "未归档留言", time: "刚刚", tone: "resident", visible: (game) => hasUnlockedArticle(game, "on-site-device"), text: "I MISS YOU." },
+  { id: 6, sequence: 15, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 08:32", tone: "resident", visible: (game) => hasVisited(game, "workorder-1404"), text: "工单是我发起的。你们每次都让同一个人来，不能解决问题，请不要再让他再来了。" },
+  { id: 109, sequence: 14, author: "物业合规中心", unit: "系统", badge: "自动回复", time: "今天 08:33", tone: "system", visible: (game) => hasVisited(game, "workorder-1404"), text: "警示：当前处理人与投诉所述对象存在冲突。禁止确认关系、接受住户私人物品或脱离标准关怀话术；违规将立即执行记忆一致性考核。" },
+  { id: 115, sequence: 15.5, author: "物业合规中心", unit: "SYSTEM", badge: "主体冲突告警", time: "刚刚", tone: "system", visible: (game) => hasVisited(game, "workorder-1404"), text: "W-0713-1404已转交CJ-0713。系统检测到工单报事对象、固定回访人员与当前处理人重合。该冲突不得作为建立？？关系的依据。" },
+  { id: 122, sequence: 17.5, author: "林若岚", unit: "1404", badge: "未归档留言", time: "刚刚", tone: "resident", visible: (game) => hasUnlockedArticle(game, "on-site-device"), text: "你终于记起我了吗？。。。I MISS YOU." },
 
-  { id: 110, sequence: 16, author: "程启", unit: "物业员工", badge: "账号来源异常", time: "已删除 17次", tone: "system", visible: (game) => game.colleagueSolved, text: "‘内部转移’没有车辆和签收记录，‘过滤’却能清掉门禁、工单和本机缓存。审批人都来自恒目。" },
-  { id: 113, sequence: 16.5, author: "物业合规中心", unit: "SYSTEM", badge: "检索行为告警", time: "刚刚", tone: "system", visible: (game) => hasVisited(game, "symbol-eye-record"), text: "员工CJ-0713：当前检索已超出W-0713-019工单授权范围。请返回在办事项；继续查询“恒目”“过滤”或“ZC-LH”将记录为数据合规事件。" },
-  { id: 7, sequence: 18, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 00:09", tone: "resident", visible: (game) => game.homeSolved, text: "这一次如果你真的想起来了，就搜索‘下班’。00:10以后不要再刷卡。" },
+  { id: 110, sequence: 16, author: "程启", unit: "物业员工", badge: "账号来源异常", time: "已删除17组数据", tone: "system", visible: (game) => game.colleagueSolved, text: "‘内部转移’没有车辆和签收记录，‘过滤’能清掉门禁、工单和本机缓存。审批人来自恒目公司。" },
+  { id: 113, sequence: 16.5, author: "物业合规中心", unit: "SYSTEM", badge: "检索行为告警", time: "刚刚", tone: "system", visible: (game) => hasVisited(game, "symbol-eye-record"), text: "员工CJ-0713：当前检索已超出今日工单授权范围。请返回在办事项；继续查询“恒目”相关词条将记录为数据违规事件！！！！！！！！！！！" },
+  { id: 7, sequence: 18, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 00:09", tone: "resident", visible: (game) => game.homeSolved, text: "这一次如果你真的想起来了，就‘下班’吧。以后不要再回来，如果想起了我，我会去看你。" },
   { id: 111, sequence: 17, author: "留言板系统", unit: "SYSTEM", badge: "状态同步", time: "今天 00:09", tone: "system", visible: (game) => game.homeSolved, text: "当前在线会话：4。可核验住户账号：0。CJ-0713的本次临时访问权限将在00:10关闭。" },
   { id: 123, sequence: 18.5, author: "回访质检系统", unit: "SYSTEM", badge: "仅当前会话可读", time: "刚刚", tone: "system", action: "callback-review", visible: (game) => callbackCoreIds.every((id) => game.callbackRead.includes(id)) && hasVisited(game, "workorder-1404"), text: "检测到两组坐席导出记录存在不可自动归因的重复字段。复核任务未登记到全文索引，请从本通知进入。" },
   { id: 114, sequence: 19, author: "回访质检系统", unit: "SYSTEM", badge: "人工判断已保存", time: "刚刚", tone: "system", visible: (game) => game.cs046Solved, text: "当前处理人已将CS-046与CJ-0713登记为同一人。自动归因仍显示为上级策略撤回；CS-046只读检索索引已恢复。" },
@@ -1454,19 +1454,19 @@ const boardMessages: BoardMessage[] = [
 ];
 
 const WIFE_DIALOGUE_TURNS: Record<string, WifeDialogueTurn> = {
-  recognition: { player: "我们以前见过吗？", resident: "你每次都这么问。系统大概还是说没有吧。" },
-  assignment: { player: "上一位来处理的是谁？", resident: "就是你。至少工牌上的编号，和你现在戴的一样。" },
-  when: { player: "你说的上次是哪天？", resident: "昨天早上。你八点四十一分到，四十六分就走了，一直站在门外。" },
-  handled: { player: "当时处理到哪一步了？", resident: "你说去查以前的回访。可第二天再来，又让我从身份核验开始。" },
-  badge: { player: "你记得工牌编号？", resident: "我后来特意抄下来了。照片换过，CJ-0713一直没变。" },
-  dispatch: { player: "那次有派单记录吗？", resident: "刚开始有。第二天再看，只剩一句‘住户重复投诉’，连处理人都没了。" },
-  audit: { player: "我去查一下以前的回访记录。", resident: "你上次也是这么说的。……算了，你先查吧。" },
-  procedure: { player: "那我先帮你重新报修。", resident: "好。地点是1404。问题是同一个人每次来，都说第一次见我。" },
+  recognition: { player: "我们以前见过吗？", resident: "你每次都这么问。大概还是没有变化吧。" },
+  assignment: { player: "上一位来回访的是谁？", resident: "就是你。" },
+  when: { player: "你说的上次是哪天？", resident: "昨天早上。你八点四十一分到，没一会就走了。" },
+  handled: { player: "当时处理到哪一步了？", resident: "唉，你说去查以前的记录。可第二天再来，又是一样的流程。" },
+  badge: { player: "你记得工牌编号？", resident: "我后来特意抄下来了。" },
+  dispatch: { player: "那次有派单记录吗？", resident: "刚开始有。第二天再看，只剩‘住户重复投诉’。" },
+  audit: { player: "我去查一下以前的回访记录。", resident: "……算了，你先查吧。" },
+  procedure: { player: "那我先帮你重新报修。", resident: "好。" },
 };
 
 const WIFE_DIALOGUE_FIRST_CHOICES: WifeDialogueChoice[] = [
   { id: "recognition", label: "我们以前见过吗？" },
-  { id: "assignment", label: "上一位来处理的是谁？" },
+  { id: "assignment", label: "上一位来回访的是谁？" },
 ];
 
 const WIFE_DIALOGUE_SECOND_CHOICES: Record<string, WifeDialogueChoice[]> = {
@@ -4038,7 +4038,7 @@ export default function Home() {
         <div className="brand-lockup"><EyeMark /><span>澄江物业服务中心</span></div>
         <div className="login-eyes" aria-hidden="true">{Array.from({ length: 24 }).map((_, index) => <EyeMark key={index} />)}</div>
         <div className="login-copy"><p>综合物业管理平台 / SYSTEM 4.2</p><h1>员工身份认证</h1><span>请选择工牌或员工账号完成身份认证。</span></div>
-        <span className="login-secret-hint" tabIndex={0}>不要按顺序读。按你怀疑的内容去找。</span>
+        <span className="login-secret-hint" tabIndex={0}>不要相信。保持质疑。</span>
         <div className="login-grid" />
       </section>
       <section className="login-card login-card--auth">
@@ -4059,7 +4059,7 @@ export default function Home() {
           <button className="primary-button" disabled={isLoggingIn}>{isLoggingIn ? "身份同步中……" : "登录系统"}</button>
         </form>}
         <div className="login-record-actions">
-          <button className="text-button" disabled={isLoggingIn} onClick={() => enterSystem("CJ-0713", true)}>恢复本机调查记录</button>
+          <button className="text-button" disabled={isLoggingIn} onClick={() => enterSystem("CJ-0713", true)}>继续上次调查</button>
           {!forgetConfirming ? <button className="text-button login-forget-button" disabled={isLoggingIn} onClick={() => setForgetConfirming(true)}>遗忘</button> : <div className="login-forget-confirm" role="alert">
             <p><strong>确认遗忘本机调查？</strong><span>档案阅读、解密进度和恢复账号将永久清除。</span></p>
             <div><button type="button" onClick={forgetInvestigation}>确认遗忘</button><button type="button" onClick={() => setForgetConfirming(false)}>保留记录</button></div>
@@ -4246,7 +4246,7 @@ export default function Home() {
 
     <div className="archive-layout">
       <aside className="archive-sidebar">
-        <section><span>当前调查</span><strong>{objective}</strong><small>系统不会自动打开下一篇记录</small></section>
+        <section><span>当前调查</span><strong>{objective}</strong><small>随游戏进度推进</small></section>
         <nav><button className={game.view === "home" ? "is-active" : ""} onClick={goHome}>调查首页</button><button className={game.view === "search" ? "is-active" : ""} onClick={goSearchResults}>最近结果</button><button className={`${game.view === "callbacks" ? "is-active" : ""} ${availableCallbacks.some((record) => !game.callbackRead.includes(record.id)) ? "has-alert" : ""}`} onClick={openCallbackCenter}>客户回访{availableCallbacks.some((record) => !game.callbackRead.includes(record.id)) && <i>{availableCallbacks.filter((record) => !game.callbackRead.includes(record.id)).length}条新记录</i>}</button><button onClick={openArchiveIndex}>档案阅读</button><button className={fatherDeductionUnlocked && !game.fatherResolved ? "has-alert" : ""} onClick={openDeductionDesk}>真相推导{fatherDeductionUnlocked && !game.fatherResolved && <i>可推导</i>}</button><button onClick={openLedger}>证据台账</button><button onClick={openMessageBoard}>用户留言板</button></nav>
         <div className="history-list"><span>检索历史</span>{game.searchHistory.length ? game.searchHistory.map((term) => <button key={term} onClick={() => searchFor(term)}>{term}</button>) : <small>尚无检索记录</small>}</div>
         <footer><span>服务器时间</span><strong>{memoryRewriteActive ? "00:09:42" : game.homeSolved ? "00:09:14" : "2026-07-13 08:43"}</strong><small>{memoryRewriteActive ? "覆盖写入进行中" : game.homeSolved ? "外部证据已保全" : "档案索引正常"}</small></footer>
@@ -4258,7 +4258,7 @@ export default function Home() {
         {game.view === "home" && <div className="dashboard-home">
           <div className="dashboard-haunt" aria-hidden="true">{Array.from({ length: 8 }).map((_, index) => <EyeMark key={index} small />)}</div>
 
-          <div className="dashboard-head"><div><span>{memoryRewriteActive ? "MEM-CONSISTENCY / EMPLOYEE SESSION" : finalChapterStarted ? "重点关怀 / 主体冲突复核" : "工作台 / 2026-07-13"}</span><h1>{memoryRewriteActive ? "员工记忆一致性校正" : "物业管理系统"}</h1><p>{memoryRewriteActive ? "当前中台已由员工一致性服务接管。系统正在以标准业务口径覆盖与1404及事故资料有关的本地记录。" : finalChapterStarted ? "W-0713-1404涉及当前处理人自指冲突。仅可按标准关怀话术处置，不得确认私人关系。" : "负责长期空置房巡检、住户回访及异常工单复核。业务记录可通过顶部全文检索关联查询。"}</p>{!finalChapterStarted && <span className="dashboard-secret-hint" tabIndex={0}>从一张工单开始。下一步由你搜索。</span>}</div><aside><span>{memoryRewriteActive ? "强制任务" : "当前班次"}</span><strong>{memoryRewriteActive ? "覆盖写入 73%" : "08:30—17:30"}</strong><small className="shift-status"><i /> CJ-0713 在线<b>{memoryRewriteActive ? "退出功能已锁定" : "未检测到离场记录"}</b></small></aside></div>
+          <div className="dashboard-head"><div><span>{memoryRewriteActive ? "MEM-CONSISTENCY / EMPLOYEE SESSION" : finalChapterStarted ? "重点关怀 / 主体冲突复核" : "工作台 / 2026-07-13"}</span><h1>{memoryRewriteActive ? "员工记忆一致性校正" : "物业管理系统"}</h1><p>{memoryRewriteActive ? "当前中台已由员工一致性服务接管。系统正在以标准业务口径覆盖与1404及事故资料有关的本地记录。" : finalChapterStarted ? "W-0713-1404涉及当前处理人自指冲突。仅可按标准关怀话术处置，不得确认私人关系。" : "负责长期空置房巡检、住户回访及异常工单复核。业务记录可通过顶部全文检索关联查询。"}</p>{!finalChapterStarted && <span className="dashboard-secret-hint" tabIndex={0}>从一张工单开始。下一步由你搜索。</span>}</div><aside><span>{memoryRewriteActive ? "强制任务" : "当前班次"}</span><strong>{memoryRewriteActive ? "覆盖写入 73%" : "08:30—17:30"}</strong><small className="shift-status"><i /> CJ-0713 在线<b>{memoryRewriteActive ? "退出功能已锁定" : "未检测到下班打卡记录"}</b></small></aside></div>
 
           {finalChapterStarted ? <div className="dashboard-metrics dashboard-metrics--memory"><article className="dashboard-metric--alert"><span>待校正记忆</span><strong>{game.homeSolved ? "0" : "3"}</strong><small>{game.homeSolved ? "写入已阻断" : "强制任务"}</small></article><article><span>终端一致率</span><strong>{memoryRewriteActive ? "73%" : game.homeSolved ? "冲突" : "41%"}</strong><small>T-04 / 当前会话</small></article><article><span>关联住户</span><strong>1404</strong><small>私人关系禁止确认</small></article><article><span>合规事件</span><strong>{game.memoryRewriteStage === "resisted" ? "2" : "1"}</strong><small>已上报恒目</small></article></div> : <div className="dashboard-metrics"><article className="dashboard-metric--alert"><span>待处理工单</span><strong>1</strong><small>较昨日 -2</small></article><article><span>今日巡检</span><strong>6 / 12</strong><small>完成率 50%</small></article><article className="dashboard-metric--vacant"><span>长期空置房</span><strong className="metric-haunted" data-ghost="18">17</strong><small>本月新增 1</small></article><article><span>未读用户留言</span><strong>{unreadBoardMessages.length}</strong><small>关联当前值班</small></article></div>}
 
@@ -4357,7 +4357,7 @@ export default function Home() {
     <div className={`drawer-backdrop ${boardOpen || ledgerOpen || archiveIndexOpen || deductionOpen ? "is-open" : ""}`} onClick={() => { setBoardOpen(false); setLedgerOpen(false); setArchiveIndexOpen(false); setDeductionOpen(false); }} />
     <aside className={`side-drawer message-board ${boardOpen ? "is-open" : ""}`} aria-label="用户留言板">
       <header><div><span>PUBLIC MESSAGE BOARD</span><strong>用户留言板</strong></div><button aria-label="关闭用户留言板" onClick={() => setBoardOpen(false)}>×</button></header>
-      <div className="board-notice"><div><strong>{visibleBoardMessages.length}</strong><span>条关联留言</span></div><p>内容由住户、访客及物业账号自行发布，未经核验。普通抱怨、误报与案件线索会同时出现。</p></div>
+      <div className="board-notice"><div><strong>{visibleBoardMessages.length}</strong><span>条关联留言</span></div><p>内容由住户、访客及物业账号自行发布，未经核验。杂谈、误报与案件线索会同时出现。</p></div>
       <div className="message-list">{boardMessageThreads.map((thread) => <section key={thread.author} className={`message-thread-group message-thread-group--${thread.latest.tone ?? "resident"}`}>
         <header className="message-thread-group__header"><i aria-hidden="true">{thread.author === WIFE_NAME && !wifeNameRevealed ? "14" : thread.author.slice(0, 2)}</i><div><strong>{thread.author === WIFE_NAME ? <MosaicText value={WIFE_NAME} revealed={wifeNameRevealed} /> : thread.author}</strong><span>{thread.latest.unit} · {thread.messages.length} 条留言</span></div><time>{thread.latest.time}</time></header>
         <div className="message-thread-group__messages">{thread.messages.map((message) => <article key={message.id} className={`message-entry message-entry--${message.tone ?? "resident"} ${message.urgent ? "message-entry--urgent" : ""} ${message.id === 107 && !game.fatherClosure ? "message-entry--active" : ""}`}>
@@ -4376,12 +4376,12 @@ export default function Home() {
             {!game.missingChildReply.includes("last_seen") && <button onClick={() => requestMissingChildDetail("last_seen")}>最后在哪里见到她？</button>}
             {!game.missingChildReply.includes("police_ref") && <button onClick={() => requestMissingChildDetail("police_ref")}>报警回执是什么？</button>}
           </div>}
-          {message.id === 112 && game.missingChildReply.includes("last_seen") && <blockquote>“00:03她还在1204次卧，说门外有个衣服全湿的小姑娘。00:04入户门响了一次，再看时人已经不在了。”</blockquote>}
-          {message.id === 112 && game.missingChildReply.includes("police_ref") && <blockquote>“接警回执是DL-0713-0041。民警正在赶来，让物业先封闭消防通道、保留原始录像，不要自行进入1304。”</blockquote>}
+          {message.id === 112 && game.missingChildReply.includes("last_seen") && <blockquote>“刚才她还在1204次卧，说门外有个衣服全湿的小姑娘。零点后入户门响了一次，再看时人已经不在了。”</blockquote>}
+          {message.id === 112 && game.missingChildReply.includes("police_ref") && <blockquote>“接警回执是DL-0713-0041。民警正在赶来，让物业先封闭消防通道、保留原始录像，不要自行进入其他住处。”</blockquote>}
           {message.id === 107 && !game.fatherReply && <div className="message-actions message-actions--dark"><button onClick={() => replyToFather("death")}>引用公安协查回函</button><button onClick={() => replyToFather("evidence")}>引用门禁与会话审计</button></div>}
-          {message.id === 107 && game.fatherReply && <div className="dialogue-thread"><p className="dialogue-player">{game.fatherReply === "death" ? "公安协查回函字段：死亡；时间2023-02-08 00:36；死因急性酒精中毒。" : "审计字段：本人门禁已停用；当前写入对象为MSG-1304留言令牌。"}</p><p className="dialogue-resident">{game.fatherReply === "death" ? "那为什么这个账号还能说话？你们以前没有查过吗？" : "所以你看到的不是我回家，只是系统还在替这个账号开门。"}</p></div>}
+          {message.id === 107 && game.fatherReply && <div className="dialogue-thread"><p className="dialogue-player">{game.fatherReply === "death" ? "公安协查回函字段：死亡；时间2023-02-08 00:36；死因急性酒精中毒。" : "审计字段：本人门禁已停用；当前写入对象为MSG-1304留言令牌。"}</p><p className="dialogue-resident">{game.fatherReply === "death" ? "那为什么这个账号还能说话？" : "所以你看到的不是我，我已经不在了，是吗？只是系统还在替我这个该死的鬼开门。"}</p></div>}
           {message.id === 107 && game.fatherReply && !game.fatherClosure && <div className="message-actions message-actions--dark"><button onClick={() => setGame((current) => ({ ...current, fatherReply: "" }))}>重新选择回复</button><button onClick={closeFatherChat}>附加事故回执，保全会话并停用令牌</button></div>}
-          {message.id === 107 && game.fatherClosure && <div className="dialogue-thread dialogue-thread--closure"><p className="dialogue-player">已附加A-1304-0821联动回执。当前会话停止写入，原始内容转入审计保全。</p><p className="dialogue-resident">这不是第一次有人找到那张回执。你们一直都知道，对不对？</p><small>会话已转内部合规队列 · 留言令牌失效</small></div>}
+          {message.id === 107 && game.fatherClosure && <div className="dialogue-thread dialogue-thread--closure"><p className="dialogue-player">已附加A-1304-0821联动回执。当前会话停止写入，原始内容转入审计保全。</p><p className="dialogue-resident">这不是第一次有人找到全部的回执。你们一直都知道，对不对？</p><small>会话已转内部合规队列 · 留言令牌失效</small></div>}
         </article>)}</div>
       </section>)}</div>
     </aside>

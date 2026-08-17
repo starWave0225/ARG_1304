@@ -6,7 +6,7 @@ const BASE_PATH = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
 const assetPath = (path: string) => `${BASE_PATH}${path.startsWith("/") ? path : `/${path}`}`;
 
 export const metadata: Metadata = {
-  title: "全案真相档案 | 不存在的住户",
+  title: "全案真相档案 | 不存在的房间",
   description: "澄江公寓四起案件、人物关系、恒目计划、解密答案与双结局的完整真相。",
 };
 
