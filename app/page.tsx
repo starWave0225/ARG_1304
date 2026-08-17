@@ -592,7 +592,7 @@ const articles: ArticleMeta[] = [
     title: "失联儿童现场搜索路线",
     section: "安防中心",
     date: "2026-07-13",
-    snippet: "根据最后目击点、公共区域录像、消防门磁和儿童手环网关记录，生成现场人员的五点搜索顺序。",
+    snippet: "根据最后目击点、公共区域录像、物业数据和儿童手环网络记录，生成现场人员的搜索顺序。",
     terms: ["消防楼梯", "许芷遥", "失联儿童", "湿脚印", "衣服全湿", "湿衣小姑娘", "搜索路线", "1204儿童房", "13层前室", "1304门外"],
     kind: "media",
     available: (game) => game.surveillanceSolved && game.childRegistered,
@@ -1279,7 +1279,7 @@ const rescueRouteScenes: RescueRouteScene[] = [
     signal: "监护人最后确认",
     image: "/rescue-route/01-1204-child-room.jpg",
     alt: "1204儿童房通往走廊的门口出现模糊孩童影子",
-    observation: "床边物品没有翻动。赤脚水迹从床前延伸至房门，门外墙面留下无法对应光源的低矮影子。",
+    observation: "床边物品没有翻动。赤脚水迹从床前延伸至房门。",
     supportsRoute: true,
   },
   {
@@ -1288,13 +1288,13 @@ const rescueRouteScenes: RescueRouteScene[] = [
     signal: "门磁开启一次",
     image: "/rescue-route/02-1204-corridor.jpg",
     alt: "1204门外走廊尽头的消防门旁有孩童影子",
-    observation: "门外痕迹由赤脚印变为断续湿鞋印，方向避开电梯厅，沿走廊转向消防门。",
+    observation: "门外痕迹由赤脚印变为断续湿鞋印，方向沿走廊转向消防门。",
     supportsRoute: true,
   },
   {
     place: "电梯厅",
     time: "00:04—00:10",
-    signal: "ELEV-12F / 呼梯0次",
+    signal: "ELEV-12F / 无呼梯记录",
     image: "/rescue-route/06-12f-elevator-lobby.png",
     alt: "12层电梯厅夜间监控画面，电梯门关闭且地面无人",
     supportsRoute: false,
@@ -1305,7 +1305,7 @@ const rescueRouteScenes: RescueRouteScene[] = [
     signal: "12F消防门 / 上行痕迹",
     image: "/rescue-route/03-fire-stair.jpg",
     alt: "消防楼梯上行台阶与上层墙面的孩童影子",
-    observation: "上行台阶记录到两组尺寸不同的潮湿痕迹。较小一组时断时续，墙面影子始终领先一个转角。",
+    observation: "上行台阶记录到两组尺寸不同的潮湿痕迹。",
     supportsRoute: true,
   },
   {
@@ -1314,7 +1314,7 @@ const rescueRouteScenes: RescueRouteScene[] = [
     signal: "BLE-13F-W / -72dBm",
     image: "/rescue-route/04-13f-vestibule.jpg",
     alt: "13层消防前室通往住户走廊方向掠过孩童影子",
-    observation: "手环只在西侧网关短暂出现。前室门先开启，走廊影子在门磁记录后掠过画面边缘。",
+    observation: "手环在西侧短暂出现。前室门开启，画面边缘存在孩童身影。",
     supportsRoute: true,
   },
   {
@@ -1323,13 +1323,13 @@ const rescueRouteScenes: RescueRouteScene[] = [
     signal: "门把手水迹 / 无开锁记录",
     image: "/rescue-route/05-1304-door.jpg",
     alt: "1304门外水迹、墙面孩童影子与消防前室中的协查儿童",
-    observation: "水迹停在1304门外，门锁没有开启。最后一段影子落在门板上，协查人员应优先复核相邻消防前室。",
+    observation: "水迹停在1304门外，门锁没有开启，附近有消防前室无监控记录。",
     supportsRoute: true,
   },
   {
     place: "1304室内",
     time: "2023-02-08",
-    signal: "历史入户影像 / 非本次时段",
+    signal: "历史入户影像 / 非本次时段监控",
     image: "/rescue-route/07-1304-archive-interior.png",
     alt: "1304室内历史巡检归档照片，房间内没有人员或异常影子",
     supportsRoute: false,
@@ -1337,7 +1337,7 @@ const rescueRouteScenes: RescueRouteScene[] = [
   {
     place: "地库",
     time: "00:03—00:13",
-    signal: "CAM-B2-07 / 事件0",
+    signal: "CAM-B2-07 / 暂无来往车辆",
     image: "/rescue-route/08-b2-parking.png",
     alt: "地下停车场夜间监控画面，车道内没有人员或异常影子",
     supportsRoute: false,
@@ -1351,17 +1351,17 @@ const rescueCinematicFrames: Record<Exclude<RescueCinematicStage, "idle">, { eye
   found: {
     eyebrow: "00:13 / 13层西侧消防前室",
     title: "许芷遥已找到。",
-    copy: "民警把她从1304门外相邻前室带离。她没有明显外伤，只是一直回头看向走廊。",
+    copy: "民警把她从1304门外消防前室带离。她没有明显外伤，只是一直回头看向走廊。",
   },
   corridor: {
     eyebrow: "00:13:08 / 现场照明恢复",
-    title: "“带我来的小姑娘没有跟出来。”",
-    copy: "镜头越过消防前室，沿断续水迹移向1304。门锁从头到尾没有开启。",
+    title: "“带我来的小姑娘没有一起出来。”",
+    copy: "镜头越过消防前室，沿断续水迹移向1304。房门仍旧紧闭。",
   },
   ghost: {
     eyebrow: "00:13:10 / 1304门外",
     title: "那扇门始终没有打开。",
-    copy: "门上的男人没有看向获救的孩子。他只是望着消防前室里已经消失的另一道矮小影子。现场设备没有保存这一帧。",
+    copy: "门上出现可疑男人身影，他只是望着消防前室里另一道矮小的影子。物业警告：您已逾越调查边界，请立刻关闭档案。",
   },
 };
 
@@ -1433,7 +1433,7 @@ const boardMessages: BoardMessage[] = [
   { id: 105, sequence: 7, author: "孙阿姨", unit: "1303", badge: "普通住户", time: "今天 00:02", tone: "resident", visible: (game) => game.childRegistered && hasVisited(game, "cctv-1204"), text: "消防门外的流浪猫我准备接回去领养了，很可爱，就是偶尔会出去乱跑。" },
 
   { id: 4, sequence: 10, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 00:11", tone: "resident", visible: (game) => game.fatherResolved, text: "小满只是想念父母，但思念不等于原谅，两份档案无法合并。" },
-  { id: 106, sequence: 9, author: "1204报警人", unit: "1204", badge: "协查对象已找到", time: "今天 00:13", tone: "warning", visible: (game) => game.childSaved, text: "民警和安保在1304门外的消防前室找到芷遥，已经送回住处。她一直重复说是一个衣服全湿的小姑娘带她走的，还问‘有没有看到我的爸爸妈妈’。" },
+  { id: 106, sequence: 9, author: "1204报警人", unit: "1204", badge: "协查对象已找到", time: "今天 00:13", tone: "warning", visible: (game) => game.childSaved, text: "民警和安保在1304门外的消防前室找到芷遥，已经送回住处。她一直重复说是一个衣服全湿的小姑娘带她走的，那小姑娘还问‘有没有看到我的爸爸妈妈’。" },
 
   { id: 5, sequence: 13, author: "林若岚", unit: "1404", badge: "认证住户", time: "今天 08:17", tone: "resident", visible: (game) => Boolean(game.fatherClosure), text: "之前有一份记录，那份记录可能能解开很多疑问，现在是时候交给你。" },
   { id: 107, sequence: 12, author: "顾长河", unit: "1304", badge: "账号已注销 · 会话未关闭", time: "刚刚", tone: "system", visible: (game) => game.fatherConfirmedDead, text: "为什么我的住户身份被注销了？门一直打不开。你如果知道真相，就告诉我到底发生了什么。" },
@@ -1756,6 +1756,7 @@ export default function Home() {
   const [routeDrag, setRouteDrag] = useState<RescueRouteDrag | null>(null);
   const [routeDropIndex, setRouteDropIndex] = useState<number | null>(null);
   const [routePoolActive, setRoutePoolActive] = useState(false);
+  const [rescuePreviewPlace, setRescuePreviewPlace] = useState<string | null>(null);
   const [rescueCinematicStage, setRescueCinematicStage] = useState<RescueCinematicStage>("idle");
   const [fieldAudioPlaying, setFieldAudioPlaying] = useState(false);
   const [fieldAudioPosition, setFieldAudioPosition] = useState(0);
@@ -2223,7 +2224,7 @@ export default function Home() {
 
   const currentArticle = articles.find((article) => article.id === game.activeArticle) ?? null;
   const currentCallback = callbackRecords.find((record) => record.id === game.activeCallback) ?? null;
-  const activeRescueScene = rescueRouteScenes.find((scene) => scene.place === (game.route.at(-1) ?? rescueRouteScenes[0].place)) ?? null;
+  const activeRescueScene = rescueRouteScenes.find((scene) => scene.place === (rescuePreviewPlace ?? game.route.at(-1) ?? rescueRouteScenes[0].place)) ?? null;
   const rescueCinematicFrame = rescueCinematicStage === "idle" ? null : rescueCinematicFrames[rescueCinematicStage];
   const availableCallbacks = callbackRecords.filter((record) => record.available(game));
   const callbackReviewReady = callbackCoreIds.every((id) => game.callbackRead.includes(id)) && hasVisited(game, "workorder-1404");
@@ -3026,6 +3027,7 @@ export default function Home() {
 
   const insertRouteAt = (place: string, targetIndex: number) => {
     if (!rescueRouteOptions.includes(place)) return;
+    setRescuePreviewPlace(place);
     setGame((current) => {
       const alreadySelected = current.route.includes(place);
       if (!alreadySelected && current.route.length >= 5) return current;
@@ -3036,6 +3038,7 @@ export default function Home() {
   };
 
   const toggleRoutePlace = (place: string) => {
+    setRescuePreviewPlace(place);
     if (!game.route.includes(place) && game.route.length >= 5) {
       flash("搜索路线已有五个节点，请先移除一张现场图像");
       return;
@@ -3063,6 +3066,7 @@ export default function Home() {
   };
 
   const startRouteDrag = (event: DragEvent<HTMLElement>, place: string, sourceIndex: number | null) => {
+    setRescuePreviewPlace(place);
     event.dataTransfer.effectAllowed = sourceIndex === null ? "copyMove" : "move";
     event.dataTransfer.setData("text/plain", place);
     setRouteDrag({ place, sourceIndex });
@@ -3091,7 +3095,7 @@ export default function Home() {
   const submitRoute = () => {
     const expected = ["1204儿童房", "1204门外", "消防楼梯", "13层前室", "1304门外"];
     if (game.route.join("|") !== expected.join("|")) {
-      flash("路线无法下发：目击位置、门磁和蓝牙网关记录不能连续衔接");
+      flash("路线无法下发：不能形成合理搜索路径");
       return;
     }
     notifyEvidenceWrite(["childGuide"]);
@@ -3589,7 +3593,7 @@ export default function Home() {
     </>;
 
     if (id === "rescue-route") return <>
-      <div className="callout"><strong>现场调度原则</strong><p>请从最后确认位置开始，将五张现场图像编入连续搜索路径，并与门磁、网关及时间字段交叉复核。</p></div>
+      <div className="callout"><strong>现场调度原则</strong><p>请从最后确认位置开始，将现场图像编入连续搜索路径。</p></div>
       <section className={`rescue-visual-route ${game.childSaved ? "is-complete" : ""}`}>
         <header><div><span>RESCUE PATH / VISUAL RECONSTRUCTION</span><strong>失联儿童搜索路线</strong></div><b>{game.childSaved ? "已移交民警" : `${game.route.length} / 5`}</b></header>
         {game.childSaved ? rescueCinematicFrame ? <section className={`route-rescue-cinematic is-${rescueCinematicStage}`} aria-live="polite" aria-label="许芷遥获救场景演出">
@@ -3606,11 +3610,14 @@ export default function Home() {
             ? <button type="button" onClick={finishRescueCinematic}>记录现场，继续调查</button>
             : <button type="button" onClick={() => setRescueCinematicStage("ghost")}>跳到最后一帧</button>}
           </div>
-        </section> : <figure className="route-rescue-result">
-          <Image src={assetPath(rescueResultScene.image)} alt={rescueResultScene.alt} fill sizes="(max-width: 900px) 100vw, 72vw" unoptimized />
-          <div className="route-scene-vignette" />
-          <figcaption><span>00:08 / 13层西侧消防前室</span><strong>许芷遥已找到。</strong><p>人员位于1304门外相邻前室，无明显外伤。1304门锁全程未开启；墙面低矮影子在现场照明恢复后消失。</p></figcaption>
-        </figure> : <>
+        </section> : <>
+          <figure className="route-rescue-result">
+            <Image src={assetPath(rescueResultScene.image)} alt={rescueResultScene.alt} fill sizes="(max-width: 900px) 100vw, 72vw" unoptimized />
+            <div className="route-scene-vignette" />
+            <figcaption><span>00:08 / 13层西侧消防前室</span><strong>许芷遥已找到。</strong><p>人员位于1304门外消防前室，无明显外伤。1304房门未开启。</p></figcaption>
+          </figure>
+          <button type="button" className="route-replay-button" onClick={() => setRescueCinematicStage("found")}>重新播放搜索录像</button>
+        </> : <>
           <figure className={`route-scene-stage ${activeRescueScene?.supportsRoute ? "has-trace" : "is-excluded"}`}>
             {activeRescueScene && <Image key={activeRescueScene.place} src={assetPath(activeRescueScene.image)} alt={activeRescueScene.alt} fill sizes="(max-width: 900px) 100vw, 72vw" unoptimized />}
             {activeRescueScene && <><div className="route-scene-vignette"/><figcaption><span>{activeRescueScene.time} / {activeRescueScene.signal}</span><strong>{activeRescueScene.place}</strong>{activeRescueScene.observation && <p>{activeRescueScene.observation}</p>}</figcaption></>}
@@ -3666,15 +3673,15 @@ export default function Home() {
                 return <button
                   type="button"
                   key={place}
-                  className={`${selected ? "is-selected" : ""} ${routeDrag?.place === place ? "is-dragging" : ""}`}
-                  disabled={!canSelect}
+                  className={`${selected ? "is-selected" : ""} ${activeRescueScene?.place === place ? "is-previewed" : ""} ${routeDrag?.place === place ? "is-dragging" : ""}`}
                   draggable={canSelect}
                   onDragStart={(event) => startRouteDrag(event, place, selected ? selectedIndex : null)}
                   onDragEnd={clearRouteDrag}
                   onClick={() => toggleRoutePlace(place)}
                   aria-pressed={selected}
+                  aria-current={activeRescueScene?.place === place ? "true" : undefined}
                   aria-label={`${selected ? "从路线移除" : "加入路线"}${place}`}
-                  title={selected ? "移出路线" : "编入路线"}
+                  title={selected ? "移出路线并预览" : canSelect ? "编入路线并预览" : "预览图片（路线已满）"}
                 >
                   <Image src={assetPath(scene.image)} alt="" fill sizes="(max-width: 560px) 42vw, 180px" unoptimized />
                   <span><b>{place}</b><small>{scene.signal}</small></span>
@@ -3686,7 +3693,7 @@ export default function Home() {
         </>}
       </section>
       <table className="data-table"><tbody><tr><th>00:03</th><td>监护人确认许芷遥最后在1204次卧，赤脚，未携带手机。</td></tr><tr><th>00:04</th><td>1204门磁开启一次；走廊画面出现向消防门方向延伸的潮湿童鞋印；同期无电梯呼梯。</td></tr><tr><th>00:05</th><td>儿童手环短暂连接13层西侧公共蓝牙网关，信号强度-72dBm。</td></tr><tr><th>00:07</th><td>12层消防门与13层前室门磁先后开启，校正设备时差后间隔26秒。</td></tr><tr><th>00:08</th><td>13层夜间保洁报告1304门把手有新鲜水迹，屋内无人应答。</td></tr></tbody></table>
-      <div className="callout"><strong>证据边界</strong><p>路线画面由现场照片、门磁与痕迹记录合成，不等同于连续监控。现有材料无法证明影子的来源；1304没有合法开锁记录，现场人员只能先搜索门外及消防前室，并等待民警处置室内空间。</p></div>
+      <div className="callout"><strong>证据边界</strong><p>路线画面由现场照片、物业数据与相关记录合成，现有材料无法证明影子来源；1304状态仍旧存疑，现场人员只能先搜索门外及消防前室，并等待进一步调查处置。</p></div>
       <button className="primary-button" disabled={game.childSaved || game.route.length !== 5} onClick={submitRoute}>{game.childSaved ? "协查对象已找到" : game.route.length === 5 ? "下发五点搜索路线" : `还需选择 ${5 - game.route.length} 个搜索点`}</button>
     </>;
 
