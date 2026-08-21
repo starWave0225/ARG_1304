@@ -2420,6 +2420,11 @@ export default function Home() {
   }, [legacyCameraState]);
 
   useEffect(() => {
+    if (!game.legacyCameraPending) return;
+    if (legacyReadingStartedAt.current === null) legacyReadingStartedAt.current = Date.now();
+  }, [game.legacyCameraPending]);
+
+  useEffect(() => {
     const shouldWaitForCamera = game.activeAccount === MINGCHUAN_ACCOUNT
       && game.view === "legacy"
       && game.legacyRead.length === legacyFiles.length
@@ -2458,8 +2463,9 @@ export default function Home() {
     if (!shouldWatchDiaryBottom || !diaryFooter) return;
 
     const markBottomReached = () => setLegacyDiaryBottomReached(true);
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver((entries) => {
+    const IntersectionObserverConstructor = window.IntersectionObserver;
+    if (typeof IntersectionObserverConstructor === "function") {
+      const observer = new IntersectionObserverConstructor((entries) => {
         if (entries.some((entry) => entry.isIntersecting)) markBottomReached();
       }, { threshold: 0.65 });
       observer.observe(diaryFooter);
@@ -3596,7 +3602,6 @@ export default function Home() {
       && !game.legacyAccountCollapsed;
     if (opensFinalUnreadDiary) {
       legacyFinalDiaryId.current = fileId;
-      legacyReadingStartedAt.current = Date.now();
       legacyCameraRevealAt.current = null;
       setLegacyDiaryBottomReached(false);
     }

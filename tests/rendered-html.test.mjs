@@ -1463,7 +1463,7 @@ test("keeps the Zhou Mingchuan breach playable when camera access is unavailable
   assert.match(page, /legacyCameraPending: current\.legacyCameraPending \|\| completesEvidenceSet/);
   assert.match(page, /const mustResumeLegacyCamera = Boolean\(saved\?\.legacyCameraPending/);
   assert.match(page, /legacyReadingStartedAt\.current = Date\.now\(\)/);
-  assert.match(page, /new IntersectionObserver/);
+  assert.match(page, /new IntersectionObserverConstructor/);
   assert.match(page, /\{ threshold: 0\.65 \}/);
   assert.match(page, /Math\.max\(readingStartedAt \+ LEGACY_READING_MIN_MS, Date\.now\(\)\) \+ suspenseDelay/);
   assert.match(page, /<footer ref=\{legacyDiaryBottomRef\}>/);
