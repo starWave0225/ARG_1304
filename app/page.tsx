@@ -260,7 +260,9 @@ const MINGCHUAN_ACCOUNT: EmployeeAccount = "ZM-0602";
 const MINGCHUAN_PASSWORD = "hengmurecyclezm0602";
 const MINGCHUAN_BIRTHDAY = "1991-09-17";
 const MINGCHUAN_RECORD_PASSWORD = "19910917";
-const LEGACY_READING_GRACE_MS = 18000;
+const LEGACY_READING_MIN_MS = 45000;
+const LEGACY_CAMERA_SUSPENSE_MIN_MS = 5000;
+const LEGACY_CAMERA_SUSPENSE_MAX_MS = 8000;
 const LEGACY_CAMERA_PREVIEW_MS = 2200;
 const LEGACY_CAMERA_FALLBACK_MS = 1600;
 const LEGACY_CAMERA_REQUEST_TIMEOUT_MS = 8000;
@@ -1947,6 +1949,11 @@ export default function Home() {
   const [legacyBreachStage, setLegacyBreachStage] = useState<LegacyBreachStage>("none");
   const [legacyCameraState, setLegacyCameraState] = useState<LegacyCameraState>("idle");
   const [legacyCameraError, setLegacyCameraError] = useState("");
+  const [legacyDiaryBottomReached, setLegacyDiaryBottomReached] = useState(false);
+  const legacyDiaryBottomRef = useRef<HTMLElement | null>(null);
+  const legacyFinalDiaryId = useRef<string | null>(null);
+  const legacyReadingStartedAt = useRef<number | null>(null);
+  const legacyCameraRevealAt = useRef<number | null>(null);
   const [homeWoman, setHomeWoman] = useState("");
   const [homeEmployee, setHomeEmployee] = useState("");
   const [homeDevice, setHomeDevice] = useState("");
@@ -2094,8 +2101,12 @@ export default function Home() {
         if (legacyCameraVideo.current) legacyCameraVideo.current.srcObject = null;
         setLegacyCameraState("idle");
         setLegacyCameraError("");
-        setLegacyBreachStage("camera");
-        setLegacyFileId(null);
+        setLegacyBreachStage("none");
+        setLegacyDiaryBottomReached(false);
+        legacyFinalDiaryId.current = saved.legacyRead.at(-1) ?? null;
+        legacyReadingStartedAt.current = Date.now();
+        legacyCameraRevealAt.current = null;
+        setLegacyFileId(legacyFinalDiaryId.current);
         setSelectedAccount(MINGCHUAN_ACCOUNT);
         setGame({ ...saved, started: true, activeAccount: MINGCHUAN_ACCOUNT, view: "legacy", activeArticle: null, activeCallback: null });
         writeAppRoute("/system/legacy", true);
@@ -2409,24 +2420,63 @@ export default function Home() {
   }, [legacyCameraState]);
 
   useEffect(() => {
-    const shouldDelayCamera = game.activeAccount === MINGCHUAN_ACCOUNT
+    const shouldWaitForCamera = game.activeAccount === MINGCHUAN_ACCOUNT
       && game.view === "legacy"
       && game.legacyRead.length === legacyFiles.length
       && game.legacyCameraPending
       && !game.legacyBreachSeen
       && !game.legacyAccountCollapsed
       && legacyBreachStage === "none";
-    if (!shouldDelayCamera) return;
+    if (!shouldWaitForCamera || !legacyDiaryBottomReached) return;
+    const readingStartedAt = legacyReadingStartedAt.current ?? Date.now();
+    legacyReadingStartedAt.current = readingStartedAt;
+    if (legacyCameraRevealAt.current === null) {
+      const suspenseRange = LEGACY_CAMERA_SUSPENSE_MAX_MS - LEGACY_CAMERA_SUSPENSE_MIN_MS;
+      const suspenseDelay = LEGACY_CAMERA_SUSPENSE_MIN_MS + Math.floor(Math.random() * (suspenseRange + 1));
+      legacyCameraRevealAt.current = Math.max(readingStartedAt + LEGACY_READING_MIN_MS, Date.now()) + suspenseDelay;
+    }
+    const remainingDelay = Math.max(0, legacyCameraRevealAt.current - Date.now());
     const timer = window.setTimeout(() => {
       if (legacyTimer.current === timer) legacyTimer.current = null;
       setLegacyBreachStage("camera");
-    }, LEGACY_READING_GRACE_MS);
+    }, remainingDelay);
     legacyTimer.current = timer;
     return () => {
       window.clearTimeout(timer);
       if (legacyTimer.current === timer) legacyTimer.current = null;
     };
-  }, [game.activeAccount, game.legacyAccountCollapsed, game.legacyBreachSeen, game.legacyCameraPending, game.legacyRead.length, game.view, legacyBreachStage]);
+  }, [game.activeAccount, game.legacyAccountCollapsed, game.legacyBreachSeen, game.legacyCameraPending, game.legacyRead.length, game.view, legacyBreachStage, legacyDiaryBottomReached]);
+
+  useEffect(() => {
+    const shouldWatchDiaryBottom = game.activeAccount === MINGCHUAN_ACCOUNT
+      && game.view === "legacy"
+      && game.legacyCameraPending
+      && legacyBreachStage === "none"
+      && legacyFileId === legacyFinalDiaryId.current
+      && !legacyDiaryBottomReached;
+    const diaryFooter = legacyDiaryBottomRef.current;
+    if (!shouldWatchDiaryBottom || !diaryFooter) return;
+
+    const markBottomReached = () => setLegacyDiaryBottomReached(true);
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver((entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) markBottomReached();
+      }, { threshold: 0.65 });
+      observer.observe(diaryFooter);
+      return () => observer.disconnect();
+    }
+
+    const checkDiaryBottom = () => {
+      if (diaryFooter.getBoundingClientRect().top <= window.innerHeight * 0.92) markBottomReached();
+    };
+    checkDiaryBottom();
+    window.addEventListener("scroll", checkDiaryBottom, { passive: true });
+    window.addEventListener("resize", checkDiaryBottom);
+    return () => {
+      window.removeEventListener("scroll", checkDiaryBottom);
+      window.removeEventListener("resize", checkDiaryBottom);
+    };
+  }, [game.activeAccount, game.legacyCameraPending, game.view, legacyBreachStage, legacyDiaryBottomReached, legacyFileId]);
 
   useEffect(() => {
     if (legacyBreachStage !== "question" && legacyBreachStage !== "found") return;
@@ -3540,6 +3590,16 @@ export default function Home() {
   };
 
   const openLegacyFile = (fileId: string) => {
+    const opensFinalUnreadDiary = !game.legacyRead.includes(fileId)
+      && game.legacyRead.length === legacyFiles.length - 1
+      && !game.legacyBreachSeen
+      && !game.legacyAccountCollapsed;
+    if (opensFinalUnreadDiary) {
+      legacyFinalDiaryId.current = fileId;
+      legacyReadingStartedAt.current = Date.now();
+      legacyCameraRevealAt.current = null;
+      setLegacyDiaryBottomReached(false);
+    }
     setLegacyFileId(fileId);
     writeAppRoute(`/system/legacy/${fileId}`);
     setGame((current) => {
@@ -4516,7 +4576,7 @@ export default function Home() {
             <article className="legacy-document">{activeLegacyFile ? <>
               <header><span>{activeLegacyFile.code} / {activeLegacyFile.date}</span><h2>{activeLegacyFile.title}</h2><p>{activeLegacyFile.summary}</p></header>
               <div>{activeLegacyFile.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
-              <footer><EyeMark small/><span>该日记不在服务器索引中</span><b>阅读记录仍可能被监测</b></footer>
+              <footer ref={legacyDiaryBottomRef}><EyeMark small/><span>该日记不在服务器索引中</span><b>阅读记录仍可能被监测</b></footer>
             </> : <div className="legacy-empty"><EyeMark /><span>选择一篇日记</span><p>其他系统模块均不可访问。只有周明川留在本机的四篇日记仍能打开。</p></div>}</article>
           </div>
         </section>
