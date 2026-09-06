@@ -42,3 +42,12 @@ next-env.d.ts
 /outputs/
 /work/
 /.openai/*.tar.gz
+
+# Qiandao credentials and generated miniapp artifacts (at any depth)
+qdmp-config.json
+**/node_modules/
+miniapp/frontend/dist/
+miniapp/frontend/deploy_versions/
+miniapp/frontend/.temp/
+miniapp/frontend/.swc/
+miniapp/frontend/*.local

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import StorageNotice from "./storage-notice";
 
 const siteUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://starwave0225.github.io/ARG_1304/");
 const title = "不存在的房间";
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="zh-CN">
-      <body>{children}</body>
+      <body><StorageNotice />{children}</body>
     </html>
   );
 }

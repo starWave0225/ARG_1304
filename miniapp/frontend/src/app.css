@@ -1,0 +1,20 @@
+/* Extracted from the existing game's opening and login surfaces. */
+page {
+  --surface: #050708;
+  --text: #ffffff;
+  --muted: #b7c0bf;
+  --accent: #275f7b;
+  --text-title: 40px;
+  --text-body: 30px;
+  --text-label: 24px;
+  --radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+}
+.tap-active:active { opacity: 0.7; }
+.status-panel { position: fixed; inset: 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 64px 48px; padding-bottom: calc(64px + env(safe-area-inset-bottom)); box-sizing: border-box; }
+.status-panel__label { color: var(--muted); font-size: var(--text-label); letter-spacing: 4px; }
+.status-panel__title { margin-top: 24px; font-size: var(--text-title); font-weight: 600; }
+.status-panel__copy { margin-top: 24px; color: var(--muted); font-size: var(--text-body); line-height: 1.8; }
+.status-panel__action { margin-top: 48px; min-height: 88px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius); background: var(--accent); color: var(--text); font-size: var(--text-body); }

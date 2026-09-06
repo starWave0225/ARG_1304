@@ -1,0 +1,39 @@
+{
+  "name": "nonexistent-room-qiandao",
+  "version": "0.1.0",
+  "private": true,
+  "description": "不存在的房间 · 千岛兼容迁移容器",
+  "scripts": {
+    "build": "taro build --type weapp",
+    "dev": "npm run build -- --watch",
+    "test": "node --test tests/*.test.cjs",
+    "pack": "qdmp build"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.24.4",
+    "@tarojs/components": "4.2.0",
+    "@tarojs/helper": "4.2.0",
+    "@tarojs/plugin-framework-vue3": "4.2.0",
+    "@tarojs/plugin-platform-weapp": "4.2.0",
+    "@tarojs/runtime": "4.2.0",
+    "@tarojs/shared": "4.2.0",
+    "@tarojs/taro": "4.2.0",
+    "taro-plugin-qd": "1.0.2",
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.4",
+    "@tarojs/cli": "4.2.0",
+    "@tarojs/plugin-generator": "4.2.0",
+    "@tarojs/vite-runner": "4.2.0",
+    "@vitejs/plugin-vue": "^4.6.2",
+    "@vitejs/plugin-vue-jsx": "^3.1.0",
+    "babel-preset-taro": "4.2.0",
+    "postcss": "^8.5.6",
+    "sass": "^1.75.0",
+    "terser": "^5.30.4",
+    "vite": "^4.5.14"
+  },
+  "packageManager": "pnpm@10.14.0",
+  "engines": { "node": ">=22.13.0" }
+}

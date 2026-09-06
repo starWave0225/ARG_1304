@@ -198,7 +198,7 @@ test("lets the login terminal forget the local investigation and restart from th
 
   assert.match(page, /const \[forgetConfirming, setForgetConfirming\] = useState\(false\)/);
   assert.match(page, /const forgetInvestigation = \(\) =>/);
-  assert.match(page, /localStorage\.removeItem\(SAVE_KEY\)/);
+  assert.match(page, /if \(!browserStorage\.removeItem\(SAVE_KEY\)\) return;/);
   assert.match(page, /writeAppRoute\("\/opening", true\)/);
   assert.match(page, /window\.location\.reload\(\)/);
   assert.match(page, />遗忘<\/button>/);

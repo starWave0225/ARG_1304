@@ -1,14 +1,15 @@
 import type { NextConfig } from "next";
 
 const isGitHubPages = process.env.GITHUB_PAGES === "true";
+const isMiniappWeb = process.env.MINIAPP_WEB_EXPORT === "true";
 const repositoryName = process.env.GITHUB_REPOSITORY?.split("/")[1] ?? "ARG_1304";
 
 const nextConfig: NextConfig = {
   turbopack: { root: process.cwd() },
-  ...(isGitHubPages
+  ...(isGitHubPages || isMiniappWeb
     ? {
         output: "export" as const,
-        basePath: `/${repositoryName}`,
+        basePath: isMiniappWeb ? (process.env.NEXT_PUBLIC_BASE_PATH ?? "") : `/${repositoryName}`,
         trailingSlash: true,
         images: { unoptimized: true },
         typescript: { tsconfigPath: "tsconfig.pages.json" },

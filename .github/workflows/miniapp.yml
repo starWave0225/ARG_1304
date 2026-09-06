@@ -1,0 +1,49 @@
+name: Qiandao migration checks
+
+on:
+  push:
+    branches: ['codex/qiandao-miniapp-migration']
+  pull_request:
+    paths:
+      - 'miniapp/**'
+      - 'app/**'
+      - 'scripts/build-miniapp-web.mjs'
+      - 'tests/**'
+      - '*config*'
+      - 'package*.json'
+      - '.github/workflows/miniapp.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Compile-only target. This workflow DOES NOT deploy this branch to Pages.
+      QDMP_GAME_URL: https://starwave0225.github.io/ARG_1304/
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run test:miniapp
+      - run: npm run build:miniapp-web
+      - run: npm install --global pnpm@10.14.0 qdmp-cli@0.1.24
+      - run: pnpm install --frozen-lockfile
+        working-directory: miniapp/frontend
+      - run: pnpm test
+        working-directory: miniapp/frontend
+      - run: pnpm run pack
+        working-directory: miniapp/frontend
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qiandao-compile-check-not-deployed
+          path: miniapp/frontend/dist/
+          if-no-files-found: error
+          retention-days: 7

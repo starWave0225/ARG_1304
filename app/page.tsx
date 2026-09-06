@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import type { CSSProperties, DragEvent, FormEvent } from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { browserStorage } from "./browser-storage";
+import { bindBackgroundPause, getServerRuntime, isQiandaoMode, subscribeToRuntime } from "./qiandao-runtime";
 
 type View = "home" | "search" | "article" | "denied" | "callbacks" | "callback-review" | "ending" | "legacy" | "completion";
 type Ending = "expose" | "loop" | null;
@@ -556,7 +558,7 @@ const writeAppRoute = (route: string, replace = false) => {
 };
 
 const readSavedGame = (): GameState | null => {
-  const saved = localStorage.getItem(SAVE_KEY);
+  const saved = browserStorage.getItem(SAVE_KEY);
   if (!saved) return null;
   try {
     const restored = JSON.parse(saved) as Partial<GameState>;
@@ -1878,6 +1880,8 @@ async function preloadImageBatch(paths: readonly string[], concurrency: number, 
 }
 
 export default function Home() {
+  const qiandaoMode = useSyncExternalStore(subscribeToRuntime, isQiandaoMode, getServerRuntime);
+  const qiandaoBackgroundPaused = useRef(false);
   const [game, setGame] = useState<GameState>(initialGame);
   const [entryStage, setEntryStage] = useState<EntryStage>("dream");
   const [memoryIndex, setMemoryIndex] = useState(0);
@@ -2291,7 +2295,7 @@ export default function Home() {
 
   useEffect(() => {
     const preferenceTimer = window.setTimeout(() => {
-      setBackgroundMusicEnabled(localStorage.getItem(MUSIC_PREF_KEY) !== "1");
+      setBackgroundMusicEnabled(browserStorage.getItem(MUSIC_PREF_KEY) !== "1");
     }, 0);
     return () => window.clearTimeout(preferenceTimer);
   }, []);
@@ -2306,6 +2310,8 @@ export default function Home() {
     if (!audio.paused) return;
 
     const startMusic = () => {
+      if (qiandaoMode && document.hidden) return;
+      qiandaoBackgroundPaused.current = false;
       audio.volume = fieldAudioPlaying || cctvVideoPlaying ? BACKGROUND_MUSIC_DUCKED_VOLUME : BACKGROUND_MUSIC_VOLUME;
       void audio.play().catch(() => undefined);
     };
@@ -2315,14 +2321,14 @@ export default function Home() {
       document.removeEventListener("pointerdown", startMusic);
       document.removeEventListener("keydown", startMusic);
     };
-  }, [backgroundMusicEnabled, backgroundMusicPath, backgroundMusicStarted, cctvVideoPlaying, fieldAudioPlaying]);
+  }, [backgroundMusicEnabled, backgroundMusicPath, backgroundMusicStarted, cctvVideoPlaying, fieldAudioPlaying, qiandaoMode]);
 
   useEffect(() => {
     const audio = backgroundMusicElement.current;
-    if (!audio || !backgroundMusicEnabled) return;
+    if (!audio || !backgroundMusicEnabled || (qiandaoMode && (document.hidden || qiandaoBackgroundPaused.current))) return;
     audio.volume = fieldAudioPlaying || cctvVideoPlaying ? BACKGROUND_MUSIC_DUCKED_VOLUME : BACKGROUND_MUSIC_VOLUME;
     void audio.play().catch(() => undefined);
-  }, [backgroundMusicEnabled, backgroundMusicPath, cctvVideoPlaying, fieldAudioPlaying]);
+  }, [backgroundMusicEnabled, backgroundMusicPath, cctvVideoPlaying, fieldAudioPlaying, qiandaoMode]);
 
   useEffect(() => {
     const audio = backgroundMusicElement.current;
@@ -2495,8 +2501,23 @@ export default function Home() {
   }, [legacyBreachStage]);
 
   useEffect(() => {
-    if (game.started) localStorage.setItem(SAVE_KEY, JSON.stringify(game));
+    if (game.started) browserStorage.setItem(SAVE_KEY, JSON.stringify(game));
   }, [game]);
+
+  useEffect(() => {
+    if (!qiandaoMode) return;
+    return bindBackgroundPause(document, window, () => {
+      qiandaoBackgroundPaused.current = true;
+      document.querySelectorAll<HTMLMediaElement>("audio, video").forEach((media) => media.pause());
+      FIELD_AUDIO_TRACKS.forEach((track) => fieldAudioElements.current[track.key]?.pause());
+      fieldAudioStartedAt.current = null;
+      setFieldAudioPlaying(false);
+      setFieldAudioPosition(0);
+      setCctvVideoPlaying(false);
+      const context = messageAudioContext.current;
+      if (context?.state === "running") void context.suspend().catch(() => undefined);
+    });
+  }, [qiandaoMode]);
 
   useEffect(() => {
     for (const evidenceId of evidenceNotificationKeys.current) {
@@ -2545,7 +2566,7 @@ export default function Home() {
     const nextEnabled = !backgroundMusicEnabled;
     const audio = backgroundMusicElement.current;
     setBackgroundMusicEnabled(nextEnabled);
-    localStorage.setItem(MUSIC_PREF_KEY, nextEnabled ? "0" : "1");
+    browserStorage.setItem(MUSIC_PREF_KEY, nextEnabled ? "0" : "1");
     if (!audio) return;
     if (!nextEnabled) {
       audio.pause();
@@ -2719,6 +2740,7 @@ export default function Home() {
   };
 
   const playMessageNotificationSound = useCallback(() => {
+    if (isQiandaoMode() && document.hidden) return;
     try {
       const audioContext = messageAudioContext.current ?? new AudioContext();
       messageAudioContext.current = audioContext;
@@ -2759,6 +2781,7 @@ export default function Home() {
   }, []);
 
   const playEvidenceNotificationSound = () => {
+    if (isQiandaoMode() && document.hidden) return;
     try {
       const audioContext = messageAudioContext.current ?? new AudioContext();
       messageAudioContext.current = audioContext;
@@ -2938,7 +2961,7 @@ export default function Home() {
     setLegacyCameraState("idle");
     setLegacyCameraError("");
     setLegacyBreachStage("none");
-    localStorage.setItem(SAVE_KEY, JSON.stringify({ ...game, started: true }));
+    browserStorage.setItem(SAVE_KEY, JSON.stringify({ ...game, started: true }));
     dismissMessagePopup();
     setBoardOpen(false);
     setLedgerOpen(false);
@@ -2956,7 +2979,7 @@ export default function Home() {
   };
 
   const forgetInvestigation = () => {
-    localStorage.removeItem(SAVE_KEY);
+    if (!browserStorage.removeItem(SAVE_KEY)) return;
     setForgetConfirming(false);
     writeAppRoute("/opening", true);
     window.location.reload();
@@ -3645,6 +3668,10 @@ export default function Home() {
   };
 
   const requestLegacyCamera = async () => {
+    if (qiandaoMode) {
+      continueLegacyWithoutCamera();
+      return;
+    }
     if (legacyCameraState === "requesting") return;
     const requestToken = ++legacyCameraRequestToken.current;
     let requestTimeout: number | null = null;
@@ -3692,7 +3719,7 @@ export default function Home() {
     setLegacyCameraState("idle");
     setLegacyCameraError("");
     const savedGame: GameState = { ...game, started: true, activeAccount: "CJ-0713", view: "home", activeArticle: null, legacyAccountCollapsed: true };
-    localStorage.setItem(SAVE_KEY, JSON.stringify(savedGame));
+    browserStorage.setItem(SAVE_KEY, JSON.stringify(savedGame));
     setLegacyBreachStage("none");
     setLegacyFileId(null);
     setGame({ ...savedGame, started: false });
@@ -4603,11 +4630,11 @@ export default function Home() {
           <div className="legacy-camera-copy">
             <span>检测到已注销账号正在读取未同步材料</span>
             <strong>{legacyCameraState === "active" ? "请看向镜头。画面核验完成后将自动继续。" : legacyCameraState === "fallback" ? "画面中没有人。正在改用历史身份特征。" : "继续访问前，需要完成一次本机身份校验。"}</strong>
-            <p>摄像头画面只在当前设备预览，不会上传或保存；无可用画面时将继续执行离线校验。</p>
+            <p>{qiandaoMode ? "小程序使用无画面校验，不申请摄像头权限；不影响后续调查。" : "摄像头画面只在当前设备预览，不会上传或保存；无可用画面时将继续执行离线校验。"}</p>
             {legacyCameraError && <p className="legacy-camera-error" role="alert">{legacyCameraError}</p>}
           </div>
           <footer>
-            {legacyCameraState === "active" ? <div className="legacy-camera-accepted"><i /><span>摄像头已开启 · 正在核验</span></div> : legacyCameraState === "fallback" ? <div className="legacy-camera-accepted legacy-camera-accepted--fallback"><i /><span>无画面 · 正在比对历史身份</span></div> : <div><button className="legacy-camera-primary" onClick={() => void requestLegacyCamera()} disabled={legacyCameraState === "requesting"}>{legacyCameraState === "requesting" ? "等待授权……" : legacyCameraState === "error" ? "重新开启摄像头" : "开启摄像头"}</button><button className="legacy-camera-exit" onClick={() => continueLegacyWithoutCamera()}>无画面校验</button></div>}
+            {legacyCameraState === "active" ? <div className="legacy-camera-accepted"><i /><span>摄像头已开启 · 正在核验</span></div> : legacyCameraState === "fallback" ? <div className="legacy-camera-accepted legacy-camera-accepted--fallback"><i /><span>无画面 · 正在比对历史身份</span></div> : <div>{!qiandaoMode && <button className="legacy-camera-primary" onClick={() => void requestLegacyCamera()} disabled={legacyCameraState === "requesting"}>{legacyCameraState === "requesting" ? "等待授权……" : legacyCameraState === "error" ? "重新开启摄像头" : "开启摄像头"}</button>}<button className="legacy-camera-exit" onClick={() => continueLegacyWithoutCamera()}>无画面校验</button></div>}
             <small>{legacyCameraState === "active" ? "请保持画面稳定" : legacyCameraState === "fallback" ? "终端未检测到活体画面" : "设备不可用或拒绝授权时仍可继续"}</small>
           </footer>
         </section>
