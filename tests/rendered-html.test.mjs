@@ -497,7 +497,7 @@ test("turns the 1204 rescue into an evidence-led emergency workflow", async () =
   assert.match(page, /<dt>监护人<\/dt><dd>许\*\*、赵\*\*<\/dd>/);
   assert.match(page, /<dt>出生日期<\/dt><dd>2020年4月12日<\/dd>/);
   assert.match(page, /function normalizeChineseDate\(value: string\)/);
-  assert.match(page, /const compact = normalized\.match\(\/\^\(\\d\{4\}\)\(\\d\{2\}\)\(\\d\{2\}\)\$\//);
+  assert.match(page, /const compact = normalized\.match\(\/\(\?:\^\|\\D\)\(\\d\{4\}\)\(\\d\{2\}\)\(\\d\{2\}\)\(\?:\\D\|\$\)\//);
   assert.match(page, /normalizeChineseDate\(childBirthday\) !== "2020-04-12"/);
   assert.match(page, /normalizeChineseDate\(childLastDate\) !== "2026-07-13"/);
   assert.match(page, /出生日期（年月日）<input value=\{childBirthday\}[\s\S]*placeholder="例：x年x月x日"/);
@@ -1063,7 +1063,11 @@ test("makes the 1404 complaint and memory rewrite the final chapter", async () =
   assert.match(page, /CJ-0713账号的后台创建日期<input value=\{homeEmployee\}[\s\S]*placeholder="例：yyyymmdd"/);
   assert.match(page, /封存物附件凭证编号<input value=\{homeDevice\}[\s\S]*placeholder="例：XX-0000"/);
   assert.match(page, /const normalizedEmployeeDate = normalizeChineseDate\(homeEmployee\)/);
-  assert.match(page, /normalizedEmployeeDate !== "2025-11-05" \|\| normalizeText\(homeDevice\) !== "dl1105"/);
+  assert.match(page, /normalizeIdentityCode\(homeWoman\) !== "1404"/);
+  assert.match(page, /normalizedEmployeeDate !== "2025-11-05"/);
+  assert.match(page, /normalizeIdentityCode\(homeDevice\) !== "DL1105"/);
+  assert.match(page, /字段核验失败：\$\{invalidFields\.join\("、"\)\}未能与原始凭证匹配/);
+  assert.match(page, /支持全角或半角字符、常见年月日格式，以及带说明文字的整段复制内容/);
   assert.match(page, /东临殡仪馆寄存转出单 DL-1105<\/dd>/);
   assert.doesNotMatch(page, /DL-1105-██/);
   assert.match(page, /className="memory-admin-table"><p><span>REL-1404<\/span><b>来源冲突 · 3/);
@@ -1300,7 +1304,7 @@ test("uses the revised concise 1404 relationship verification wording", async ()
   assert.match(page, /snippet: "系统要求操作员录入可复核字段。"/);
   assert.match(page, /系统将自行计算关联性/);
   assert.match(page, /<label>封存物附件凭证编号<input/);
-  assert.match(page, /字段核验失败：请按原始凭证填写/);
+  assert.match(page, /字段核验失败：\$\{invalidFields\.join\("、"\)\}未能与原始凭证匹配/);
   assert.doesNotMatch(page, /不要提交关系结论/);
 });
 

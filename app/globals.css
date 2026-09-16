@@ -1049,6 +1049,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .archive-form input, .archive-form select, .password-gate input { display: block; width: 100%; margin-top: 7px; border: 1px solid var(--line); background: #fff; color: var(--ink); padding: 12px; }
 .archive-form > .primary-button { grid-column: 1/-1; }
 .archive-form--wide { grid-template-columns: 1fr 1fr; }
+.identity-source-form__hint { grid-column: 1/-1; margin: -5px 0 0; color: #708083; font-size: 12px; line-height: 1.7; }
 .status-review { grid-column: 1/-1; padding: 20px; color: #d8e3e4; background: #202f35; border-left: 3px solid #9e3e3d; }
 .status-review span,.status-review strong { display: block; }
 .credential-recovery { margin-top: 24px; border: 1px solid #522d30; color: #ded6d4; background: #1c1517; }

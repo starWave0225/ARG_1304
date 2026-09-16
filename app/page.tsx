@@ -1655,16 +1655,20 @@ function addUnique(items: string[], values: string[]) {
 }
 
 function normalizeText(value: string) {
-  return value.toLowerCase().replace(/[\s·•—_\-：:，,。.、/\\（）()《》〈〉]/g, "");
+  return value.normalize("NFKC").toLowerCase().replace(/[\u200B-\u200D\uFEFF\s·•—_\-：:，,。.、/\\（）()《》〈〉]/g, "");
 }
 
 function normalizeChineseDate(value: string) {
-  const normalized = value.normalize("NFKC").trim();
-  const compact = normalized.match(/^(\d{4})(\d{2})(\d{2})$/);
+  const normalized = value.normalize("NFKC").replace(/[\u200B-\u200D\uFEFF]/g, "").trim();
+  const compact = normalized.match(/(?:^|\D)(\d{4})(\d{2})(\d{2})(?:\D|$)/);
   if (compact) return `${compact[1]}-${compact[2]}-${compact[3]}`;
-  const parts = normalized.match(/^(\d{4})\D+(\d{1,2})\D+(\d{1,2})(?:日|号)?$/);
+  const parts = normalized.match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})(?:日|号)?/);
   if (!parts) return normalized;
   return `${parts[1]}-${parts[2].padStart(2, "0")}-${parts[3].padStart(2, "0")}`;
+}
+
+function normalizeIdentityCode(value: string) {
+  return value.normalize("NFKC").toUpperCase().replace(/[^A-Z0-9]/g, "");
 }
 
 const genericRoomSearchEntries: Record<string, readonly string[]> = {
@@ -3708,8 +3712,13 @@ export default function Home() {
   const submitIdentity = (event: FormEvent) => {
     event.preventDefault();
     const normalizedEmployeeDate = normalizeChineseDate(homeEmployee);
-    if (normalizeText(homeWoman) !== "1404" || normalizedEmployeeDate !== "2025-11-05" || normalizeText(homeDevice) !== "dl1105") {
-      flash("字段核验失败：请按原始凭证填写");
+    const invalidFields = [
+      normalizeIdentityCode(homeWoman) !== "1404" ? "紧急联系人房号" : "",
+      normalizedEmployeeDate !== "2025-11-05" ? "账号创建日期" : "",
+      normalizeIdentityCode(homeDevice) !== "DL1105" ? "封存物附件凭证编号" : "",
+    ].filter(Boolean);
+    if (invalidFields.length > 0) {
+      flash(`字段核验失败：${invalidFields.join("、")}未能与原始凭证匹配`);
       return;
     }
     setMemoryAnchors([]);
@@ -4400,6 +4409,7 @@ export default function Home() {
         <label>CJ-0713账号的后台创建日期<input value={homeEmployee} onChange={(event) => setHomeEmployee(event.target.value)} placeholder="例：yyyymmdd" inputMode="numeric" /></label>
         <label>封存物附件凭证编号<input value={homeDevice} onChange={(event) => setHomeDevice(event.target.value)} placeholder="例：XX-0000" autoCapitalize="characters" spellCheck={false} /></label>
         <button className="primary-button">提交原始字段核验</button>
+        <p className="identity-source-form__hint">支持全角或半角字符、常见年月日格式，以及带说明文字的整段复制内容。</p>
       </form>
     </>;
 
